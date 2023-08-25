@@ -1,4 +1,4 @@
-'''import os
+import os
 import pymysql
 from dotenv import load_dotenv
 
@@ -22,4 +22,3 @@ if connection:
     print('Information: Database connection succeeded')
 else:
     raise Exception('Database connection failed')
-'''
