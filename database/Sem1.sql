@@ -44,7 +44,7 @@ Nombre varchar(50) not null,
 Descripcion varchar(100),
 Src varchar(100) not null,
 Usuario int,
-foreign key (Usuario) references Usuario(Id) 
+foreign key (Usuario) references USUARIO(Id) 
 );
 
 create table PLAYLIST_CANCION(
