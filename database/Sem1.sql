@@ -7,7 +7,9 @@ Id int primary key auto_increment,
 Nombre varchar(50),
 Apellido varchar(50),
 Src varchar(100),
-Psw varchar(10)
+Correo varchar(100),
+Psw varchar(10),
+Fecha_nac date
 );
 
 create table ARTISTA(
@@ -30,7 +32,8 @@ foreign key (Artista) references ARTISTA(Id)
 create table CANCION(
 Id int primary key auto_increment,
 Nombre varchar(50) not null,
-Src varchar(100) not null,
+Src_image varchar(100) not null,
+Src_mp3 varchar(100) not null,
 Duracion int not null,
 Artista int not null,
 Album int,
