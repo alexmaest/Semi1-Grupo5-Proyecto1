@@ -1,14 +1,27 @@
+const db = require('../database');
+
 class userModel {
-  constructor(id_user, name, password) {
+  constructor(id_user, firstName, lastName, email, password, birthday, profilePhoto) {
     this.id_user = id_user;
-    this.name = name;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
     this.password = password;
+    this.birthday = birthday;
+    this.profilePhoto = profilePhoto;
   }
 
-  save(user) {
+  save() {
     return new Promise((resolve, reject) => {
-      const query = 'INSERT INTO user (name, password) VALUES (?, ?);';
-      db.connection.query(query, [user.name, user.password], (err, result) => {
+      const query = 'INSERT INTO USUARIO (Nombre, Apellido, Correo, Psw, Fecha_nac, Src) VALUES (?, ?, ?, ?, ?, ?);';
+      db.connection.query(query, [
+        this.firstName,
+        this.lastName,
+        this.email,
+        this.password,
+        this.birthday,
+        this.profilePhoto
+      ], (err, result) => {
         if (err) {
           reject(err);
         } else {
@@ -20,7 +33,7 @@ class userModel {
 
   update(user) {
     return new Promise((resolve, reject) => {
-      const query = 'UPDATE user SET ? WHERE id_user = ?';
+      const query = 'UPDATE USUARIO SET ? WHERE Id = ?';
       db.connection.query(query, [user.name, user.id], (err, result) => {
         if (err) {
           reject(err);
@@ -33,7 +46,7 @@ class userModel {
 
   delete(userId) {
     return new Promise((resolve, reject) => {
-      const query = 'DELETE FROM user WHERE id_user = ?';
+      const query = 'DELETE FROM USUARIO WHERE Id = ?';
       db.connection.query(query, userId, (err, result) => {
         if (err) {
           reject(err);
@@ -44,9 +57,9 @@ class userModel {
     });
   }
 
-  findById(userId) {
+  getById(userId) {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM user WHERE id_user = ?';
+      const query = 'SELECT * FROM USUARIO WHERE Id = ?';
       db.connection.query(query, [userId], (err, result) => {
         if (err) {
           reject(err);
@@ -56,6 +69,23 @@ class userModel {
       });
     });
   }
+
+  getByEmail() {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM USUARIO WHERE Correo = ?';
+      db.connection.query(query, [this.email], (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0]);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
+  }
 }
 
-module.exports = new userModel();
+module.exports = userModel;
