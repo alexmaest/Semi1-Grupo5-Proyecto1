@@ -5,18 +5,18 @@ class ITForm extends Component {
   render() {
     return (
       <div className="form-group row">
-        <div class="col-sm-6">
+        <div className="col-sm-6">
           <input
             type="text"
-            readonly=""
-            class="form-control-plaintext"
+            readOnly
+            className="form-control-plaintext"
             value={this.props.value}
           ></input>
         </div>
-        <div class="col-sm-6">
+        <div className="col-sm-6">
           <input
             type="text"
-            class="form-control"
+            className="form-control"
           ></input>
         </div>
       </div>

@@ -4,7 +4,25 @@ import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 
 class MediaPlayer extends Component {
-  
+  state = {
+    title: "",
+    src: "",
+  }
+
+  nextSong = () => {
+    this.setState({
+      title: "",
+      src: "",
+    });
+  };
+
+  previousSong = () => {
+    this.setState({
+      title: "",
+      src: "",
+    });
+  };
+
   render() {
     return (
       <div>
@@ -15,13 +33,13 @@ class MediaPlayer extends Component {
             color: "white",
             background: "#2f2f33",
           }}
-          src={this.props.playlist[this.props.currentTrack].src}
+          src={this.state.src}
           showSkipControls={true}
           showJumpControls={false}
-          header={this.props.playlist[this.props.currentTrack].title}
-          onClickNext={this.props.nextSong}
-          onClickPrevious={this.props.previousSong}
-          onEnded={this.props.nextSong}
+          header={this.state.title}
+          onClickNext={this.state.nextSong}
+          onClickPrevious={this.previousSong}
+          onEnded={this.nextSong}
           autoPlayAfterSrcChange={true}
           //autoPlay={true}
         />

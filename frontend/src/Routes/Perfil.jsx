@@ -44,10 +44,10 @@ class Perfil extends Component {
                   Nueva Contraseña:
                   <div className="form-group row">
                     <div className="col-sm-6">
-                      <input type="password" className="form-control"></input>
+                      <input type="password" className="form-control" placeholder="New Password"></input>
                     </div>
                     <div className="col-sm-6">
-                      <input type="password" className="form-control"></input>
+                      <input type="password" className="form-control" placeholder="Verify Password"></input>
                     </div>
                   </div>
                 </li>

@@ -6,13 +6,16 @@ import { CgProfile, CgPlayList } from "react-icons/cg";
 import MediaPlayer from "../Components/MediaPlayer";
 
 class Sidebar extends Component {
+  state = {
+  };
+
   render() {
     return (
       <>
         <div id="sidebar">
           <h1>Grupo 5 - Spotify</h1>
           <div>
-            <Link to={`/`}>
+            <Link to={""}>
               <BsMusicPlayerFill />
               Home
             </Link>
@@ -20,25 +23,25 @@ class Sidebar extends Component {
           <nav>
             <ul>
               <li>
-                <Link to={"/"}>
+                <Link to={"Buscar"}>
                   <BsSearch />
                   Buscar
                 </Link>
               </li>
               <li>
-                <Link to={"/Playlist"}>
+                <Link to={"Playlist"}>
                   <CgPlayList />
                   Playlist
                 </Link>
               </li>
               <li>
-                <Link to={"/Favoritos"}>
+                <Link to={"Favoritos"}>
                   <MdFavoriteBorder />
                   Favoritos
                 </Link>
               </li>
               <li>
-                <Link to={"/Perfil"}>
+                <Link to={"Perfil"}>
                   <CgProfile />
                   Perfil
                 </Link>
@@ -51,12 +54,7 @@ class Sidebar extends Component {
             <Outlet />
           </div>
           <div style={{ order: 1 }}>
-            <MediaPlayer
-              currentTrack={this.props.currentTrack}
-              playlist={this.props.playlist}
-              nextSong={this.props.nextSong}
-              previousSong={this.props.previousSong}
-            />
+            <MediaPlayer />
           </div>
         </div>
       </>
