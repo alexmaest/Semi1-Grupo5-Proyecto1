@@ -4,20 +4,22 @@ class ITForm extends Component {
   state = {};
   render() {
     return (
-      <>
-        <label htmlFor={this.props.label} className="col-sm-2 col-htmlForm-label">
-          {this.props.label}:
-        </label>
-        <div>
+      <div className="form-group row">
+        <div class="col-sm-6">
           <input
             type="text"
-            className="form-control-plaintext"
-            id={this.props.label}
+            readonly=""
+            class="form-control-plaintext"
             value={this.props.value}
-            readOnly
-            />
+          ></input>
         </div>
-      </>
+        <div class="col-sm-6">
+          <input
+            type="text"
+            class="form-control"
+          ></input>
+        </div>
+      </div>
     );
   }
 }
