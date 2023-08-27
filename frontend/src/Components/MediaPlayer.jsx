@@ -13,7 +13,7 @@ class MediaPlayer extends Component {
           style={{
             borderRadius: "1rem",
             color: "white",
-            background: "#1b1a22",
+            background: "#2f2f33",
           }}
           src={this.props.playlist[this.props.currentTrack].src}
           showSkipControls={true}
