@@ -21,4 +21,4 @@ connection = pymysql.connect(
 if connection:
     print('Information: Database connection succeeded')
 else:
-    raise Exception('Database connection failed')
+    raise ConnectionError('Database connection failed')

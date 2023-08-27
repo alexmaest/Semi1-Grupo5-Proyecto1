@@ -14,6 +14,7 @@ s3_client = session.client('s3')
 
 class LoadController:
     def __init__(self):
+        # TODO document why this method is empty
         pass
     
     def upload_image(self, image):
