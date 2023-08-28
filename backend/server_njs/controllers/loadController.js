@@ -31,6 +31,29 @@ class loadController {
             console.log('Information: Image uploaded');
             return (urlFile);
         } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }
+
+    async uploadSong(song) {
+        try {
+            const random = Math.floor(Math.random() * 10000);
+            const filename = "file" + random;
+        
+            const uploadParams = {
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: `Canciones/${filename}`,
+              Body: song,
+              ContentType: 'audio/mpeg'
+            };
+            const command = new s3.PutObjectCommand(uploadParams);
+            const result = await client.send(command);
+            const urlFile = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/Canciones/${filename}`;
+            console.log('Information: Song uploaded');
+            return urlFile;
+        } catch (err) {
+            console.error(err);
             return null;
         }
     }

@@ -1,6 +1,8 @@
 const artistModel = require('../models/artistModel');
 const albumModel = require('../models/albumModel');
+const songModel = require('../models/songModel');
 const loadController = require('./loadController')
+const multer = require('multer');
 
 class adminController {
     constructor() { }
@@ -66,8 +68,8 @@ class adminController {
     async createAlbum(req, res) {
         try {
             const { name, description, artistId, profilePhoto } = req.body;
-            const album = new albumModel(null, name, description, null, null);
-            album.artist = new artistModel(artistId, null, null, null);
+            const artist = new artistModel(artistId, null, null, null);
+            const album = new albumModel(null, name, description, null, artist);
             const imageUrl = await loadController.uploadImage(profilePhoto);
             if (imageUrl) {
                 album.coverPhoto = imageUrl;
@@ -126,6 +128,97 @@ class adminController {
                 res.status(200).json({ albums: allAlbums });
             } else {
                 res.status(501).json({ message: 'No albums created yet' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async createSong(req, res) {
+        try {
+            const storage = multer.memoryStorage();
+            const upload = multer({
+                storage,
+                limits: { fileSize: 10000000, files: 1 }
+            });
+            const uploadMiddleware = upload.single('track');
+            uploadMiddleware(req, res, async (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Internal Server Error');
+                }
+                if (!req.file) {
+                    return res.status(400).send('No detected file in request');
+                }
+                const songUrl = await loadController.uploadSong(req.file.buffer)
+                if (songUrl) {
+                    const { name, duration, artistId, albumId, profilePhoto } = req.body;
+                    const artist = new artistModel(artistId, null, null, null);
+                    const album = new albumModel(albumId, null, null, null, artist);
+                    const song = new songModel(null, name, null, songUrl, duration, artist, album);
+                    const imageUrl = await loadController.uploadImage(profilePhoto);
+                    if (imageUrl) {
+                        song.coverPhoto = imageUrl;
+                        const savedSong = await song.save();
+                        if (savedSong) {
+                            res.status(200).json({ message: 'The song has been created' });
+                        } else {
+                            res.status(501).json({ message: 'The song could not be created' });
+                        }
+                    } else {
+                        res.status(500).json({ message: 'An error has occurred while uploading the song cover photo' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the song' });
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async getSingleSong(req, res) {
+        try {
+            const songId = req.params.id;
+            const song = new songModel(songId, null, null, null, null, null, null);
+            const songObtained = await song.getById();
+            if (songObtained) {
+                res.status(200).json({ song: songObtained });
+            } else {
+                res.status(501).json({ message: 'The album does not exist' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async getAllSongs(req, res) {
+        try {
+            const song = new songModel(null, null, null, null, null, null);
+            const allSongs = await song.getAll();
+            if (allSongs) {
+                res.status(200).json({ songs: allSongs });
+            } else {
+                res.status(501).json({ message: 'No songs created yet' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async getAlbumSongs(req, res) {
+        try {
+            const albumId = req.params.id;
+            const album = new albumModel(albumId, null, null, null, null);
+            const allSongs = await album.getAllAlbumSongs();
+            if (allSongs) {
+                res.status(200).json({ songs: allSongs });
+            } else {
+                res.status(501).json({ message: 'No songs created yet' });
             }
         } catch (err) {
             console.error(err);

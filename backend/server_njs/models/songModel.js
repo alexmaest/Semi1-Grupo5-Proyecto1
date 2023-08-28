@@ -1,22 +1,26 @@
 const db = require('../database');
 
-class albumModel {
-    constructor(id_album, name, description, coverPhoto, artist) {
-        this.id_album = id_album;
+class songModel {
+    constructor(id_song, name, coverPhoto, songFile, duration, artist, album) {
+        this.id_song = id_song;
         this.name = name;
-        this.description = description;
         this.coverPhoto = coverPhoto;
+        this.songFile = songFile;
+        this.duration = duration;
         this.artist = artist;
+        this.album = album;
     }
 
     save() {
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO ALBUM (Nombre, Descripcion, Src, Artista) VALUES (?, ?, ?, ?);';
+            const query = 'INSERT INTO CANCION (Nombre, Src_image, Src_mp3, Duracion, Artista, Album) VALUES (?, ?, ?, ?, ?, ?);';
             db.connection.query(query, [
                 this.name,
-                this.description,
                 this.coverPhoto,
-                this.artist.id_artist
+                this.songFile,
+                this.duration,
+                this.artist.id_artist,
+                this.album.id_album
             ], (err, result) => {
                 if (err) {
                     reject(err);
@@ -27,10 +31,10 @@ class albumModel {
         });
     }
 
-    update(album) {
+    update(song) {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE ALBUM SET ? WHERE Id = ?';
-            db.connection.query(query, [album.name, album.id], (err, result) => {
+            const query = 'UPDATE CANCION SET ? WHERE Id = ?';
+            db.connection.query(query, [song.name, song.id], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -40,10 +44,10 @@ class albumModel {
         });
     }
 
-    delete(albumId) {
+    delete(songId) {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ALBUM WHERE Id = ?';
-            db.connection.query(query, albumId, (err, result) => {
+            const query = 'DELETE FROM CANCION WHERE Id = ?';
+            db.connection.query(query, songId, (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -55,16 +59,18 @@ class albumModel {
 
     getById() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ALBUM WHERE Id = ?;';
-            db.connection.query(query, [this.id_album], (err, result) => {
+            const query = 'SELECT * FROM CANCION WHERE Id = ?;';
+            db.connection.query(query, [this.id_song], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
                     if (result.length > 0) {
                         this.name = result[0].Nombre;
-                        this.description = result[0].Descripcion;
-                        this.coverPhoto = result[0].Src;
-                        this.artistId = result[0].Artista;
+                        this.coverPhoto = result[0].Src_image
+                        this.songFile = result[0].Src_mp3;
+                        this.duration = result[0].Duracion;
+                        this.artist = result[0].Artista;
+                        this.album = result[0].Album;
                         resolve(this);
                     } else {
                         resolve(null);
@@ -76,7 +82,7 @@ class albumModel {
 
     getByName() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ALBUM WHERE Nombre = ?';
+            const query = 'SELECT * FROM CANCION WHERE Nombre = ?';
             db.connection.query(query, [this.name], (err, result) => {
                 if (err) {
                     reject(err);
@@ -93,21 +99,8 @@ class albumModel {
 
     getAll() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ALBUM;'
+            const query = 'SELECT * FROM CANCION;'
             db.connection.query(query, (err, results) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(results);
-                }
-            });
-        });
-    }
-
-    getAllAlbumSongs() {
-        return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM CANCION WHERE Album = ?;'
-            db.connection.query(query, [this.id_album], (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -118,4 +111,4 @@ class albumModel {
     }
 }
 
-module.exports = albumModel;
+module.exports = songModel;
