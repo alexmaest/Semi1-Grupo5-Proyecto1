@@ -1,20 +1,23 @@
+const artistModel = require('../models/artistModel');
 const db = require('../database');
 
-class artistModel {
-    constructor(id_artist, name, birthday, profilePhoto) {
-        this.id_artist = id_artist;
+class albumModel {
+    constructor(id_album, name, description, coverPhoto, artist) {
+        this.id_album = id_album;
         this.name = name;
-        this.birthday = birthday;
-        this.profilePhoto = profilePhoto;
+        this.description = description;
+        this.coverPhoto = coverPhoto;
+        this.artist = artist;
     }
 
     save() {
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO ARTISTA (Nombre, Fecha_nac, Src) VALUES (?, ?, ?);';
+            const query = 'INSERT INTO ALBUM (Nombre, Descripcion, Src, Artista) VALUES (?, ?, ?, ?);';
             db.connection.query(query, [
                 this.name,
-                this.birthday,
-                this.profilePhoto
+                this.description,
+                this.coverPhoto,
+                this.artist.id_artist
             ], (err, result) => {
                 if (err) {
                     reject(err);
@@ -25,10 +28,10 @@ class artistModel {
         });
     }
 
-    update(artist) {
+    update(album) {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE ARTISTA SET ? WHERE Id = ?';
-            db.connection.query(query, [artist.name, artist.id], (err, result) => {
+            const query = 'UPDATE ALBUM SET ? WHERE Id = ?';
+            db.connection.query(query, [album.name, album.id], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -38,10 +41,10 @@ class artistModel {
         });
     }
 
-    delete(artistId) {
+    delete(albumId) {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ARTISTA WHERE Id = ?';
-            db.connection.query(query, artistId, (err, result) => {
+            const query = 'DELETE FROM ALBUM WHERE Id = ?';
+            db.connection.query(query, albumId, (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -53,15 +56,16 @@ class artistModel {
 
     getById() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ARTISTA WHERE Id = ?;';
-            db.connection.query(query, [this.id_artist], (err, result) => {
+            const query = 'SELECT * FROM ALBUM WHERE Id = ?;';
+            db.connection.query(query, [this.id_album], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
                     if (result.length > 0) {
                         this.name = result[0].Nombre;
-                        this.birthday = result[0].Fecha_nac;
-                        this.profilePhoto = result[0].Src;
+                        this.description = result[0].Descripcion;
+                        this.coverPhoto = result[0].Src;
+                        this.artistId = result[0].Artista;
                         resolve(this);
                     } else {
                         resolve(null);
@@ -73,7 +77,7 @@ class artistModel {
 
     getByName() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ARTISTA WHERE Nombre = ?';
+            const query = 'SELECT * FROM ALBUM WHERE Nombre = ?';
             db.connection.query(query, [this.name], (err, result) => {
                 if (err) {
                     reject(err);
@@ -90,21 +94,8 @@ class artistModel {
 
     getAll() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ARTISTA;'
+            const query = 'SELECT * FROM ALBUM;'
             db.connection.query(query, (err, results) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(results);
-                }
-            });
-        });
-    }
-
-    getAllArtistAlbums() {
-        return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ALBUM WHERE Artista = ?;'
-            db.connection.query(query, [this.id_artist], (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -115,4 +106,4 @@ class artistModel {
     }
 }
 
-module.exports = artistModel;
+module.exports = albumModel;
