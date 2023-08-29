@@ -34,5 +34,21 @@ class LoadController:
         except Exception as e:
             print(f'Error: {e}')
             return None
+    
+    def upload_song(self, song):
+        try:
+            random_number = random.randint(0, 10000)
+            filename = f"file{random_number}"
+            upload_key = f'Canciones/{filename}'
+
+            s3_client.upload_fileobj(BytesIO(song), os.environ['AWS_BUCKET_NAME'], upload_key, ExtraArgs={
+                'ContentType': 'audio/mpeg',
+            })
+            url_file = f"https://{os.environ['AWS_BUCKET_NAME']}.s3.{os.environ['AWS_BUCKET_REGION']}.amazonaws.com/{upload_key}"
+            print('Information: Song uploaded')
+            return url_file
+        except Exception as e:
+            print(f'Error: {e}')
+            return None
 
 load_controller = LoadController()

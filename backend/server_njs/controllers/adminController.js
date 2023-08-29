@@ -91,7 +91,7 @@ class adminController {
     async getSingleAlbum(req, res) {
         try {
             const albumId = req.params.id;
-            const album = new albumModel(albumId, null, null, null);
+            const album = new albumModel(albumId, null, null, null, null);
             const albumObtained = await album.getById();
             if (albumObtained) {
                 res.status(200).json({ album: albumObtained });
@@ -106,7 +106,7 @@ class adminController {
 
     async getAllAlbums(req, res) {
         try {
-            const album = new albumModel(null, null, null, null);
+            const album = new albumModel(null, null, null, null, null);
             const allAlbums = await album.getAll();
             if (allAlbums) {
                 res.status(200).json({ albums: allAlbums });
