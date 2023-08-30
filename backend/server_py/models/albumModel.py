@@ -47,11 +47,19 @@ class albumModel:
                 db_cursor.execute(query, (self.id_album,))
                 result = db_cursor.fetchone()
                 if result:
+                    self.id_album = result['Id']
                     self.name = result['Nombre']
                     self.description = result['Descripcion']
                     self.coverPhoto = result['Src']
                     self.artistId = result['Artista']
-                    return self
+                    albumObtained = {
+                        'id_album': self.id_album,
+                        'name': self.name,
+                        'description': self.description,
+                        'coverPhoto': self.coverPhoto,
+                        'artistId': self.artistId
+                    }
+                    return albumObtained
                 else:
                     return None
         except Exception as e:
@@ -76,7 +84,18 @@ class albumModel:
             with connection.cursor() as db_cursor:
                 db_cursor.execute(query)
                 results = db_cursor.fetchall()
-                return results
+                albumList = []
+                for result in results:
+                    album = {
+                        'id_album': result['Id'],
+                        'name': result['Nombre'],
+                        'description': result['Descripcion'],
+                        'coverPhoto': result['Src'],
+                        'artistId': result['Artista']
+                    }
+                    albumList.append(album)
+                
+                return albumList
         except Exception as e:
             raise e
 
@@ -86,6 +105,19 @@ class albumModel:
             with connection.cursor() as db_cursor:
                 db_cursor.execute(query, (self.id_album,))
                 results = db_cursor.fetchall()
-                return results
+                songList = []
+                for result in results:
+                    song = {
+                        'id_song': result['Id'],
+                        'name': result['Nombre'],
+                        'coverPhoto': result['Src_image'],
+                        'songFile': result['Src_mp3'],
+                        'duration': result['Duracion'],
+                        'artist': result['Artista'],
+                        'album': result['Album']
+                    }
+                    songList.append(song)
+                
+                return songList
         except Exception as e:
             raise e

@@ -41,13 +41,7 @@ def get_single_artist(id):
         artist = artistModel(id, None, None, None)
         artist_obtained = artist.getById()
         if artist_obtained:
-            artist_dict = {
-                'id_artist': artist_obtained.id_artist,
-                'name': artist_obtained.name,
-                'birthday': artist_obtained.birthday,
-                'profilePhoto': artist_obtained.profilePhoto
-            }
-            return jsonify({ 'artist': artist_dict }), 200
+            return jsonify({ 'artist': artist_obtained }), 200
         else:
             return jsonify({ 'message': 'The artist does not exist' }), 501
     except Exception as e:
@@ -99,14 +93,7 @@ def get_single_album(id):
         album = albumModel(id, None, None, None, None)
         album_obtained = album.getById()
         if album_obtained:
-            album_dict = {
-                'Id': album_obtained.id_album,
-                'Nombre': album_obtained.name,
-                'Descripcion': album_obtained.description,
-                'Src': album_obtained.coverPhoto,
-                'Artista': album_obtained.artistId
-            }
-            return jsonify({ 'artist': album_dict }), 200
+            return jsonify({ 'album': album_obtained }), 200
         else:
             return jsonify({ 'message': 'The album does not exist' }), 501
     except Exception as e:
@@ -181,16 +168,7 @@ def get_single_song(id):
         song = songModel(id, None, None, None, None, None, None)
         song_obtained = song.getById()
         if song_obtained:
-            song_dict = {
-                'id_song': song_obtained.id_song,
-                'name': song_obtained.name,
-                'coverPhoto': song_obtained.coverPhoto,
-                'songFile': song_obtained.songFile,
-                'duration': song_obtained.duration,
-                'artist': song_obtained.artist,
-                'album': song_obtained.album
-            }
-            return jsonify({ 'song': song_dict }), 200
+            return jsonify({ 'song': song_obtained }), 200
         else:
             return jsonify({ 'message': 'The song does not exist' }), 501
     except Exception as e:
