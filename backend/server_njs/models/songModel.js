@@ -65,13 +65,23 @@ class songModel {
                     reject(err);
                 } else {
                     if (result.length > 0) {
+                        this.id_song = result[0].Id;
                         this.name = result[0].Nombre;
-                        this.coverPhoto = result[0].Src_image
+                        this.coverPhoto = result[0].Src_image;
                         this.songFile = result[0].Src_mp3;
                         this.duration = result[0].Duracion;
                         this.artist = result[0].Artista;
                         this.album = result[0].Album;
-                        resolve(this);
+                        const songObtained = {
+                            id_song :this.id_song,
+                            name : this.name,
+                            coverPhoto : this.coverPhoto,
+                            songFile : this.songFile,
+                            duration : this.duration,
+                            artist : this.artist,
+                            album : this.album
+                        };
+                        resolve(songObtained);
                     } else {
                         resolve(null);
                     }
@@ -99,12 +109,21 @@ class songModel {
 
     getAll() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM CANCION;'
+            const query = 'SELECT * FROM CANCION;';
             db.connection.query(query, (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(results);
+                    const songList = results.map(result => ({
+                        'id_song' : result.Id,
+                        'name' : result.Nombre,
+                        'coverPhoto' : result.Src_image,
+                        'songFile' : result.Src_mp3,
+                        'duration' : result.Duracion,
+                        'artist' : result.Artista,
+                        'album' : result.Album
+                    }));
+                    resolve(songList);
                 }
             });
         });

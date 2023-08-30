@@ -61,11 +61,19 @@ class albumModel {
                     reject(err);
                 } else {
                     if (result.length > 0) {
+                        this.id_album = result[0].Id;
                         this.name = result[0].Nombre;
                         this.description = result[0].Descripcion;
                         this.coverPhoto = result[0].Src;
                         this.artistId = result[0].Artista;
-                        resolve(this);
+                        const albumObtained = {
+                            id_album: this.id_album,
+                            name: this.name,
+                            description: this.description,
+                            coverPhoto: this.coverPhoto,
+                            artistId : this.artistId
+                        };
+                        resolve(albumObtained);
                     } else {
                         resolve(null);
                     }
@@ -98,7 +106,14 @@ class albumModel {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(results);
+                    const albumsList = results.map(result => ({
+                        'id_album': result.Id,
+                        'name': result.Nombre,
+                        'description': result.Descripcion,
+                        'coverPhoto': result.Src,
+                        "artistId": result.Artista
+                    }));
+                    resolve(albumsList);
                 }
             });
         });
@@ -111,7 +126,16 @@ class albumModel {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(results);
+                    const songList = results.map(result => ({
+                        'id_song' : result.Id,
+                        'name' : result.Nombre,
+                        'coverPhoto' : result.Src_image,
+                        'songFile' : result.Src_mp3,
+                        'duration' : result.Duracion,
+                        'artist' : result.Artista,
+                        'album' : result.Album
+                    }));
+                    resolve(songList);
                 }
             });
         });

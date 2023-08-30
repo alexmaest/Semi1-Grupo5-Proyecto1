@@ -49,13 +49,23 @@ class songModel:
                 db_cursor.execute(query, (self.id_song,))
                 result = db_cursor.fetchone()
                 if result:
+                    self.id_song = result['Id']
                     self.name = result['Nombre']
                     self.coverPhoto = result['Src_image']
                     self.songFile = result['Src_mp3']
                     self.duration = result['Duracion']
                     self.artist = result['Artista']
                     self.album = result['Album']
-                    return self
+                    songObtained = {
+                        'id_song': self.id_song,
+                        'name': self.name,
+                        'coverPhoto': self.coverPhoto,
+                        'songFile': self.songFile,
+                        'duration': self.duration,
+                        'artist': self.artist,
+                        'album': self.album
+                    }
+                    return songObtained
                 else:
                     return None
         except Exception as e:
@@ -80,6 +90,19 @@ class songModel:
             with connection.cursor() as db_cursor:
                 db_cursor.execute(query)
                 results = db_cursor.fetchall()
-                return results
+                songList = []
+                for result in results:
+                    song = {
+                        'id_song': result['Id'],
+                        'name': result['Nombre'],
+                        'coverPhoto': result['Src_image'],
+                        'songFile': result['Src_mp3'],
+                        'duration': result['Duracion'],
+                        'artist': result['Artista'],
+                        'album': result['Album']
+                    }
+                    songList.append(song)
+                
+                return songList
         except Exception as e:
             raise e

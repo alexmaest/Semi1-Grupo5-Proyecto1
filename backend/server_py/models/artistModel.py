@@ -46,10 +46,17 @@ class artistModel:
                 db_cursor.execute(query, (self.id_artist,))
                 result = db_cursor.fetchone()
                 if result:
+                    self.id_artist = result['Id']
                     self.name = result['Nombre']
                     self.birthday = result['Fecha_nac']
                     self.profilePhoto = result['Src']
-                    return self
+                    artistObtained = {
+                        'id_artist': self.id_artist,
+                        'name': self.name,
+                        'birthday': self.birthday,
+                        'profilePhoto': self.profilePhoto
+                    }
+                    return artistObtained
                 else:
                     return None
         except Exception as e:
@@ -74,7 +81,17 @@ class artistModel:
             with connection.cursor() as db_cursor:
                 db_cursor.execute(query)
                 results = db_cursor.fetchall()
-                return results
+                artistsList = []
+                for result in results:
+                    artist = {
+                        'id_artist': result['Id'],
+                        'name': result['Nombre'],
+                        'birthday': result['Fecha_nac'],
+                        'profilePhoto': result['Src']
+                    }
+                    artistsList.append(artist)
+                
+                return artistsList
         except Exception as e:
             raise e
 
@@ -84,6 +101,17 @@ class artistModel:
             with connection.cursor() as db_cursor:
                 db_cursor.execute(query, (self.id_artist,))
                 results = db_cursor.fetchall()
-                return results
+                albumList = []
+                for result in results:
+                    album = {
+                        'id_album': result['Id'],
+                        'name': result['Nombre'],
+                        'description': result['Descripcion'],
+                        'coverPhoto': result['Src'],
+                        'artistId': result['Artista']
+                    }
+                    albumList.append(album)
+                
+                return albumList
         except Exception as e:
             raise e
