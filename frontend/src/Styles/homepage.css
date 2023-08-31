@@ -1,0 +1,86 @@
+.blackbox {
+    background-color: black;
+    color: white;
+    margin-left: 0%;
+    margin-right: 0%;
+    height: 10%;
+    width: 100%;
+}
+
+.bottombox {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    margin-bottom: 0px;
+}
+
+
+.bginicio{
+    background: linear-gradient(rgba(255, 255, 255, 0.1) 0%, rgb(0, 0, 0) 100%);
+}
+
+.bglogin{
+    background: linear-gradient(rgba(0, 255, 98, 0.521) 0%, rgb(142, 36, 170) 100%);
+}
+
+.bgregister{
+    background: linear-gradient(rgba(144, 88, 209, 0.637) 0%, rgb(0, 51, 102) 100%);
+    min-height: 100vh;
+    overflow-y: auto;  
+}
+
+.textbrand{
+    font-family: 'ADLaM Display', cursive;
+    text-decoration: none;
+    font-size: 30px;
+    margin-left: 50px;
+    width: 75%;
+    color: white;
+}
+
+.options{
+    font-family: 'Josefin Sans', sans-serif;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    margin-right: 20px;
+}
+
+.bar{
+    background-color: red;
+    margin-left: 0%;
+    margin-right: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+.maincointainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.logincointainer{
+    min-height: 80vh; 
+    color: white; 
+}
+
+.registercointainer{
+    margin-top: 40px;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.mainlogin{
+    background: black; 
+    border-radius: 8px;
+}
+
+.tipografia1{
+    font-family: 'ADLaM Display', cursive;
+    color: white;
+}
+
+.tipografia2{
+    font-family: 'Josefin Sans', sans-serif;
+    color: white;
+}

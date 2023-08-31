@@ -12,6 +12,9 @@ import ModificarArtista, {
 } from "./Routes/Artista/ModificarArtista";
 import Album, { loader as loaderAlbum } from "./Routes/Album/Album";
 import CrearAlbum, { loader as loaderCAlbum } from "./Routes/Album/CrearAlbum";
+import Login from "./Routes/Login"
+import Home from "./Routes/Home";
+import Register from "./Routes/Register";
 
 function App() {
   const router = createBrowserRouter([
@@ -88,6 +91,21 @@ function App() {
           element: <CrearAlbum />,
         },
       ],
+    },
+    {
+      path: '/login',
+      element: <Login />,
+      errorElement: <h1>404 Not Found</h1>
+    },
+    {
+      path: '/registrarse',
+      element: <Register />,
+      errorElement: <h1>404 Not Found</h1>
+    },
+    {
+      path: '/',
+      element: <Home />,
+      errorElement: <h1>404 Not Found</h1>
     },
   ]);
 
