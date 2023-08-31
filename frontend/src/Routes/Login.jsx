@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Brandvar from "../Components/Brandvar";
 import { Link } from 'react-router-dom';
+import Footer from "../Components/Footer";
 
 class Login extends Component {
 
@@ -67,6 +68,7 @@ class Login extends Component {
                       </Link></p>
                   </div>
                 </div>
+                <Footer />
           </div>
       );
     }

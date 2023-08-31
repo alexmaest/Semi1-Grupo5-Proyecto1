@@ -8,14 +8,19 @@
 }
 
 .bottombox {
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.3);
     color: white;
     margin-bottom: 0px;
+    padding: 20px;
 }
 
 
 .bginicio{
-    background: linear-gradient(rgba(255, 255, 255, 0.1) 0%, rgb(0, 0, 0) 100%);
+    /*background: linear-gradient(rgba(255, 255, 255, 0.1) 0%, rgb(0, 0, 0) 100%);*/
+    background: url('https://i.imgur.com/NhTesUp.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .bglogin{
@@ -83,4 +88,10 @@
 .tipografia2{
     font-family: 'Josefin Sans', sans-serif;
     color: white;
+}
+
+.border-blanco{
+    border-right: 2px solid white;
+    display: flex;
+    align-items: center;
 }
