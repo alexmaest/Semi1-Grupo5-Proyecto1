@@ -17,6 +17,7 @@ class ITForm extends Component {
           <input
             type="text"
             className="form-control"
+            onChange={(e)=>{this.props.change(e.target.value)}}
           ></input>
         </div>
       </div>
