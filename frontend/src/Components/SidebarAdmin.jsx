@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Outlet, Link } from "react-router-dom";
-import { BsMusicPlayerFill, BsSearch } from "react-icons/bs";
-import { MdFavoriteBorder } from "react-icons/md";
+import { BsMusicPlayerFill, BsSearch, BsPersonPlus } from "react-icons/bs";
+import { MdFavoriteBorder, MdOutlinePlaylistAdd } from "react-icons/md";
 import { CgProfile, CgPlayList } from "react-icons/cg";
-import MediaPlayer from "../Components/MediaPlayer";
+import { PiMusicNotesPlus } from "react-icons/pi";
+
+import MediaPlayer from "./MediaPlayer";
 
 class Sidebar extends Component {
   state = {
@@ -44,6 +46,24 @@ class Sidebar extends Component {
                 <Link to={"Perfil"}>
                   <CgProfile />
                   Perfil
+                </Link>
+              </li>
+              <li>
+                <Link to={"Cancion"}>
+                  <PiMusicNotesPlus />
+                  CRUD Cancion
+                </Link>
+              </li>
+              <li>
+                <Link to={"Artista"}>
+                  <BsPersonPlus />
+                  CRUD Artista
+                </Link>
+              </li>
+              <li>
+                <Link to={"Album"}>
+                  <MdOutlinePlaylistAdd />
+                  CRUD Album
                 </Link>
               </li>
             </ul>

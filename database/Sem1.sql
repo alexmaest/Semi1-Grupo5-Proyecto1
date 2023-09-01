@@ -9,13 +9,13 @@ Apellido varchar(50),
 Src varchar(100),
 Correo varchar(100),
 Psw varchar(10),
-Fecha_nac date
+Fecha_nac varchar(10)
 );
 
 create table ARTISTA(
 Id int primary key auto_increment,
 Nombre varchar(50) not null,
-Fecha_nac date,
+Fecha_nac varchar(10),
 Src varchar(100) not null
 );
 
@@ -34,7 +34,7 @@ Id int primary key auto_increment,
 Nombre varchar(50) not null,
 Src_image varchar(100) not null,
 Src_mp3 varchar(100) not null,
-Duracion int not null,
+Duracion varchar(10) not null,
 Artista int not null,
 Album int,
 foreign key (Artista) references ARTISTA(Id), 

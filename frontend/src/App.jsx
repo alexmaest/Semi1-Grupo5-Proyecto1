@@ -1,49 +1,26 @@
-import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Sidebar from "./Components/Sidebar";
+import SidebarAdmin from "./Components/SidebarAdmin";
 import Perfil from "./Routes/Perfil";
 import Buscar from "./Routes/Buscar";
+import CrearCancion from "./Routes/CrearCancion";
+import Artistas, { loader as loaderArtista } from "./Routes/Artista/Artistas";
+import CrearArtista from "./Routes/Artista/CrearArtista";
+import ModificarArtista, {
+  loader as LoaderModificarA,
+} from "./Routes/Artista/ModificarArtista";
+import Album, { loader as loaderAlbum } from "./Routes/Album/Album";
+import CrearAlbum, { loader as loaderCAlbum } from "./Routes/Album/CrearAlbum";
+import Login from "./Routes/Login"
+import Home from "./Routes/Home";
+import Register from "./Routes/Register";
 
 function App() {
-  const [currentTrack, setCurrentTrack] = useState(0);
-  const [playlist, setPlaylist] = useState([
-    {
-      src: "https://audioplayer.madza.dev/Madza-Chords_of_Life.mp3",
-      title: "Madza - Chords of Life",
-      tags: ["house"],
-    },
-    {
-      src: "https://audioplayer.madza.dev/Madza-Late_Night_Drive.mp3",
-      title: "Madza - Late Night Drive",
-      tags: ["dnb"],
-    },
-    {
-      src: "https://audioplayer.madza.dev/Madza-Persistence.mp3",
-      title: "Madza - Persistence",
-      tags: ["dubstep"],
-    },
-  ]);
-
-  const nextSong = () => {
-    setCurrentTrack((currentTrack + 1) % playlist.length);
-  };
-
-  const previousSong = () => {
-    setCurrentTrack(currentTrack > 0 ? currentTrack - 1 : 0);
-  };
-
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: (
-        <Sidebar
-          nextSong={nextSong}
-          previousSong={previousSong}
-          currentTrack={currentTrack}
-          playlist={playlist}
-        />
-      ),
+      path: "/Usuario",
+      element: <Sidebar />,
       errorElement: <h1>404 Not Found</h1>,
       children: [
         {
@@ -51,7 +28,7 @@ function App() {
           element: <Perfil />,
         },
         {
-          path: "",
+          path: "Buscar",
           element: <Buscar />,
         },
         {
@@ -63,6 +40,72 @@ function App() {
           element: <h1>Aqui deberian ir la playlist</h1>,
         },
       ],
+    },
+    {
+      path: "/Administrador",
+      element: <SidebarAdmin />,
+      errorElement: <h1>404 Not Found</h1>,
+      children: [
+        {
+          path: "Perfil",
+          element: <Perfil />,
+        },
+        {
+          path: "Buscar",
+          element: <Buscar />,
+        },
+        {
+          path: "Favoritos",
+          element: <h1>Aqui deberian ir los favoritos</h1>,
+        },
+        {
+          path: "Playlist",
+          element: <h1>Aqui deberian ir la playlist</h1>,
+        },
+        {
+          path: "Cancion",
+          element: <CrearCancion />,
+        },
+        {
+          path: "Artista",
+          loader: loaderArtista,
+          element: <Artistas />,
+        },
+        {
+          path: "Artista/:id",
+          loader: LoaderModificarA,
+          element: <ModificarArtista />,
+        },
+        {
+          path: "Artista/CrearArtista",
+          element: <CrearArtista />,
+        },
+        {
+          path: "Album",
+          loader: loaderAlbum,
+          element: <Album />,
+        },
+        {
+          path: "Album/CrearAlbum",
+          loader: loaderCAlbum,
+          element: <CrearAlbum />,
+        },
+      ],
+    },
+    {
+      path: '/login',
+      element: <Login />,
+      errorElement: <h1>404 Not Found</h1>
+    },
+    {
+      path: '/registrarse',
+      element: <Register />,
+      errorElement: <h1>404 Not Found</h1>
+    },
+    {
+      path: '/',
+      element: <Home />,
+      errorElement: <h1>404 Not Found</h1>
     },
   ]);
 

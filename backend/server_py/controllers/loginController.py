@@ -1,24 +1,25 @@
 from flask import Blueprint, jsonify, request
-from extServices.authMiddleware import authenticate_token, generate_token
+from controllers.extServices.authMiddleware import authenticate_token, generate_token
+from models.userModel import UserModel
+from typing import Optional
 
 login_route = Blueprint('login_route', __name__)
 
 @login_route.route('/<email>/<password>', methods=['GET'])
 def usersLogin(email, password):
     try:
-        userEmail = email
-        userPassword = password
+        user = UserModel(None, None, None, email, password, None, None)
+        user_by_email: Optional[UserModel] = user.get_by_email()
         
-        # Realiza la lógica de verificación de credenciales y generación del token aquí
-        # ...
-
-        # Ejemplo: si el usuario y contraseña son válidos
-        if True:#valid_user_and_password(userEmail, userPassword):
-            token = generate_token(userEmail)
-            return jsonify({ 'token': token, 'message': 'Succesful request' }), 200
+        if not user_by_email:
+            return jsonify({ 'message': 'Account with that email not exist' }), 501
         else:
-            return jsonify({ 'message': 'Credenciales incorrectas' }), 401
-        
+            if user_by_email['Psw'] != password:
+                return jsonify({ 'message': 'Incorrect password' }), 501
+            else:
+                token = generate_token(email)
+                return jsonify({ 'token': token, 'message': 'Successful request' }), 200
+            
     except Exception as e:
         print(e)
         return jsonify({ 'message': 'Internal Server Error' }), 500
