@@ -6,8 +6,7 @@ import { CgProfile, CgPlayList } from "react-icons/cg";
 import MediaPlayer from "../Components/MediaPlayer";
 
 class Sidebar extends Component {
-  state = {
-  };
+  state = {};
 
   render() {
     return (
@@ -49,7 +48,15 @@ class Sidebar extends Component {
             </ul>
           </nav>
         </div>
-        <div id="detail" style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          id="detail"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            background:
+              "linear-gradient(rgba(144, 88, 209, 0.637) 0%, rgb(0, 51, 102) 100%)",
+          }}
+        >
           <div style={{ overflow: "auto", flex: 1 }}>
             <Outlet />
           </div>

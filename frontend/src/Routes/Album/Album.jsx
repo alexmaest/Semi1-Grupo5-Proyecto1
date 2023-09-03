@@ -77,7 +77,7 @@ export default function Album() {
         <ul className="list-group">
           {album.length > 0
             ? album.map((album) => (
-                <li key={album.id_artist} className="list-group-item">
+                <li key={album.id_album} className="list-group-item">
                   <div className="row">
                     <div className="col-sm-1 d-flex align-items-center">
                       <img
@@ -97,7 +97,7 @@ export default function Album() {
                       </p>
                     </div>
                     <div className="col-sm-2 d-flex align-items-center">
-                      <Link to={`${album.id_artist}`}
+                      <Link to={`${album.id_album}`}
                         className="btn btn-secondary m-1"
                         type="button"
                       >

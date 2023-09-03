@@ -19,6 +19,7 @@ export default function CrearAlbum() {
   const [foto, changeFoto] = useState("");
   const [src, changeSrc] = useState("");
   const [descripcion, changeDescripcion] = useState("");
+  const [id_artista, changeIdArtista] = useState(0);
 
   function convertBase64(file) {
     return new Promise((resolve, reject) => {
@@ -46,8 +47,8 @@ export default function CrearAlbum() {
         body: JSON.stringify({
           name: nombre,
           description: descripcion,
-          coverPhoto: result,
-          artista: 0,
+          profilePhoto: result,
+          artistId: id_artista,
         }),
       }).then((response) => {
         alert(response.status);
@@ -112,7 +113,8 @@ export default function CrearAlbum() {
                       ></input>
                     </div>
                     <div className="col-sm-8">
-                      <select className="form-select" onChange={(e)=>{ console.log(e.target.value)}}>
+                      <select className="form-select" onChange={(e)=>{ console.log(e.target.value); changeIdArtista(e.target.value)}}>
+                        <option value={0}>Seleccione un Artista</option>
                         {datos.artists.map((artista) => (
                           <option
                             key={artista.id_artist}

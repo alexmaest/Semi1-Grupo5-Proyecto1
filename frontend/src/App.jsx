@@ -15,6 +15,7 @@ import CrearAlbum, { loader as loaderCAlbum } from "./Routes/Album/CrearAlbum";
 import Login from "./Routes/Login"
 import Home from "./Routes/Home";
 import Register from "./Routes/Register";
+import ModificarAlbum, {loader as loaderMAlbum} from "./Routes/Album/ModificarAlbum";
 
 function App() {
   const router = createBrowserRouter([
@@ -89,6 +90,11 @@ function App() {
           path: "Album/CrearAlbum",
           loader: loaderCAlbum,
           element: <CrearAlbum />,
+        },
+        {
+          path: "Album/:id",
+          loader: loaderMAlbum,
+          element: <ModificarAlbum />,
         },
       ],
     },
