@@ -21,7 +21,7 @@ class Login extends Component {
       
       const { email, password} = this.state;
     
-      let url = "http://localhost:5000/login"
+      let url = `http://localhost:5000/login/${email}/${password}`
 
       const userdata = {
           email,
@@ -32,12 +32,20 @@ class Login extends Component {
 
       try {
           const solicitud = await fetch(url,{
-                  method: "POST",
+                  method: "GET",
                   headers: {"Content-Type": "application/json",},
-                  body: JSON.stringify(userdata),
+                  //body: JSON.stringify(userdata),
               });
-          if (!solicitud.ok){
-              alert("Error en la solicitud, servidor")
+          if (solicitud.ok){
+              alert("Todo OK")
+          }
+          else{
+              try {
+                const errorresponse = await solicitud.json();
+                alert(errorresponse.message)
+              } catch (error) {
+                alert("Error obtener la respuesta")
+              }
           }
       } catch (error) {
           alert("Error en el inicio de sesión, revisa los campos")

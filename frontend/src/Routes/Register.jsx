@@ -4,8 +4,8 @@ import Brandvar from "../Components/Brandvar";
 class Register extends Component {
 
     state = {
-        firstname: "",
-        lastname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         birthday: "",
@@ -34,10 +34,10 @@ class Register extends Component {
     handleSubmit = async (event) => {
         event.preventDefault(); // Evitar que el formulario se envíe de forma predeterminada
         
-        const { firstname, lastname, email, password, birthday, profilePhoto} = this.state;
+        const { firstName, lastName, email, password, birthday, profilePhoto} = this.state;
     
-        /* console.log("Nombre:", firstname);
-        console.log("Apellido:", lastname);
+        /* console.log("Nombre:", firstName);
+        console.log("Apellido:", lastName);
         console.log("Correo:", email);
         console.log("Fecha de Nacimiento:", birthday);
         console.log("Imagen:", profilePhoto); */
@@ -45,8 +45,8 @@ class Register extends Component {
         let url = "http://localhost:5000/register"
 
         const registerdata = {
-            firstname,
-            lastname,
+            firstName,
+            lastName,
             email,
             password,
             birthday,
@@ -61,8 +61,20 @@ class Register extends Component {
                     headers: {"Content-Type": "application/json",},
                     body: JSON.stringify(registerdata),
                 });
-            if (!solicitud.ok){
-                alert("Error en la solicitud, servidor")
+            if (solicitud.ok){
+                try {
+                    const success = await solicitud.json();
+                    alert(success.message)
+                  } catch (error) {
+                    alert("Error - login correcto")
+                  }
+            } else{
+                try {
+                  const errorresponse = await solicitud.json();
+                  alert(errorresponse.message)
+                } catch (error) {
+                  alert("Error obtener la respuesta")
+                }
             }
         } catch (error) {
             alert("Error en el registro, revisa los campos")
@@ -79,12 +91,12 @@ class Register extends Component {
                     <h2 className="text-center mb-4 tipografia1">Registrase</h2>
                     <form className="tipografia2" onSubmit={this.handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="firstname" className="form-label">Nombre</label>
-                            <input type="text" className="form-control" id="firstname" onChange={this.handleChange} />
+                            <label htmlFor="firstName" className="form-label">Nombre</label>
+                            <input type="text" className="form-control" id="firstName" onChange={this.handleChange} />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="lastname" className="form-label">Apellido</label>
-                            <input type="text" className="form-control" id="lastname" onChange={this.handleChange} />
+                            <label htmlFor="lastName" className="form-label">Apellido</label>
+                            <input type="text" className="form-control" id="lastName" onChange={this.handleChange} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Correo</label>

@@ -5,12 +5,12 @@ class Footer extends Component {
       return (
         <nav className="fixed-bottom bottombox d-flex align-items-center justify-content-center">
             <div className="text-center tipografia2">
-              <div class="container">
-                <div class="row">
-                  <div class="col border-blanco">
+              <div className="container">
+                <div className="row">
+                  <div className="col border-blanco">
                   2023 Spotify Pirata
                   </div>
-                  <div class="col">
+                  <div className="col">
                   Todos los derechos resevados
                   </div>
                 </div>
