@@ -4,14 +4,16 @@ import { CgPlayListSearch } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 
+const api = import.meta.env.VITE_API;
+
 export async function loader() {
-  const artistas = await fetch("http://localhost:5000/admin/artist/")
+  const artistas = await fetch(api + "/admin/artist/")
     .then((response) => response.json())
     .then((data) => {
       return data;
     });
 
-    console.log(artistas)
+  console.log(artistas);
   return artistas;
 }
 
@@ -41,7 +43,7 @@ export default function Artistas() {
               e.preventDefault();
               console.log(buscar);
               if (buscar === "") {
-                fetch("http://localhost:5000/admin/artist/")
+                fetch(api + "/admin/artist/")
                   .then((response) => response.json())
                   .then((data) => {
                     console.log(data);
@@ -49,7 +51,7 @@ export default function Artistas() {
                   });
                 return;
               }
-              fetch("http://localhost:5000/admin/artist/" + buscar)
+              fetch(api + "/admin/artist/" + buscar)
                 .then((response) => response.json())
                 .then((data) => {
                   if (data.artist != null) {
@@ -62,7 +64,8 @@ export default function Artistas() {
           >
             <CgPlayListSearch />
           </button>
-          <Link to="CrearArtista"
+          <Link
+            to="CrearArtista"
             style={{ textDecoration: "none" }}
             className="btn btn-primary col-sm-1 m-1"
           >
@@ -98,7 +101,8 @@ export default function Artistas() {
                       </p>
                     </div>
                     <div className="col-sm-2 d-flex align-items-center">
-                      <Link to={`${artista.id_artist}`}
+                      <Link
+                        to={`${artista.id_artist}`}
                         className="btn btn-secondary m-1"
                         type="button"
                       >

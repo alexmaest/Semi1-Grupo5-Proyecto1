@@ -4,7 +4,7 @@ import Sidebar from "./Components/Sidebar";
 import SidebarAdmin from "./Components/SidebarAdmin";
 import Perfil from "./Routes/Perfil";
 import Buscar from "./Routes/Buscar";
-import CrearCancion from "./Routes/CrearCancion";
+import CrearCancion, {loader as loaderCCancion} from "./Routes/Cancion/CrearCancion";
 import Artistas, { loader as loaderArtista } from "./Routes/Artista/Artistas";
 import CrearArtista from "./Routes/Artista/CrearArtista";
 import ModificarArtista, {
@@ -16,6 +16,7 @@ import Login from "./Routes/Login"
 import Home from "./Routes/Home";
 import Register from "./Routes/Register";
 import ModificarAlbum, {loader as loaderMAlbum} from "./Routes/Album/ModificarAlbum";
+import Canciones , {loader as loaderCancion} from "./Routes/Cancion/Cancion";
 
 function App() {
   const router = createBrowserRouter([
@@ -64,10 +65,6 @@ function App() {
           element: <h1>Aqui deberian ir la playlist</h1>,
         },
         {
-          path: "Cancion",
-          element: <CrearCancion />,
-        },
-        {
           path: "Artista",
           loader: loaderArtista,
           element: <Artistas />,
@@ -90,6 +87,21 @@ function App() {
           path: "Album/CrearAlbum",
           loader: loaderCAlbum,
           element: <CrearAlbum />,
+        },
+        {
+          path: "Album/:id",
+          loader: loaderMAlbum,
+          element: <ModificarAlbum />,
+        },
+        {
+          path: "Cancion",
+          loader: loaderCancion,
+          element: <Canciones />,
+        },
+        {
+          path: "Cancion/CrearCancion",
+          loader: loaderCCancion,
+          element: <CrearCancion />,
         },
         {
           path: "Album/:id",

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import ITForm from "../../Components/ITPForm";
 
+const api = import.meta.env.VITE_API;
+
 class CrearArtista extends Component {
   state = {
     nombre: "",
@@ -43,7 +45,7 @@ class CrearArtista extends Component {
   submitHandler = (e) => {
     e.preventDefault();
     this.convertBase64(this.state.foto).then((result) => {
-      fetch("http://localhost:5000/admin/artist", {
+      fetch(api + "/admin/artist", {
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
@@ -53,9 +55,17 @@ class CrearArtista extends Component {
           birthday: this.state.fecha,
           profilePhoto: result,
         }),
-      }).then((response) => {
-        alert(response.status);
-      });
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert("Artista creado exitosamente.");
+          } else {
+            alert("Error al crear el artista.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error de red:", error);
+        });
     });
   };
 
@@ -89,10 +99,7 @@ class CrearArtista extends Component {
               <form>
                 <ul className="list-group">
                   <li className="list-group-item d-flex justify-content-between align-items-center">
-                    <ITForm
-                      value={"Nombre:"}
-                      change={this.changeNombre}
-                    />
+                    <ITForm value={"Nombre:"} change={this.changeNombre} />
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     Fecha de Nacimiento:

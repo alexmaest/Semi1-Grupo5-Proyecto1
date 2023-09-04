@@ -25,7 +25,8 @@ export default function ModificarAlbum() {
   console.log(datosAlbum);
 
   const [nombre, changeNombre] = useState(datosAlbum.album.name);
-  const [foto, changeFoto] = useState(datosAlbum.album.coverPhoto);
+  const [foto, changeFoto] = useState("");
+  const [src, changeSrc] = useState(datosAlbum.album.coverPhoto);
   const [descripcion, changeDescripcion] = useState(datosAlbum.album.description);
   const [id_artista, changeIdArtista] = useState(datosAlbum.album.artistId);
   const id = datosAlbum.album.id_album;
@@ -58,7 +59,7 @@ export default function ModificarAlbum() {
           style={{ background: "#2f2f33" }}
         >
           <img
-            src={foto}
+            src={src}
             alt=""
             className="rounded mx-auto d-block img-fluid m-3"
           />
@@ -109,7 +110,8 @@ export default function ModificarAlbum() {
                   type="file"
                   accept="image/png, image/jpeg"
                   onChange={() => {
-                    changeFoto(URL.createObjectURL(e.target.files[0]));
+                    changeSrc(URL.createObjectURL(e.target.files[0]));
+                      changeFoto(e.target.files[0]);
                   }}
                 />
               </li>

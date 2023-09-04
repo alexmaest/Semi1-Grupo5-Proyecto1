@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import ITForm from "../../Components/ITPForm";
 
+const api = import.meta.env.VITE_API;
+
 export async function loader() {
-  const artistas = await fetch("http://localhost:5000/admin/artist/")
+  const artistas = await fetch(api + "/admin/artist/")
     .then((response) => response.json())
     .then((data) => {
       return data;
@@ -39,7 +41,7 @@ export default function CrearAlbum() {
   function submitHandler(e) {
     e.preventDefault();
     convertBase64(foto).then((result) => {
-      fetch("http://localhost:5000/admin/album", {
+      fetch(api + "/admin/album", {
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
@@ -50,9 +52,17 @@ export default function CrearAlbum() {
           profilePhoto: result,
           artistId: id_artista,
         }),
-      }).then((response) => {
-        alert(response.status);
-      });
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert("Album creado exitosamente.");
+          } else {
+            alert("Error al crear el album.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error de red:", error);
+        });
     });
   }
 
@@ -113,14 +123,20 @@ export default function CrearAlbum() {
                       ></input>
                     </div>
                     <div className="col-sm-8">
-                      <select className="form-select" onChange={(e)=>{ console.log(e.target.value); changeIdArtista(e.target.value)}}>
+                      <select
+                        className="form-select"
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          changeIdArtista(e.target.value);
+                        }}
+                      >
                         <option value={0}>Seleccione un Artista</option>
                         {datos.artists.map((artista) => (
                           <option
                             key={artista.id_artist}
                             value={artista.id_artist}
                           >
-                           {artista.id_artist +" - "+ artista.name}
+                            {artista.id_artist + " - " + artista.name}
                           </option>
                         ))}
                       </select>

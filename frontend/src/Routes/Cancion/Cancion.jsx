@@ -1,25 +1,25 @@
+import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { CgPlayListSearch } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
-import React, { useState } from "react";
 
 const api = import.meta.env.VITE_API;
 
 export async function loader() {
-  const album = await fetch(api + "/admin/album/")
+  const canciones = await fetch(api+"/admin/song/")
     .then((response) => response.json())
     .then((data) => {
       return data;
     });
 
-  console.log(album);
-  return album;
+    console.log(canciones)
+  return canciones;
 }
 
-export default function Album() {
+export default function Canciones() {
   const datos = useLoaderData();
-  const [album, setAlbum] = useState(datos.albums);
+  const [canciones, setArtistas] = useState(datos.songs);
   const [buscar, setBuscar] = useState(0);
 
   return (
@@ -30,7 +30,7 @@ export default function Album() {
             <input
               className="form-control"
               type="text"
-              placeholder="Buscar ID Album"
+              placeholder="Buscar ID Artista"
               onChange={(e) => {
                 setBuscar(e.target.value);
               }}
@@ -43,29 +43,28 @@ export default function Album() {
               e.preventDefault();
               console.log(buscar);
               if (buscar === "") {
-                fetch(api + "/admin/album/")
+                fetch(api+"/admin/song/")
                   .then((response) => response.json())
                   .then((data) => {
                     console.log(data);
-                    setAlbum(data.albums);
+                    setArtistas(data.songs);
                   });
                 return;
               }
-              fetch(api + "/admin/album/" + buscar)
+              fetch(api+"/admin/song/" + buscar)
                 .then((response) => response.json())
                 .then((data) => {
-                  if (data.album != null) {
-                    setAlbum([data.album]);
+                  if (data.song != null) {
+                    setArtistas([data.song]);
                   } else {
-                    setAlbum([]);
+                    setArtistas([]);
                   }
                 });
             }}
           >
             <CgPlayListSearch />
           </button>
-          <Link
-            to="CrearAlbum"
+          <Link to="CrearCancion"
             style={{ textDecoration: "none" }}
             className="btn btn-primary col-sm-1 m-1"
           >
@@ -78,13 +77,13 @@ export default function Album() {
         style={{ maxHeight: "900px", overflowY: "auto" }}
       >
         <ul className="list-group">
-          {album.length > 0
-            ? album.map((album) => (
-                <li key={album.id_album} className="list-group-item">
+          {canciones.length > 0
+            ? canciones.map((cancion) => (
+                <li key={cancion.id_song} className="list-group-item">
                   <div className="row">
                     <div className="col-sm-1 d-flex align-items-center">
                       <img
-                        src={album.coverPhoto}
+                        src={cancion.coverPhoto}
                         alt=""
                         style={{ width: "50px", height: "50px" }}
                         className="rounded img-fluid m-3"
@@ -92,16 +91,15 @@ export default function Album() {
                     </div>
                     <div className="col-sm-8 d-flex align-items-center">
                       <p className="h3">
-                        {album.name}
+                        {"ID:"+cancion.id_song+" - "+cancion.name}
                         <br />
                         <small className="text-muted">
-                          {"ID: " + album.id_album + " - " + album.description}
+                          {"Artist ID: "+cancion.artist+" - Album ID: "+ cancion.album}
                         </small>
                       </p>
                     </div>
                     <div className="col-sm-2 d-flex align-items-center">
-                      <Link
-                        to={`${album.id_album}`}
+                      <Link to={`${cancion.id_song}`}
                         className="btn btn-secondary m-1"
                         type="button"
                       >
