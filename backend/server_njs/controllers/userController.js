@@ -5,8 +5,25 @@ class userController {
 
     async findUser(req, res) {
         try {
-            const response = await userModel.findById(1);
+            const userId = req.params.id;
+            const response = await userModel.findById(userId);
             res.status(200).json({ message: 'User created', results: response });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async updateUser(req, res){
+        try {
+            const { id_user, firstName, lastName, email, password, profilePhoto} = req.body;
+            const user = new userModel(id_user, firstName, lastName, email, password, null, profilePhoto);
+            const userUpdated = await user.update(user);
+            if (userUpdated) {
+                res.status(200).json({ message: 'User updated' });
+            } else {
+                res.status(500).json({ message: 'An error has occurred while uploading the User' });
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Internal Server Error' });

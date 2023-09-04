@@ -18,7 +18,7 @@ class LoginController {
                     res.status(501).json({ message: 'Incorrect password' });
                 } else {
                     const token = jwt.sign({ userEmail, userPassword }, process.env.AUTH_KEY, { expiresIn: '1h' });
-                    res.status(200).json({ token: token, message: 'Successful request' });
+                    res.status(200).json({ id_User: userByEmail.Id, token: token, message: 'Successful request' });
                 }
             }
         } catch (err) {
