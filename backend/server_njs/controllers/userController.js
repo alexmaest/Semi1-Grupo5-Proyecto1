@@ -6,7 +6,8 @@ class userController {
     async findUser(req, res) {
         try {
             const userId = req.params.id;
-            const response = await userModel.findById(userId);
+            const user = new userModel(null, null, null, null, null, null, null);
+            const response = await user.getById(userId);
             res.status(200).json({ message: 'User created', results: response });
         } catch (err) {
             console.error(err);
