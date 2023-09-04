@@ -6,7 +6,7 @@ const api = import.meta.env.VITE_API;
 
 export async function loader({ params }) {
   console.log(params);
-  const datosAlbum = await fetch(api + "admin/album/")
+  const datosAlbum = await fetch(api + "/admin/album/")
     .then((response) => response.json())
     .then((data) => {
       return data;
@@ -21,7 +21,7 @@ export async function loader({ params }) {
   return { datosArtistas, datosAlbum };
 }
 
-export default function CrearAlbum() {
+export default function CrearCancion() {
   const { datosArtistas, datosAlbum } = useLoaderData();
   console.log(datosArtistas);
   console.log(datosAlbum);
@@ -61,7 +61,7 @@ export default function CrearAlbum() {
       formData.append("profilePhoto", result);
       formData.append("track", track);
 
-      fetch(api + "/admin/song", {
+      fetch("http://localhost:5000/admin/song", {
         method: "POST", // or 'PUT'
         body: formData,
       })

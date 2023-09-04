@@ -39,6 +39,12 @@ class Login extends Component {
       });
       if (solicitud.ok) {
         alert("Todo OK");
+        const respuesta = await solicitud.json();
+        if (0 == 0){
+          window.location.href = "/Usuario";
+          sessionStorage.setItem("token", respuesta.token);
+          sessionStorage.setItem("id", respuesta.id_User);
+        }
       } else {
         try {
           const errorresponse = await solicitud.json();

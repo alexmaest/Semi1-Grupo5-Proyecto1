@@ -1,17 +1,36 @@
 import React, { Component } from "react";
 import ITForm from "../Components/ITPForm";
+import { useLoaderData } from "react-router-dom";
+
+const api = import.meta.env.VITE_API;
 
 class Perfil extends Component {
   state = {
-    nombre: "Bruse",
-    apellido: "Wayne",
-    correo: "brucewayne@batman.com",
-    fechaNacimiento: "1990-01-01",
+    id: "",
+    nombre: "",
+    apellido: "",
+    correo: "",
+    fechaNacimiento: "",
     psw: "",
     confirmPsw: "",
-    fotoPerfil:
-      "https://i.pinimg.com/1200x/c5/eb/f2/c5ebf2e0bb30390ba534e8fe30884ec8.jpg",
+    fotoPerfil: "",
   };
+
+  componentDidMount() {
+    const datosAlbum = fetch(api + "/profile/" + sessionStorage.getItem("id"))
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.results[0]);
+        this.setState({
+          id: data.results[0].Id,
+          nombre: data.results[0].Nombre,
+          apellido: data.results[0].Apellido,
+          correo: data.results[0].Correo,
+          fechaNacimiento: data.results[0].Fecha_nac,
+          fotoPerfil: data.results[0].Src,
+        });
+      });
+  }
 
   changeNombre = (value) => {
     this.setState({ nombre: value });
@@ -32,9 +51,9 @@ class Perfil extends Component {
   submitHandler = (e) => {
     e.preventDefault();
 
-    if(this.state.psw === this.state.confirmPsw && this.state.psw != ""){
+    if (this.state.psw === this.state.confirmPsw && this.state.psw != "") {
       alert("Datos Actualizados");
-    }else{
+    } else {
       alert("Verifique los valores de password");
     }
   };
@@ -60,7 +79,7 @@ class Perfil extends Component {
               alt=""
               className="rounded mx-auto d-block img-fluid m-3"
             />
-            <p className="h3 text-center">ID: 12345678</p>
+            <p className="h3 text-center">ID: {this.state.id}</p>
           </div>
           <div className="col-sm-8 col-md-8">
             <form>

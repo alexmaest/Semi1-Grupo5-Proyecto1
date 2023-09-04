@@ -67,6 +67,7 @@ class Register extends Component {
         try {
           const success = await solicitud.json();
           alert(success.message);
+          window.location.href = "/login";
         } catch (error) {
           alert("Error - login correcto");
         }
