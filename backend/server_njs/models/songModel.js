@@ -31,10 +31,23 @@ class songModel {
         });
     }
 
-    update(song) {
+    updateWithImage() {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE CANCION SET ? WHERE Id = ?';
-            db.connection.query(query, [song.name, song.id], (err, result) => {
+            const query = 'UPDATE CANCION SET Nombre = ?, Src_image = ?, Duracion = ?, Artista = ?, Album = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.coverPhoto, this.duration, this.artist.id_artist, this.album.id_album, this.id_song], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
+                }
+            });
+        });
+    }
+
+    updateWithoutImage() {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE CANCION SET Nombre = ?, Duracion = ?, Artista = ?, Album = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.duration, this.artist.id_artist, this.album.id_album, this.id_song], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {

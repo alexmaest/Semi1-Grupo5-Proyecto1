@@ -27,10 +27,23 @@ class albumModel {
         });
     }
 
-    update(album) {
+    updateWithImage() {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE ALBUM SET ? WHERE Id = ?';
-            db.connection.query(query, [album.name, album.id], (err, result) => {
+            const query = 'UPDATE ALBUM SET Nombre = ?, Descripcion = ?, Src = ?, Artista = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.description, this.coverPhoto, this.artist.id_artist, this.id_album], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
+                }
+            });
+        });
+    }
+
+    updateWithoutImage() {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE ALBUM SET Nombre = ?, Descripcion = ?, Artista = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.description, this.artist.id_artist, this.id_album], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {

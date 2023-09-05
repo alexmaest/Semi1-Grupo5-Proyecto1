@@ -244,7 +244,7 @@ class adminController {
     }
 
     async deleteSong(req, res) {
-        try{
+        try {
             const songId = req.params.id;
             const song = new songModel(songId, null, null, null, null, null, null);
             const songDeleted = await song.delete();
@@ -256,7 +256,7 @@ class adminController {
     }
 
     async deleteAlbum(req, res) {
-        try{
+        try {
             const albumId = req.params.id;
             const album = new albumModel(albumId, null, null, null, null);
             const albumDeleted = await album.delete();
@@ -268,7 +268,7 @@ class adminController {
     }
 
     async addSongToAlbum(req, res) {
-        try{
+        try {
             const { idAlbum, idSong } = req.body;
             const album = new albumModel(idAlbum, null, null, null, null);
             const song = new songModel(idSong, null, null, null, null, null, null);
@@ -281,7 +281,7 @@ class adminController {
     }
 
     async deleteSongFromAlbum(req, res) {
-        try{
+        try {
             const idSong = req.params.id;
             const album = new albumModel(null, null, null, null, null);
             const song = new songModel(idSong, null, null, null, null, null, null);
@@ -294,7 +294,7 @@ class adminController {
     }
 
     async deleteArtist(req, res) {
-        try{
+        try {
             const artistId = req.params.id;
             const artist = new artistModel(artistId, null, null, null);
             const artistDeleted = await artist.delete();
@@ -302,6 +302,102 @@ class adminController {
         } catch (err) {
             console.error(err);
             res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async updateArtist(req, res) {
+        try {
+            const { id, name, birthday, profilePhoto } = req.body;
+            const artist = new artistModel(id, name, birthday, null);
+            if (profilePhoto == null) {
+                const artistUpdated = await artist.updateWithoutImage();
+                if (artistUpdated) {
+                    res.status(200).json({ message: 'Artist updated' });
+                } else {
+                    res.status(503).json({ message: 'Failed artist method update' });
+                }
+            } else {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    artist.profilePhoto = imageUrl;
+                    const artistAdded = await artist.updateWithImage();
+                    if (artistAdded) {
+                        res.status(200).json({ message: 'Artist updated' });
+                    } else {
+                        res.status(503).json({ message: 'Failed artist method update' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the profile photo' });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async updateAlbum(req, res) {
+        try {
+            const { albumId, name, description, artistId, profilePhoto } = req.body;
+            const artist = new artistModel(artistId, null, null, null);
+            const album = new albumModel(albumId, name, description, null, artist);
+            if (profilePhoto == null) {
+                const albumAdded = await album.updateWithoutImage();
+                if (albumAdded) {
+                    res.status(200).json({ message: 'Album updated' });
+                } else {
+                    res.status(503).json({ message: 'Failed album method update' });
+                }
+            } else {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    album.coverPhoto = imageUrl;
+                    const albumAdded = await album.updateWithImage();
+                    if (albumAdded) {
+                        res.status(200).json({ message: 'Album updated' });
+                    } else {
+                        res.status(503).json({ message: 'Failed album method update' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the album cover photo' });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async updateSong(req, res) {
+        try {
+            const { songId, name, duration, artistId, albumId, profilePhoto } = req.body;
+            const artist = new artistModel(artistId, null, null, null);
+            const album = new albumModel(albumId, null, null, null, artist);
+            const song = new songModel(songId, name, null, null, duration, artist, album);
+            if (profilePhoto == null) {
+                const albumAdded = await song.updateWithoutImage();
+                if (albumAdded) {
+                    res.status(200).json({ message: 'Song updated' });
+                } else {
+                    res.status(503).json({ message: 'Failed song method update' });
+                }
+            } else {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    song.coverPhoto = imageUrl;
+                    const albumAdded = await song.updateWithImage();
+                    if (albumAdded) {
+                        res.status(200).json({ message: 'Song updated' });
+                    } else {
+                        res.status(503).json({ message: 'Failed song method update' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the song cover photo' });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
         }
     }
 }
