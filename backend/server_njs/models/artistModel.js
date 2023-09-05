@@ -51,7 +51,7 @@ class artistModel {
         });
     }
 
-    deleteArtistAndContent() {
+    delete() {
         return new Promise((resolve, reject) => {
             db.connection.beginTransaction((err) => {
                 if (err) {

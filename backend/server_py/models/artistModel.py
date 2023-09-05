@@ -40,7 +40,7 @@ class artistModel:
         except Exception as e:
             raise e
 
-    def deleteArtistAndContent(self):
+    def delete(self):
         try:
             with connection.cursor() as db_cursor:
                 db_cursor.execute('START TRANSACTION')
