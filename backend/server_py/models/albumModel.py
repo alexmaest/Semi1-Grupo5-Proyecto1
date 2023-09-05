@@ -19,11 +19,22 @@ class albumModel:
         except Exception as e:
             raise e
 
-    def update(self):
+    def updateWithImage(self):
         try:
+            query = 'UPDATE ALBUM SET Nombre = %s, Descripcion = %s, Src = %s, Artista = %s WHERE Id = %s'
+            values = (self.name, self.description, self.coverPhoto, self.artist.id_artist, self.id_album)
             with connection.cursor() as db_cursor:
-                query = 'UPDATE ALBUM SET Nombre = %s WHERE Id = %s'
-                values = (self.name, self.id_album)
+                db_cursor.execute(query, values)
+                connection.commit()
+                return db_cursor.rowcount > 0
+        except Exception as e:
+            raise e
+
+    def updateWithoutImage(self):
+        try:
+            query = 'UPDATE ALBUM SET Nombre = %s, Descripcion = %s, Artista = %s WHERE Id = %s'
+            values = (self.name, self.description, self.artist.id_artist, self.id_album)
+            with connection.cursor() as db_cursor:
                 db_cursor.execute(query, values)
                 connection.commit()
                 return db_cursor.rowcount > 0
@@ -33,11 +44,21 @@ class albumModel:
     def delete(self):
         try:
             with connection.cursor() as db_cursor:
-                query = 'DELETE FROM ALBUM WHERE Id = %s;'
-                db_cursor.execute(query, (self.id_album,))
-                connection.commit()
-                return db_cursor.rowcount > 0
+                db_cursor.execute('START TRANSACTION')
+                
+                removeAlbumFromSongQuery = 'UPDATE CANCION SET Album = NULL WHERE Album = %s'
+                db_cursor.execute(removeAlbumFromSongQuery, (self.id_album,))
+                
+                deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album = %s'
+                db_cursor.execute(deleteUsuarioAlbumQuery, (self.id_album,))
+                
+                deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Id = %s'
+                db_cursor.execute(deleteAlbumQuery, (self.id_album,))
+                
+                db_cursor.execute('COMMIT')
+                return True
         except Exception as e:
+            connection.rollback()
             raise e
 
     def getById(self):
@@ -119,5 +140,27 @@ class albumModel:
                     songList.append(song)
                 
                 return songList
+        except Exception as e:
+            raise e
+
+    def add_song(self, song):
+        try:
+            query = 'UPDATE CANCION SET Album = %s WHERE Id = %s'
+            values = (self.id_album, song.id_song)
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query, values)
+                connection.commit()
+                return db_cursor.rowcount > 0
+        except Exception as e:
+            raise e
+
+    def remove_song(self, song):
+        try:
+            query = 'UPDATE CANCION SET Album = NULL WHERE Id = %s'
+            values = (song.id_song,)
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query, values)
+                connection.commit()
+                return db_cursor.rowcount > 0
         except Exception as e:
             raise e
