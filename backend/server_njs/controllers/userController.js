@@ -8,7 +8,7 @@ class userController {
             const userId = req.params.id;
             const user = new userModel(null, null, null, null, null, null, null);
             const response = await user.getById(userId);
-            res.status(200).json({ message: 'User created', results: response });
+            res.status(200).json({ message: 'User found', results: response });
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Internal Server Error' });

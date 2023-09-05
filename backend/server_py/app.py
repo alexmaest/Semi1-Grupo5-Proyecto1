@@ -9,10 +9,12 @@ def create_app():
     from controllers.loginController import login_route
     from controllers.registerController import register_route
     from controllers.adminController import admin_route
+    from controllers.userController import profile_route
 
     app.register_blueprint(main_route, url_prefix='/')
     app.register_blueprint(login_route, url_prefix='/login')
     app.register_blueprint(register_route, url_prefix='/register')
     app.register_blueprint(admin_route, url_prefix='/admin')
+    app.register_blueprint(profile_route, url_prefix='/profile')
 
     return app
