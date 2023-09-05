@@ -21,16 +21,46 @@ class UserModel:
         except Exception as e:
             raise e
 
-    def update(self, user):
+    def update(self):
         try:
             with connection.cursor() as db_cursor:
-                query = 'UPDATE USUARIO SET Nombre = %s, Apellido = %s WHERE Id = %s;'
-                values = (user.first_name, user.last_name, user.id_user)
+                query = 'UPDATE Semi1.USUARIO SET '
+                values = []
+
+                # Comprobar y agregar campos no nulos
+                if self.first_name is not None:
+                    query += 'Nombre = %s, '
+                    values.append(self.first_name)
+
+                if self.last_name is not None:
+                    query += 'Apellido = %s, '
+                    values.append(self.last_name)
+
+                if self.profile_photo is not None:
+                    query += 'Src = %s, '
+                    values.append(self.profile_photo)
+
+                if self.email is not None:
+                    query += 'Correo = %s, '
+                    values.append(self.email)
+
+                if self.password is not None:
+                    query += 'Psw = %s, '
+                    values.append(self.password)
+
+                # Eliminar la última coma y espacio
+                query = query[:-2]
+
+                # Agregar la condición WHERE
+                query += ' WHERE Id = %s ;'
+                values.append(self.id_user)
+
                 db_cursor.execute(query, values)
                 connection.commit()
                 return db_cursor.rowcount > 0
         except Exception as e:
             raise e
+
 
     def delete(self, user_id):
         try:

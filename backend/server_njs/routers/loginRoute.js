@@ -6,6 +6,7 @@ const loginController = require('../controllers/loginController');
 
 router.get('/:email/:password', loginController.usersLogin);
 router.post('/passwordChange', loginController.passwordSend);
-router.post('/passwordChange/update', authenticateToken, loginController.passwordUpdate);
+//router.post('/passwordChange/update', authenticateToken, loginController.passwordUpdate);
+router.post('/passwordChange/update', loginController.passwordUpdate);
 
 module.exports = router;
