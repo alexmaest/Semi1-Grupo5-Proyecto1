@@ -40,15 +40,50 @@ class albumModel {
         });
     }
 
-    delete(albumId) {
+    delete() {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ALBUM WHERE Id = ?';
-            db.connection.query(query, albumId, (err, result) => {
+            db.connection.beginTransaction((err) => {
                 if (err) {
                     reject(err);
-                } else {
-                    resolve(result.affectedRows > 0);
+                    return;
                 }
+    
+                const removeAlbumFromSongQuery = 'UPDATE CANCION SET Album = NULL WHERE Album = ?';
+                db.connection.query(removeAlbumFromSongQuery, [this.id_album], (err, result) => {
+                    if (err) {
+                        db.connection.rollback(() => {
+                            reject(err);
+                        });
+                    } else {
+                        const deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album = ?';
+                        db.connection.query(deleteUsuarioAlbumQuery, [this.id_album], (err, result) => {
+                            if (err) {
+                                db.connection.rollback(() => {
+                                    reject(err);
+                                });
+                            } else {
+                                const deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Id = ?';
+                                db.connection.query(deleteAlbumQuery, [this.id_album], (err, result) => {
+                                    if (err) {
+                                        db.connection.rollback(() => {
+                                            reject(err);
+                                        });
+                                    } else {
+                                        db.connection.commit((err) => {
+                                            if (err) {
+                                                db.connection.rollback(() => {
+                                                    reject(err);
+                                                });
+                                            } else {
+                                                resolve(result.affectedRows > 0);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
     }
@@ -136,6 +171,32 @@ class albumModel {
                         'album' : result.Album
                     }));
                     resolve(songList);
+                }
+            });
+        });
+    }
+
+    addSong(song) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE CANCION SET Album = ? WHERE Id = ?';
+            db.connection.query(query, [this.id_album, song.id_song], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
+                }
+            });
+        });
+    }
+
+    removeSong(song) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE CANCION SET Album = NULL WHERE Id = ?';
+            db.connection.query(query, [song.id_song], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
                 }
             });
         });

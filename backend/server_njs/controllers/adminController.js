@@ -210,6 +210,23 @@ class adminController {
         }
     }
 
+    async getAllAvailableSongs(req, res) {
+        try {
+            const idArtist = req.params.id;
+            const song = new songModel(null, null, null, null, null, null);
+            const artist = new artistModel(idArtist, null, null, null);
+            const allSongs = await song.getAllAvailable(artist);
+            if (allSongs) {
+                res.status(200).json({ songs: allSongs });
+            } else {
+                res.status(501).json({ message: 'No songs created yet' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
     async getAlbumSongs(req, res) {
         try {
             const albumId = req.params.id;
@@ -223,6 +240,68 @@ class adminController {
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async deleteSong(req, res) {
+        try{
+            const songId = req.params.id;
+            const song = new songModel(songId, null, null, null, null, null, null);
+            const songDeleted = await song.delete();
+            res.status(200).json({ message: 'Song deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async deleteAlbum(req, res) {
+        try{
+            const albumId = req.params.id;
+            const album = new albumModel(albumId, null, null, null, null);
+            const albumDeleted = await album.delete();
+            res.status(200).json({ message: 'Album deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async addSongToAlbum(req, res) {
+        try{
+            const { idAlbum, idSong } = req.body;
+            const album = new albumModel(idAlbum, null, null, null, null);
+            const song = new songModel(idSong, null, null, null, null, null, null);
+            const songAdded = await album.addSong(song);
+            res.status(200).json({ message: 'Song added to album' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async deleteSongFromAlbum(req, res) {
+        try{
+            const idSong = req.params.id;
+            const album = new albumModel(null, null, null, null, null);
+            const song = new songModel(idSong, null, null, null, null, null, null);
+            const songRemoved = await album.removeSong(song);
+            res.status(200).json({ message: 'Song removed from album' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async deleteArtist(req, res) {
+        try{
+            const artistId = req.params.id;
+            const artist = new artistModel(artistId, null, null, null);
+            const artistDeleted = await artist.delete();
+            res.status(200).json({ message: 'Artist deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
         }
     }
 }

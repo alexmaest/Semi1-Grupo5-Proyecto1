@@ -38,15 +38,50 @@ class artistModel {
         });
     }
 
-    delete(artistId) {
+    delete() {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ARTISTA WHERE Id = ?';
-            db.connection.query(query, artistId, (err, result) => {
+            db.connection.beginTransaction((err) => {
                 if (err) {
                     reject(err);
-                } else {
-                    resolve(result.affectedRows > 0);
+                    return;
                 }
+    
+                const deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Artista = ?';
+                db.connection.query(deleteUsuarioAlbumQuery, [this.id_artist], (err, result) => {
+                    if (err) {
+                        db.connection.rollback(() => {
+                            reject(err);
+                        });
+                    } else {
+                        const removeAlbumFromSongQuery = 'DELETE FROM CANCION WHERE Artista = ?';
+                        db.connection.query(removeAlbumFromSongQuery, [this.id_artist], (err, result) => {
+                            if (err) {
+                                db.connection.rollback(() => {
+                                    reject(err);
+                                });
+                            } else {
+                                const deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Artista = ?';
+                                db.connection.query(deleteAlbumQuery, [this.id_artist], (err, result) => {
+                                    if (err) {
+                                        db.connection.rollback(() => {
+                                            reject(err);
+                                        });
+                                    } else {
+                                        db.connection.commit((err) => {
+                                            if (err) {
+                                                db.connection.rollback(() => {
+                                                    reject(err);
+                                                });
+                                            } else {
+                                                resolve(result.affectedRows > 0);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
     }

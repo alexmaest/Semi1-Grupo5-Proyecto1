@@ -44,15 +44,50 @@ class songModel {
         });
     }
 
-    delete(songId) {
+    delete() {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM CANCION WHERE Id = ?';
-            db.connection.query(query, songId, (err, result) => {
+            db.connection.beginTransaction((err) => {
                 if (err) {
                     reject(err);
-                } else {
-                    resolve(result.affectedRows > 0);
+                    return;
                 }
+    
+                const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
+                db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
+                    if (err) {
+                        db.connection.rollback(() => {
+                            reject(err);
+                        });
+                    } else {
+                        const deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = ?';
+                        db.connection.query(deleteUsuarioCancionQuery, [this.id_song], (err, result) => {
+                            if (err) {
+                                db.connection.rollback(() => {
+                                    reject(err);
+                                });
+                            } else {
+                                const deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = ?';
+                                db.connection.query(deletePlaylistCancionQuery, [this.id_song], (err, result) => {
+                                    if (err) {
+                                        db.connection.rollback(() => {
+                                            reject(err);
+                                        });
+                                    } else {
+                                        db.connection.commit((err) => {
+                                            if (err) {
+                                                db.connection.rollback(() => {
+                                                    reject(err);
+                                                });
+                                            } else {
+                                                resolve(result.affectedRows > 0);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
     }
@@ -111,6 +146,28 @@ class songModel {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM CANCION;';
             db.connection.query(query, (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const songList = results.map(result => ({
+                        'id_song' : result.Id,
+                        'name' : result.Nombre,
+                        'coverPhoto' : result.Src_image,
+                        'songFile' : result.Src_mp3,
+                        'duration' : result.Duracion,
+                        'artist' : result.Artista,
+                        'album' : result.Album
+                    }));
+                    resolve(songList);
+                }
+            });
+        });
+    }
+
+    getAllAvailable(artist) {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM CANCION WHERE Album IS NULL AND Artista = ?;';
+            db.connection.query(query, [artist.id_artist],(err, results) => {
                 if (err) {
                     reject(err);
                 } else {
