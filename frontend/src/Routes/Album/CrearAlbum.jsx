@@ -105,7 +105,7 @@ export default function CrearAlbum() {
                   <input
                     className="form-control"
                     type="file"
-                    accept="image/png, image/jpeg"
+                    accept="image/*"
                     onChange={(e) => {
                       changeSrc(URL.createObjectURL(e.target.files[0]));
                       changeFoto(e.target.files[0]);

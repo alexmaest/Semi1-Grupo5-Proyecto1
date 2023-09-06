@@ -13,7 +13,6 @@ export async function loader() {
       return data;
     });
 
-  console.log(album);
   return album;
 }
 
@@ -21,6 +20,39 @@ export default function Album() {
   const datos = useLoaderData();
   const [album, setAlbum] = useState(datos.albums);
   const [buscar, setBuscar] = useState(0);
+
+  function handlerEliminar(param) {
+    fetch(api + "/admin/album/" + param, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        window.location.reload();
+      });
+  }
+
+  function handlerBuscar(e) {
+    e.preventDefault();
+
+    if (buscar === "") {
+      fetch(api + "/admin/album/")
+        .then((response) => response.json())
+        .then((data) => {
+          setAlbum(data.albums);
+        });
+      return;
+    }
+    fetch(api + "/admin/album/" + buscar)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.album != null) {
+          setAlbum([data.album]);
+        } else {
+          setAlbum([]);
+        }
+      });
+  }
 
   return (
     <div className="container">
@@ -39,28 +71,7 @@ export default function Album() {
           </div>
           <button
             className="btn btn-secondary col-sm-1 m-1"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log(buscar);
-              if (buscar === "") {
-                fetch(api + "/admin/album/")
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log(data);
-                    setAlbum(data.albums);
-                  });
-                return;
-              }
-              fetch(api + "/admin/album/" + buscar)
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.album != null) {
-                    setAlbum([data.album]);
-                  } else {
-                    setAlbum([]);
-                  }
-                });
-            }}
+            onClick={handlerBuscar}
           >
             <CgPlayListSearch />
           </button>
@@ -107,7 +118,14 @@ export default function Album() {
                       >
                         Modificar
                       </Link>
-                      <button className="btn btn-danger m-1" type="button">
+                      <button
+                        className="btn btn-danger m-1"
+                        type="button"
+                        value={album.id_album}
+                        onClick={(e) => {
+                          handlerEliminar(e.target.value);
+                        }}
+                      >
                         Eliminar
                       </button>
                     </div>

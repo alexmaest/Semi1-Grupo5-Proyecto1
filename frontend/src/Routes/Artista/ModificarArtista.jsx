@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import ITForm from "../../Components/ITPForm";
 
+const api = import.meta.env.VITE_API;
+
 export async function loader({ params }) {
   console.log(params);
-  const artistas = await fetch("http://localhost:5000/admin/artist/"+params.id)
+  const artistas = await fetch(api + "/admin/artist/" + params.id)
     .then((response) => response.json())
     .then((data) => {
       return data;
@@ -14,23 +16,60 @@ export async function loader({ params }) {
 }
 
 export default function ModificarArtista() {
-    const datos = useLoaderData();
+  const datos = useLoaderData();
 
   const [nombre, changeNombre] = useState(datos.artist.name);
-  const [foto, changeFoto] = useState(datos.artist.profilePhoto);
+  const [src, changeSrc] = useState(datos.artist.profilePhoto);
   const [fecha, changeFecha] = useState(datos.artist.birthday);
   const id = datos.artist.id_artist;
+
+  function convertBase64(file) {
+    var myInit = {
+      method: "GET",
+      mode: "no-cors",
+    };
+
+    var myRequest = new Request(file, myInit);
+    return fetch(myRequest)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          return reader.result;
+        };
+      });
+  }
 
   function submitHandler(e) {
     e.preventDefault();
 
-    if (this.state.psw === this.state.confirmPsw && this.state.psw != "") {
-      alert("Datos Actualizados");
-      console.log(this.datos);
-    } else {
-      alert("Verifique los valores de password");
-    }
-  };
+    convertBase64(src).then((result) => {
+      fetch(api + "/admin/artist", {
+        method: "PUT", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          name: nombre,
+          birthday: fecha,
+          profilePhoto: result,
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert("Modificado exitosamente.");
+            location.href = "/Administrador/Artista";
+          } else {
+            alert("Error al modificar el artista.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error de red:", error);
+        });
+    });
+  }
 
   return (
     <div
@@ -48,7 +87,7 @@ export default function ModificarArtista() {
           style={{ background: "#2f2f33" }}
         >
           <img
-            src={foto}
+            src={src}
             alt=""
             className="rounded mx-auto d-block img-fluid m-3"
           />
@@ -78,9 +117,9 @@ export default function ModificarArtista() {
                 <input
                   className="form-control"
                   type="file"
-                  accept="image/png, image/jpeg"
-                  onChange={() => {
-                    changeFoto(URL.createObjectURL(e.target.files[0]));
+                  accept="image/*"
+                  onChange={(e) => {
+                    changeSrc(URL.createObjectURL(e.target.files[0]));
                   }}
                 />
               </li>

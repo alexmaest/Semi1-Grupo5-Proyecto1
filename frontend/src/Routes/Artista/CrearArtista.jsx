@@ -116,7 +116,7 @@ class CrearArtista extends Component {
                     <input
                       className="form-control"
                       type="file"
-                      accept="image/png, image/jpeg"
+                      accept="image/*"
                       onChange={(e) => {
                         this.changeSrc(URL.createObjectURL(e.target.files[0]));
                         this.changeFoto(e.target.files[0]);

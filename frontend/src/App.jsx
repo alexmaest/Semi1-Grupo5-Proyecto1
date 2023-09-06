@@ -8,7 +8,7 @@ import CrearCancion, {loader as loaderCCancion} from "./Routes/Cancion/CrearCanc
 import Artistas, { loader as loaderArtista } from "./Routes/Artista/Artistas";
 import CrearArtista from "./Routes/Artista/CrearArtista";
 import ModificarArtista, {
-  loader as LoaderModificarA,
+  loader as LoaderMArtista,
 } from "./Routes/Artista/ModificarArtista";
 import Album, { loader as loaderAlbum } from "./Routes/Album/Album";
 import CrearAlbum, { loader as loaderCAlbum } from "./Routes/Album/CrearAlbum";
@@ -17,6 +17,7 @@ import Home from "./Routes/Home";
 import Register from "./Routes/Register";
 import ModificarAlbum, {loader as loaderMAlbum} from "./Routes/Album/ModificarAlbum";
 import Canciones , {loader as loaderCancion} from "./Routes/Cancion/Cancion";
+import ModificarCancion, {loader as loaderMCancion} from "./Routes/Cancion/ModificarCancion";
 
 function App() {
   const router = createBrowserRouter([
@@ -25,6 +26,10 @@ function App() {
       element: <Sidebar />,
       errorElement: <h1>404 Not Found</h1>,
       children: [
+        {
+          path: "",
+          element: <h1>Aqui debe ir una radio</h1>,
+        },
         {
           path: "Perfil",
           element: <Perfil />,
@@ -71,7 +76,7 @@ function App() {
         },
         {
           path: "Artista/:id",
-          loader: LoaderModificarA,
+          loader: LoaderMArtista,
           element: <ModificarArtista />,
         },
         {
@@ -104,9 +109,9 @@ function App() {
           element: <CrearCancion />,
         },
         {
-          path: "Album/:id",
-          loader: loaderMAlbum,
-          element: <ModificarAlbum />,
+          path: "Cancion/:id",
+          loader: loaderMCancion,
+          element: <ModificarCancion />,
         },
       ],
     },

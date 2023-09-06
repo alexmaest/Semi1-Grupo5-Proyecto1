@@ -147,7 +147,7 @@ class Perfil extends Component {
                   <input
                     className="form-control"
                     type="file"
-                    accept="image/png, image/jpeg"
+                    accept="image/*"
                     onChange={() => {
                       this.setState({
                         fotoPerfil: URL.createObjectURL(e.target.files[0]),

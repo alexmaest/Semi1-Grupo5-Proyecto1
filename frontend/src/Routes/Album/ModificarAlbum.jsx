@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import ITForm from "../../Components/ITPForm";
 
+const api = import.meta.env.VITE_API;
+
 export async function loader({ params }) {
-  console.log(params);
-  const datosAlbum = await fetch("http://localhost:5000/admin/album/" + params.id)
+  const datosAlbum = await fetch(api + "/admin/album/" + params.id)
     .then((response) => response.json())
     .then((data) => {
       return data;
     });
 
-  const datosArtistas = await fetch("http://localhost:5000/admin/artist/")
+  const datosArtistas = await fetch(api + "/admin/artist/")
     .then((response) => response.json())
     .then((data) => {
       return data;
@@ -20,27 +21,65 @@ export async function loader({ params }) {
 }
 
 export default function ModificarAlbum() {
-  const {datosArtistas, datosAlbum} = useLoaderData();
-  console.log(datosArtistas);
-  console.log(datosAlbum);
+  const { datosArtistas, datosAlbum } = useLoaderData();
 
   const [nombre, changeNombre] = useState(datosAlbum.album.name);
   const [foto, changeFoto] = useState("");
   const [src, changeSrc] = useState(datosAlbum.album.coverPhoto);
-  const [descripcion, changeDescripcion] = useState(datosAlbum.album.description);
+  const [descripcion, changeDescripcion] = useState(
+    datosAlbum.album.description
+  );
   const [id_artista, changeIdArtista] = useState(datosAlbum.album.artistId);
   const id = datosAlbum.album.id_album;
   const artistas = datosArtistas.artists;
 
+  function convertBase64(file) {
+    var myInit = {
+      method: "GET",
+      mode: "no-cors",
+    };
+
+    var myRequest = new Request(file, myInit);
+    return fetch(myRequest)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          return reader.result;
+        };
+      });
+  }
+
   function submitHandler(e) {
     e.preventDefault();
 
-    if (this.state.psw === this.state.confirmPsw && this.state.psw != "") {
-      alert("Datos Actualizados");
-      console.log(this.datos);
-    } else {
-      alert("Verifique los valores de password");
-    }
+    convertBase64(src).then((result) => {
+      fetch(api + "/admin/album", {
+        method: "PUT", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          albumId: id,
+          name: nombre,
+          description: descripcion,
+          artistId: id_artista,
+          profilePhoto: result,
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert("Modificado exitosamente.");
+            location.href = "/Administrador/Album";
+          } else {
+            alert("Error al modificar el artista.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error de red:", error);
+        });
+    });
   }
 
   return (
@@ -77,30 +116,36 @@ export default function ModificarAlbum() {
                 <ITForm value={descripcion} change={changeDescripcion} />
               </li>
               <li className="list-group-item d-flex justify-content-between align-items-center">
-                  <div className="form-group row">
-                    <div className="col-sm-4">
-                      <input
-                        type="text"
-                        readOnly
-                        className="form-control-plaintext"
-                        value={"Artista: "}
-                      ></input>
-                    </div>
-                    <div className="col-sm-8">
-                      <select className="form-select" defaultValue={id_artista} onChange={(e)=>{ console.log(e.target.value); changeIdArtista(e.target.value)}}>
-                        <option value={0}>Seleccione un Artista</option>
-                        {artistas.map((artista) => (
-                          <option
-                            key={artista.id_artist}
-                            value={artista.id_artist}
-                          >
-                           {artista.id_artist +" - "+ artista.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                <div className="form-group row">
+                  <div className="col-sm-4">
+                    <input
+                      type="text"
+                      readOnly
+                      className="form-control-plaintext"
+                      value={"Artista: "}
+                    ></input>
                   </div>
-                </li>
+                  <div className="col-sm-8">
+                    <select
+                      className="form-select"
+                      defaultValue={id_artista}
+                      onChange={(e) => {
+                        changeIdArtista(e.target.value);
+                      }}
+                    >
+                      <option value={0}>Seleccione un Artista</option>
+                      {artistas.map((artista) => (
+                        <option
+                          key={artista.id_artist}
+                          value={artista.id_artist}
+                        >
+                          {artista.id_artist + " - " + artista.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </li>
               <li className="list-group-item d-flex justify-content-between align-items-center">
                 <label className="form-label mt-4">
                   Cambiar Foto de Perfil:
@@ -108,10 +153,10 @@ export default function ModificarAlbum() {
                 <input
                   className="form-control"
                   type="file"
-                  accept="image/png, image/jpeg"
+                  accept="image/*"
                   onChange={() => {
                     changeSrc(URL.createObjectURL(e.target.files[0]));
-                      changeFoto(e.target.files[0]);
+                    changeFoto(e.target.files[0]);
                   }}
                 />
               </li>
