@@ -150,3 +150,36 @@ class songModel:
                 return song_list
         except Exception as e:
             raise e
+        
+    def getByRegex(self, search):
+        try:
+            query = """
+                SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id
+                WHERE C.Nombre REGEXP %s;
+            """
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query, (search,))
+                results = db_cursor.fetchall()
+
+                songList = []
+                for result in results:
+                    song = {
+                        'id_song': result['Id'],
+                        'name': result['Nombre'],
+                        'coverPhoto': result['Src_image'],
+                        'songFile': result['Src_mp3'],
+                        'duration': result['Duracion'],
+                        'artist': result['Artista'],
+                        'album': result['Album'],
+                        'id_artist': result['IdArtista'],
+                        'id_album': result['IdAlbum']
+                    }
+                    songList.append(song)
+
+                return songList
+
+        except Exception as e:
+            raise e
