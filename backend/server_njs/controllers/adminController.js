@@ -210,6 +210,23 @@ class adminController {
         }
     }
 
+    async getAllAvailableSongs(req, res) {
+        try {
+            const idArtist = req.params.id;
+            const song = new songModel(null, null, null, null, null, null);
+            const artist = new artistModel(idArtist, null, null, null);
+            const allSongs = await song.getAllAvailable(artist);
+            if (allSongs) {
+                res.status(200).json({ songs: allSongs });
+            } else {
+                res.status(501).json({ message: 'No songs created yet' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
     async getAlbumSongs(req, res) {
         try {
             const albumId = req.params.id;
@@ -219,6 +236,164 @@ class adminController {
                 res.status(200).json({ songs: allSongs });
             } else {
                 res.status(501).json({ message: 'No songs created yet' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async deleteSong(req, res) {
+        try {
+            const songId = req.params.id;
+            const song = new songModel(songId, null, null, null, null, null, null);
+            const songDeleted = await song.delete();
+            res.status(200).json({ message: 'Song deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async deleteAlbum(req, res) {
+        try {
+            const albumId = req.params.id;
+            const album = new albumModel(albumId, null, null, null, null);
+            const albumDeleted = await album.delete();
+            res.status(200).json({ message: 'Album deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async addSongToAlbum(req, res) {
+        try {
+            const { idAlbum, idSong } = req.body;
+            const album = new albumModel(idAlbum, null, null, null, null);
+            const song = new songModel(idSong, null, null, null, null, null, null);
+            const songAdded = await album.addSong(song);
+            res.status(200).json({ message: 'Song added to album' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async deleteSongFromAlbum(req, res) {
+        try {
+            const idSong = req.params.id;
+            const album = new albumModel(null, null, null, null, null);
+            const song = new songModel(idSong, null, null, null, null, null, null);
+            const songRemoved = await album.removeSong(song);
+            res.status(200).json({ message: 'Song removed from album' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async deleteArtist(req, res) {
+        try {
+            const artistId = req.params.id;
+            const artist = new artistModel(artistId, null, null, null);
+            const artistDeleted = await artist.delete();
+            res.status(200).json({ message: 'Artist deleted' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async updateArtist(req, res) {
+        try {
+            const { id, name, birthday, profilePhoto } = req.body;
+            const artist = new artistModel(id, name, birthday, null);
+            if (profilePhoto == null) {
+                const artistUpdated = await artist.updateWithoutImage();
+                if (artistUpdated) {
+                    res.status(200).json({ message: 'Artist updated' });
+                } else {
+                    res.status(503).json({ message: 'Failed artist method update' });
+                }
+            } else {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    artist.profilePhoto = imageUrl;
+                    const artistAdded = await artist.updateWithImage();
+                    if (artistAdded) {
+                        res.status(200).json({ message: 'Artist updated' });
+                    } else {
+                        res.status(503).json({ message: 'Failed artist method update' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the profile photo' });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async updateAlbum(req, res) {
+        try {
+            const { albumId, name, description, artistId, profilePhoto } = req.body;
+            const artist = new artistModel(artistId, null, null, null);
+            const album = new albumModel(albumId, name, description, null, artist);
+            if (profilePhoto == null) {
+                const albumAdded = await album.updateWithoutImage();
+                if (albumAdded) {
+                    res.status(200).json({ message: 'Album updated' });
+                } else {
+                    res.status(503).json({ message: 'Failed album method update' });
+                }
+            } else {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    album.coverPhoto = imageUrl;
+                    const albumAdded = await album.updateWithImage();
+                    if (albumAdded) {
+                        res.status(200).json({ message: 'Album updated' });
+                    } else {
+                        res.status(503).json({ message: 'Failed album method update' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the album cover photo' });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async updateSong(req, res) {
+        try {
+            const { songId, name, duration, artistId, albumId, profilePhoto } = req.body;
+            const artist = new artistModel(artistId, null, null, null);
+            const album = new albumModel(albumId, null, null, null, artist);
+            const song = new songModel(songId, name, null, null, duration, artist, album);
+            if (profilePhoto == null) {
+                const albumAdded = await song.updateWithoutImage();
+                if (albumAdded) {
+                    res.status(200).json({ message: 'Song updated' });
+                } else {
+                    res.status(503).json({ message: 'Failed song method update' });
+                }
+            } else {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    song.coverPhoto = imageUrl;
+                    const albumAdded = await song.updateWithImage();
+                    if (albumAdded) {
+                        res.status(200).json({ message: 'Song updated' });
+                    } else {
+                        res.status(503).json({ message: 'Failed song method update' });
+                    }
+                } else {
+                    res.status(500).json({ message: 'An error has occurred while uploading the song cover photo' });
+                }
             }
         } catch (err) {
             console.error(err);

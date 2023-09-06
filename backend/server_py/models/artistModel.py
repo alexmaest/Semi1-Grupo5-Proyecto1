@@ -18,11 +18,22 @@ class artistModel:
         except Exception as e:
             raise e
 
-    def update(self):
+    def updateWithImage(self):
         try:
+            query = 'UPDATE ARTISTA SET Nombre = %s, Fecha_nac = %s, Src = %s WHERE Id = %s'
+            values = (self.name, self.birthday, self.profilePhoto, self.id_artist)
             with connection.cursor() as db_cursor:
-                query = 'UPDATE ARTISTA SET Nombre = %s WHERE Id = %s'
-                values = (self.name, self.id_artist)
+                db_cursor.execute(query, values)
+                connection.commit()
+                return db_cursor.rowcount > 0
+        except Exception as e:
+            raise e
+
+    def updateWithoutImage(self):
+        try:
+            query = 'UPDATE ARTISTA SET Nombre = %s, Fecha_nac = %s WHERE Id = %s'
+            values = (self.name, self.birthday, self.id_artist)
+            with connection.cursor() as db_cursor:
                 db_cursor.execute(query, values)
                 connection.commit()
                 return db_cursor.rowcount > 0
@@ -32,11 +43,33 @@ class artistModel:
     def delete(self):
         try:
             with connection.cursor() as db_cursor:
-                query = 'DELETE FROM ARTISTA WHERE Id = %s;'
-                db_cursor.execute(query, (self.id_artist,))
-                connection.commit()
-                return db_cursor.rowcount > 0
+                db_cursor.execute('START TRANSACTION')
+                
+                deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album IN (SELECT Id FROM ALBUM WHERE Artista = %s)'
+                db_cursor.execute(deleteUsuarioAlbumQuery, (self.id_artist,))
+                
+                deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = %s)'
+                db_cursor.execute(deleteUsuarioCancionQuery, (self.id_artist,))
+                
+                deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = %s)'
+                db_cursor.execute(deletePlaylistCancionQuery, (self.id_artist,))
+                
+                deleteCancionQuery = 'DELETE FROM CANCION WHERE Artista = %s'
+                db_cursor.execute(deleteCancionQuery, (self.id_artist,))
+                
+                deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Artista = %s'
+                db_cursor.execute(deleteAlbumQuery, (self.id_artist,))
+                
+                deleteUsuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Artista = %s'
+                db_cursor.execute(deleteUsuarioArtistaQuery, (self.id_artist,))
+                
+                deleteArtistaQuery = 'DELETE FROM ARTISTA WHERE Id = %s'
+                db_cursor.execute(deleteArtistaQuery, (self.id_artist,))
+                
+                db_cursor.execute('COMMIT')
+                return True
         except Exception as e:
+            connection.rollback()
             raise e
 
     def getById(self):

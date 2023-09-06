@@ -27,10 +27,10 @@ class albumModel {
         });
     }
 
-    update(album) {
+    updateWithImage() {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE ALBUM SET ? WHERE Id = ?';
-            db.connection.query(query, [album.name, album.id], (err, result) => {
+            const query = 'UPDATE ALBUM SET Nombre = ?, Descripcion = ?, Src = ?, Artista = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.description, this.coverPhoto, this.artist.id_artist, this.id_album], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -40,15 +40,63 @@ class albumModel {
         });
     }
 
-    delete(albumId) {
+    updateWithoutImage() {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ALBUM WHERE Id = ?';
-            db.connection.query(query, albumId, (err, result) => {
+            const query = 'UPDATE ALBUM SET Nombre = ?, Descripcion = ?, Artista = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.description, this.artist.id_artist, this.id_album], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
                     resolve(result.affectedRows > 0);
                 }
+            });
+        });
+    }
+
+    delete() {
+        return new Promise((resolve, reject) => {
+            db.connection.beginTransaction((err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+    
+                const removeAlbumFromSongQuery = 'UPDATE CANCION SET Album = NULL WHERE Album = ?';
+                db.connection.query(removeAlbumFromSongQuery, [this.id_album], (err, result) => {
+                    if (err) {
+                        db.connection.rollback(() => {
+                            reject(err);
+                        });
+                    } else {
+                        const deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album = ?';
+                        db.connection.query(deleteUsuarioAlbumQuery, [this.id_album], (err, result) => {
+                            if (err) {
+                                db.connection.rollback(() => {
+                                    reject(err);
+                                });
+                            } else {
+                                const deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Id = ?';
+                                db.connection.query(deleteAlbumQuery, [this.id_album], (err, result) => {
+                                    if (err) {
+                                        db.connection.rollback(() => {
+                                            reject(err);
+                                        });
+                                    } else {
+                                        db.connection.commit((err) => {
+                                            if (err) {
+                                                db.connection.rollback(() => {
+                                                    reject(err);
+                                                });
+                                            } else {
+                                                resolve(result.affectedRows > 0);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
     }
@@ -136,6 +184,32 @@ class albumModel {
                         'album' : result.Album
                     }));
                     resolve(songList);
+                }
+            });
+        });
+    }
+
+    addSong(song) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE CANCION SET Album = ? WHERE Id = ?';
+            db.connection.query(query, [this.id_album, song.id_song], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
+                }
+            });
+        });
+    }
+
+    removeSong(song) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE CANCION SET Album = NULL WHERE Id = ?';
+            db.connection.query(query, [song.id_song], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
                 }
             });
         });

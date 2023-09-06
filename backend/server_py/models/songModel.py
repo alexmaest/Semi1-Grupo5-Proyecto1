@@ -21,11 +21,22 @@ class songModel:
         except Exception as e:
             raise e
 
-    def update(self):
+    def update_with_image(self):
         try:
+            query = 'UPDATE CANCION SET Nombre = %s, Src_image = %s, Duracion = %s, Artista = %s, Album = %s WHERE Id = %s'
+            values = (self.name, self.coverPhoto, self.duration, self.artist.id_artist, self.album.id_album, self.id_song)
             with connection.cursor() as db_cursor:
-                query = 'UPDATE CANCION SET ? WHERE Id = ?';
-                values = (self.id_song)
+                db_cursor.execute(query, values)
+                connection.commit()
+                return db_cursor.rowcount > 0
+        except Exception as e:
+            raise e
+
+    def update_without_image(self):
+        try:
+            query = 'UPDATE CANCION SET Nombre = %s, Duracion = %s, Artista = %s, Album = %s WHERE Id = %s'
+            values = (self.name, self.duration, self.artist.id_artist, self.album.id_album, self.id_song)
+            with connection.cursor() as db_cursor:
                 db_cursor.execute(query, values)
                 connection.commit()
                 return db_cursor.rowcount > 0
@@ -35,11 +46,21 @@ class songModel:
     def delete(self):
         try:
             with connection.cursor() as db_cursor:
-                query = 'DELETE FROM CANCION WHERE Id = %s;'
-                db_cursor.execute(query, (self.id_song,))
-                connection.commit()
-                return db_cursor.rowcount > 0
+                db_cursor.execute('START TRANSACTION')
+                
+                deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = %s'
+                db_cursor.execute(deleteCancionQuery, (self.id_song,))
+                
+                deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = %s'
+                db_cursor.execute(deleteUsuarioCancionQuery, (self.id_song,))
+                
+                deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = %s'
+                db_cursor.execute(deletePlaylistCancionQuery, (self.id_song,))
+                
+                db_cursor.execute('COMMIT')
+                return True
         except Exception as e:
+            connection.rollback()
             raise e
 
     def getById(self):
@@ -104,5 +125,28 @@ class songModel:
                     songList.append(song)
                 
                 return songList
+        except Exception as e:
+            raise e
+        
+    def get_all_available(self, artist):
+        try:
+            query = 'SELECT * FROM CANCION WHERE Album IS NULL AND Artista = %s'
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query, (artist.id_artist,))
+                results = db_cursor.fetchall()
+
+                song_list = [
+                    {
+                        'id_song': result['Id'],
+                        'name': result['Nombre'],
+                        'coverPhoto': result['Src_image'],
+                        'songFile': result['Src_mp3'],
+                        'duration': result['Duracion'],
+                        'artist': result['Artista'],
+                        'album': result['Album']
+                    }
+                    for result in results
+                ]
+                return song_list
         except Exception as e:
             raise e

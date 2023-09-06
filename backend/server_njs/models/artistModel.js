@@ -25,10 +25,10 @@ class artistModel {
         });
     }
 
-    update(artist) {
+    updateWithImage() {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE ARTISTA SET ? WHERE Id = ?';
-            db.connection.query(query, [artist.name, artist.id], (err, result) => {
+            const query = 'UPDATE ARTISTA SET Nombre = ?, Fecha_nac = ?, Src = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.birthday, this.profilePhoto, this.id_artist], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -38,15 +38,99 @@ class artistModel {
         });
     }
 
-    delete(artistId) {
+    updateWithoutImage() {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ARTISTA WHERE Id = ?';
-            db.connection.query(query, artistId, (err, result) => {
+            const query = 'UPDATE ARTISTA SET Nombre = ?, Fecha_nac = ? WHERE Id = ?';
+            db.connection.query(query, [this.name, this.birthday, this.id_artist], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
                     resolve(result.affectedRows > 0);
                 }
+            });
+        });
+    }
+
+    delete() {
+        return new Promise((resolve, reject) => {
+            db.connection.beginTransaction((err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                const deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album IN (SELECT Id FROM ALBUM WHERE Artista = ?)';
+                db.connection.query(deleteUsuarioAlbumQuery, [this.id_artist], (err) => {
+                    if (err) {
+                        db.connection.rollback(() => {
+                            reject(err);
+                        });
+                    } else {
+                        const deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = ?)';
+                        db.connection.query(deleteUsuarioCancionQuery, [this.id_artist], (err) => {
+                            if (err) {
+                                db.connection.rollback(() => {
+                                    reject(err);
+                                });
+                            } else {
+                                const deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = ?)';
+                                db.connection.query(deletePlaylistCancionQuery, [this.id_artist], (err) => {
+                                    if (err) {
+                                        db.connection.rollback(() => {
+                                            reject(err);
+                                        });
+                                    } else {
+                                        const deleteCancionQuery = 'DELETE FROM CANCION WHERE Artista = ?';
+                                        db.connection.query(deleteCancionQuery, [this.id_artist], (err) => {
+                                            if (err) {
+                                                db.connection.rollback(() => {
+                                                    reject(err);
+                                                });
+                                            } else {
+                                                const deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Artista = ?';
+                                                db.connection.query(deleteAlbumQuery, [this.id_artist], (err) => {
+                                                    if (err) {
+                                                        db.connection.rollback(() => {
+                                                            reject(err);
+                                                        });
+                                                    } else {
+                                                        const deleteUsuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Artista = ?';
+                                                        db.connection.query(deleteUsuarioArtistaQuery, [this.id_artist], (err) => {
+                                                            if (err) {
+                                                                db.connection.rollback(() => {
+                                                                    reject(err);
+                                                                });
+                                                            } else {
+                                                                const deleteArtistaQuery = 'DELETE FROM ARTISTA WHERE Id = ?';
+                                                                db.connection.query(deleteArtistaQuery, [this.id_artist], (err) => {
+                                                                    if (err) {
+                                                                        db.connection.rollback(() => {
+                                                                            reject(err);
+                                                                        });
+                                                                    } else {
+                                                                        db.connection.commit((err) => {
+                                                                            if (err) {
+                                                                                db.connection.rollback(() => {
+                                                                                    reject(err);
+                                                                                });
+                                                                            } else {
+                                                                                resolve(true);
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
     }
@@ -113,7 +197,7 @@ class artistModel {
             });
         });
     }
-    
+
     getAllArtistAlbums() {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM ALBUM WHERE Artista = ?;'
