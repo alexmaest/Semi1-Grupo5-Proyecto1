@@ -73,6 +73,17 @@ class userController {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }
+
+    async randomSong(req, res) {
+        try {
+            const song = new songModel(null, null, null, null, null, null, null);
+            const randomSong = await song.getRandom();
+            res.status(200).json({ song: randomSong });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 }
 
 module.exports = new userController();
