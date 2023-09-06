@@ -6,6 +6,16 @@ from flask import Blueprint, jsonify, request
 
 user_route = Blueprint('user_route', __name__)
 
+@user_route.route('/random', methods=['GET'])
+def random_song():
+    try:
+        song = songModel(None, None, None, None, None, None, None)
+        random_song = song.get_random()
+        return jsonify({'song': random_song}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Internal Server Error'}), 500
+
 @user_route.route('/search', methods=['POST'])
 def search():
     try:
@@ -50,3 +60,4 @@ def unlike():
     except Exception as e:
         print(e)
         return jsonify({ 'message': 'Internal Server Error' }), 500
+

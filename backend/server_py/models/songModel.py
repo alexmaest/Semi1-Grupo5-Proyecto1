@@ -183,3 +183,44 @@ class songModel:
 
         except Exception as e:
             raise e
+
+    def get_random(self):
+        try:
+            query = """
+                SELECT *, A.Nombre AS nameArtista, A.Id AS IdArtista, B.Nombre AS nameAlbum, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id 
+                ORDER BY RAND() LIMIT 1;
+            """
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query)
+                result = db_cursor.fetchone()
+                if result:
+                    self.id_song = result['Id']
+                    self.name = result['Nombre']
+                    self.coverPhoto = result['Src_image']
+                    self.songFile = result['Src_mp3']
+                    self.duration = result['Duracion']
+                    self.artist = result['nameArtista']
+                    self.album = result['nameAlbum']
+                    id_artist = result['IdArtista']
+                    id_album = result['IdAlbum']
+
+                    song_obtained = {
+                        'id_song': self.id_song,
+                        'name': self.name,
+                        'coverPhoto': self.coverPhoto,
+                        'songFile': self.songFile,
+                        'duration': self.duration,
+                        'artist': self.artist,
+                        'album': self.album,
+                        'id_artist': id_artist,
+                        'id_album': id_album
+                    }
+
+                    return song_obtained
+                else:
+                    return None
+        except Exception as e:
+            raise e
