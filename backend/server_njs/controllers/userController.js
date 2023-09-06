@@ -61,6 +61,18 @@ class userController {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }
+
+    async unlike(req, res) {
+        try {
+            const { userId, songId, albumId, artistId } = req.body;
+            const user = new userModel(userId, null, null, null, null, null, null);
+            const unlikedSong = await user.unlikeASong(songId, albumId, artistId);
+            res.status(200).json({ message: 'Song unliked by user' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 }
 
 module.exports = new userController();

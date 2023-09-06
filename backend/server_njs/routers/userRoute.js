@@ -5,5 +5,6 @@ const userController = require('../controllers/userController');
 
 router.post('/search', userController.search);  // Search controller
 router.post('/like', userController.like);  // Like a song
+router.post('/unlike', userController.unlike);  // Unlike a song
 
 module.exports = router;
