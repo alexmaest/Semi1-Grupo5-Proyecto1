@@ -214,6 +214,63 @@ class albumModel {
             });
         });
     }
+
+    getByRegex(search) {
+        return new Promise((resolve, reject) => {
+            const albumQuery = `
+                SELECT A.Id AS albumId, A.Nombre AS albumName, A.Descripcion AS albumDescription, A.Src AS albumCover, A.Artista AS artistId
+                FROM ALBUM A
+                WHERE A.Nombre REGEXP ?;
+            `;
+    
+            db.connection.query(albumQuery, [search], (err, albumResults) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const albumsList = albumResults.map(albumResult => ({
+                        'id_album': albumResult.albumId,
+                        'name': albumResult.albumName,
+                        'description': albumResult.albumDescription,
+                        'coverPhoto': albumResult.albumCover,
+                        'artistId': albumResult.artistId,
+                        'songs': []
+                    }));
+    
+                    const songQuery = `
+                        SELECT C.Id AS songId, C.Nombre AS songName, C.Src_image AS songCover, C.Src_mp3 AS songFile, C.Duracion AS songDuration, A.Nombre AS artistName, B.Nombre AS albumName, B.Id AS IdAlbum, A.Id AS IdArtista
+                        FROM CANCION C
+                        INNER JOIN ARTISTA A ON C.Artista = A.Id
+                        INNER JOIN ALBUM B ON C.Album = B.Id
+                        WHERE B.Nombre REGEXP ?;
+                    `;
+    
+                    db.connection.query(songQuery, [search], (err, songResults) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            songResults.forEach(songResult => {
+                                const albumIndex = albumsList.findIndex(album => album.name === songResult.albumName);
+                                if (albumIndex !== -1) {
+                                    albumsList[albumIndex].songs.push({
+                                        'id_song': songResult.songId,
+                                        'name': songResult.songName,
+                                        'coverPhoto': songResult.songCover,
+                                        'songFile': songResult.songFile,
+                                        'duration': songResult.songDuration,
+                                        'artist': songResult.artistName,
+                                        'album': songResult.albumName,
+                                        'id_artist': songResult.IdArtista,
+                                        'id_album': songResult.IdAlbum
+                                    });
+                                }
+                            });
+                            resolve(albumsList);
+                        }
+                    });
+                }
+            });
+        });
+    }
 }
 
 module.exports = albumModel;
