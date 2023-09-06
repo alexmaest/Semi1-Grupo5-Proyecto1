@@ -164,3 +164,58 @@ class albumModel:
                 return db_cursor.rowcount > 0
         except Exception as e:
             raise e
+    
+    def getByRegex(self, search):
+        try:
+            albumQuery = """
+                SELECT A.Id AS albumId, A.Nombre AS albumName, A.Descripcion AS albumDescription, A.Src AS albumCover, A.Artista AS artistId
+                FROM ALBUM A
+                WHERE A.Nombre REGEXP %s;
+            """
+
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(albumQuery, (search,))
+                albumResults = db_cursor.fetchall()
+
+                albumsList = []
+                for albumResult in albumResults:
+                    album = {
+                        'id_album': albumResult['albumId'],
+                        'name': albumResult['albumName'],
+                        'description': albumResult['albumDescription'],
+                        'coverPhoto': albumResult['albumCover'],
+                        'artistId': albumResult['artistId'],
+                        'songs': []
+                    }
+                    albumsList.append(album)
+
+                songQuery = """
+                    SELECT C.Id AS songId, C.Nombre AS songName, C.Src_image AS songCover, C.Src_mp3 AS songFile, C.Duracion AS songDuration, A.Nombre AS artistName, B.Nombre AS albumName, B.Id AS IdAlbum, A.Id AS IdArtista
+                    FROM CANCION C
+                    INNER JOIN ARTISTA A ON C.Artista = A.Id
+                    INNER JOIN ALBUM B ON C.Album = B.Id
+                    WHERE B.Nombre REGEXP %s;
+                """
+
+                db_cursor.execute(songQuery, (search,))
+                songResults = db_cursor.fetchall()
+
+                for songResult in songResults:
+                    albumIndex = next((i for i, album in enumerate(albumsList) if album['name'] == songResult['albumName']), None)
+                    if albumIndex is not None:
+                        albumsList[albumIndex]['songs'].append({
+                            'id_song': songResult['songId'],
+                            'name': songResult['songName'],
+                            'coverPhoto': songResult['songCover'],
+                            'songFile': songResult['songFile'],
+                            'duration': songResult['songDuration'],
+                            'artist': songResult['artistName'],
+                            'album': songResult['albumName'],
+                            'id_artist': songResult['IdArtista'],
+                            'id_album': songResult['IdAlbum']
+                        })
+
+                return albumsList
+
+        except Exception as e:
+            raise e

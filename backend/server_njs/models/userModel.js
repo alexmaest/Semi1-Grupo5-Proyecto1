@@ -139,18 +139,16 @@ class userModel {
           } else {
             const countCancion = result[0].count;
             if (countCancion > 0) {
-              // El registro de la canción ya existe, no es necesario insertar
               db.connection.commit((err) => {
                 if (err) {
                   db.connection.rollback(() => {
                     reject(err);
                   });
                 } else {
-                  resolve(false); // Indicamos que no se insertó
+                  resolve(false);
                 }
               });
             } else {
-              // El registro de la canción no existe, lo insertamos
               const usuarioCancionQuery = 'INSERT INTO USUARIO_CANCION (Reproducciones, Usuario, Cancion) VALUES (0, ?, ?);';
               db.connection.query(usuarioCancionQuery, [this.id_user, songId], (err, result) => {
                 if (err) {
@@ -158,7 +156,6 @@ class userModel {
                     reject(err);
                   });
                 } else {
-                  // Ahora verificamos y realizamos el proceso para Usuario-Album
                   const checkAlbumQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ALBUM WHERE Usuario = ? AND Album = ?;';
                   db.connection.query(checkAlbumQuery, [this.id_user, albumId], (err, result) => {
                     if (err) {
@@ -168,18 +165,16 @@ class userModel {
                     } else {
                       const countAlbum = result[0].count;
                       if (countAlbum > 0) {
-                        // El registro del álbum ya existe, no es necesario insertar
                         db.connection.commit((err) => {
                           if (err) {
                             db.connection.rollback(() => {
                               reject(err);
                             });
                           } else {
-                            resolve(false); // Indicamos que no se insertó
+                            resolve(false);
                           }
                         });
                       } else {
-                        // El registro del álbum no existe, lo insertamos
                         const usuarioAlbumQuery = 'INSERT INTO USUARIO_ALBUM (Reproducciones, Usuario, Album) VALUES (0, ?, ?);';
                         db.connection.query(usuarioAlbumQuery, [this.id_user, albumId], (err, result) => {
                           if (err) {
@@ -187,7 +182,6 @@ class userModel {
                               reject(err);
                             });
                           } else {
-                            // Ahora verificamos y realizamos el proceso para Usuario-Artista
                             const checkArtistaQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ARTISTA WHERE Usuario = ? AND Artista = ?;';
                             db.connection.query(checkArtistaQuery, [this.id_user, artistId], (err, result) => {
                               if (err) {
@@ -197,18 +191,16 @@ class userModel {
                               } else {
                                 const countArtista = result[0].count;
                                 if (countArtista > 0) {
-                                  // El registro del artista ya existe, no es necesario insertar
                                   db.connection.commit((err) => {
                                     if (err) {
                                       db.connection.rollback(() => {
                                         reject(err);
                                       });
                                     } else {
-                                      resolve(false); // Indicamos que no se insertó
+                                      resolve(false);
                                     }
                                   });
                                 } else {
-                                  // El registro del artista no existe, lo insertamos
                                   const usuarioArtistaQuery = 'INSERT INTO USUARIO_ARTISTA (Reproducciones, Usuario, Artista) VALUES (0, ?, ?);';
                                   db.connection.query(usuarioArtistaQuery, [this.id_user, artistId], (err, result) => {
                                     if (err) {
@@ -238,6 +230,54 @@ class userModel {
                 }
               });
             }
+          }
+        });
+      });
+    });
+  }
+
+  unlikeASong(songId, albumId, artistId) {
+    return new Promise((resolve, reject) => {
+      db.connection.beginTransaction((err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const usuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Usuario = ? AND Cancion = ?;';
+        db.connection.query(usuarioCancionQuery, [this.id_user, songId], (err, result) => {
+          if (err) {
+            db.connection.rollback(() => {
+              reject(err);
+            });
+          } else {
+            const usuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Usuario = ? AND Album = ?;';
+            db.connection.query(usuarioAlbumQuery, [this.id_user, albumId], (err, result) => {
+              if (err) {
+                db.connection.rollback(() => {
+                  reject(err);
+                });
+              } else {
+                const usuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Usuario = ? AND Artista = ?;';
+                db.connection.query(usuarioArtistaQuery, [this.id_user, artistId], (err, result) => {
+                  if (err) {
+                    db.connection.rollback(() => {
+                      reject(err);
+                    });
+                  } else {
+                    db.connection.commit((err) => {
+                      if (err) {
+                        db.connection.rollback(() => {
+                          reject(err);
+                        });
+                      } else {
+                        resolve(result.affectedRows > 0);
+                      }
+                    });
+                  }
+                });
+              }
+            });
           }
         });
       });

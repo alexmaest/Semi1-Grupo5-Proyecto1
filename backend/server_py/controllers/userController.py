@@ -1,33 +1,52 @@
-from models.userModel import UserModel
+from models.userModel import userModel
+from models.artistModel import artistModel
+from models.albumModel import albumModel
+from models.songModel import songModel
 from flask import Blueprint, jsonify, request
 
-profile_route = Blueprint('profile', __name__)
+user_route = Blueprint('user_route', __name__)
 
-@profile_route.route('/<id>', methods=['GET'])
-def find_user(id):
+@user_route.route('/search', methods=['POST'])
+def search():
     try:
-        user = UserModel(None, None, None, None, None, None, None)
-        response = user.get_by_id(id)
-        user_list = [response]
-        return jsonify({ 'message': 'User found', 'results': user_list  }), 200
+        search = request.json.get('search')
+        artist = artistModel(None, None, None, None)
+        album = albumModel(None, None, None, None, None)
+        song = songModel(None, None, None, None, None, None, None)
+        songs = song.getByRegex(search)
+        albums = album.getByRegex(search)
+        artists = artist.getByRegex(search)
+        return jsonify({ 'songs': songs, 'albums': albums, 'artists': artists}), 200
     except Exception as e:
         print(e)
         return jsonify({ 'message': 'Internal Server Error' }), 500
-    
-@profile_route.route('/', methods=['PUT'])
-def updateUser():
+
+@user_route.route('/like', methods=['POST'])
+def like():
     try:
         data = request.get_json()
-        id_user = data['id_user']
-        firstName = data['firstName']
-        lastName = data['lastName']
-        email = data['email']
-        password = data['password']
-        profilePhoto = data['profilePhoto']
-        user = UserModel(id_user, firstName, lastName, email, password, None, profilePhoto)
-        userUpdated = user.update()
-        return jsonify({ 'message': 'User found', 'results': userUpdated  }), 200
+        userId = data['userId']
+        songId = data['songId']
+        albumId = data['albumId']
+        artistId = data['artistId']
+        user = userModel(userId, None, None, None, None, None, None)
+        likedSong = user.likeASong(songId, albumId, artistId)
+        return jsonify({ 'message': 'Song liked by user' }), 200
     except Exception as e:
         print(e)
         return jsonify({ 'message': 'Internal Server Error' }), 500
 
+@user_route.route('/unlike', methods=['POST'])
+def unlike():
+    try:
+        data = request.get_json()
+        userId = data['userId']
+        songId = data['songId']
+        albumId = data['albumId']
+        artistId = data['artistId']
+        user = userModel(userId, None, None, None, None, None, None)
+        unlikedSong = user.unlikeASong(songId, albumId, artistId)
+        return jsonify({ 'message': 'Song unliked by user' }), 200
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from controllers.extServices.authMiddleware import authenticate_token, generate_token
-from models.userModel import UserModel
+from models.userModel import userModel
 from typing import Optional
 
 login_route = Blueprint('login_route', __name__)
@@ -8,8 +8,8 @@ login_route = Blueprint('login_route', __name__)
 @login_route.route('/<email>/<password>', methods=['GET'])
 def usersLogin(email, password):
     try:
-        user = UserModel(None, None, None, email, password, None, None)
-        user_by_email: Optional[UserModel] = user.get_by_email()
+        user = userModel(None, None, None, email, password, None, None)
+        user_by_email: Optional[userModel] = user.get_by_email()
         
         if not user_by_email:
             return jsonify({ 'message': 'Account with that email not exist' }), 501

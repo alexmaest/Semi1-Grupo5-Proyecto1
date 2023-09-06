@@ -148,3 +148,57 @@ class artistModel:
                 return albumList
         except Exception as e:
             raise e
+
+    def getByRegex(self, search):
+        try:
+            artistQuery = """
+                SELECT A.Id AS artistId, A.Nombre AS artistName, A.Fecha_nac AS artistBirthday, A.Src AS artistProfilePhoto
+                FROM ARTISTA A
+                WHERE A.Nombre REGEXP %s;
+            """
+
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(artistQuery, (search,))
+                artistResults = db_cursor.fetchall()
+
+                artistsList = []
+                for artistResult in artistResults:
+                    artist = {
+                        'id_artist': artistResult['artistId'],
+                        'name': artistResult['artistName'],
+                        'birthday': artistResult['artistBirthday'],
+                        'profilePhoto': artistResult['artistProfilePhoto'],
+                        'songs': []
+                    }
+                    artistsList.append(artist)
+
+                songQuery = """
+                    SELECT C.Id AS songId, C.Nombre AS songName, C.Src_image AS songCover, C.Src_mp3 AS songFile, C.Duracion AS songDuration, A.Nombre AS artistName, B.Nombre AS albumName, B.Id AS IdAlbum, A.Id AS IdArtista
+                    FROM CANCION C
+                    INNER JOIN ARTISTA A ON C.Artista = A.Id
+                    INNER JOIN ALBUM B ON C.Album = B.Id
+                    WHERE A.Nombre REGEXP %s;
+                """
+
+                db_cursor.execute(songQuery, (search,))
+                songResults = db_cursor.fetchall()
+
+                for songResult in songResults:
+                    artistIndex = next((i for i, artist in enumerate(artistsList) if artist['name'] == songResult['artistName']), None)
+                    if artistIndex is not None:
+                        artistsList[artistIndex]['songs'].append({
+                            'id_song': songResult['songId'],
+                            'name': songResult['songName'],
+                            'coverPhoto': songResult['songCover'],
+                            'songFile': songResult['songFile'],
+                            'duration': songResult['songDuration'],
+                            'artist': songResult['artistName'],
+                            'album': songResult['albumName'],
+                            'id_artist': songResult['IdArtista'],
+                            'id_album': songResult['IdAlbum']
+                        })
+
+                return artistsList
+
+        except Exception as e:
+            raise e
