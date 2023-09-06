@@ -1,4 +1,4 @@
-from models.userModel import UserModel
+from models.userModel import userModel
 from flask import Blueprint, jsonify, request
 
 profile_route = Blueprint('profile', __name__)
@@ -6,7 +6,7 @@ profile_route = Blueprint('profile', __name__)
 @profile_route.route('/<id>', methods=['GET'])
 def find_user(id):
     try:
-        user = UserModel(None, None, None, None, None, None, None)
+        user = userModel(None, None, None, None, None, None, None)
         response = user.get_by_id(id)
         user_list = [response]
         return jsonify({ 'message': 'User found', 'results': user_list  }), 200
@@ -24,7 +24,7 @@ def updateUser():
         email = data['email']
         password = data['password']
         profilePhoto = data['profilePhoto']
-        user = UserModel(id_user, firstName, lastName, email, password, None, profilePhoto)
+        user = userModel(id_user, firstName, lastName, email, password, None, profilePhoto)
         userUpdated = user.update()
         return jsonify({ 'message': 'User found', 'results': userUpdated  }), 200
     except Exception as e:

@@ -1,4 +1,4 @@
-from models.userModel import UserModel
+from models.userModel import userModel
 from controllers.loadController import load_controller
 from flask import Blueprint, jsonify, request
 
@@ -15,7 +15,7 @@ def register():
             birthday = data['birthday']
             profile_photo = data['profilePhoto']
             
-            user = UserModel(None, first_name, last_name, email, password, birthday, None)
+            user = userModel(None, first_name, last_name, email, password, birthday, None)
             user_by_email = user.get_by_email()
             
             if user_by_email:
