@@ -35,40 +35,40 @@ class userModel {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE Semi1.USUARIO SET ';
       const values = [];
-  
+
       // Comprobar y agregar campos no nulos
       if (user.firstName !== null) {
         query += 'Nombre = ?, ';
         values.push(user.firstName);
       }
-  
+
       if (user.lastName !== null) {
         query += 'Apellido = ?, ';
         values.push(user.lastName);
       }
-  
+
       if (user.profilePhoto !== null) {
         query += 'Src = ?, ';
         values.push(user.profilePhoto);
       }
-  
+
       if (user.email !== null) {
         query += 'Correo = ?, ';
         values.push(user.email);
       }
-  
+
       if (user.password !== null) {
         query += 'Psw = ?, ';
         values.push(user.password);
       }
-  
+
       // Eliminar la última coma y espacio
       query = query.slice(0, -2);
-  
+
       // Agregar la condición WHERE
       query += ' WHERE Id = ? ;';
       values.push(user.id_user);
-  
+
       db.connection.query(query, values, (err, result) => {
         if (err) {
           reject(err);
@@ -78,7 +78,6 @@ class userModel {
       });
     });
   }
-  
 
   delete(userId) {
     return new Promise((resolve, reject) => {
@@ -119,6 +118,128 @@ class userModel {
             resolve(null);
           }
         }
+      });
+    });
+  }
+
+  likeASong(songId, albumId, artistId) {
+    return new Promise((resolve, reject) => {
+      db.connection.beginTransaction((err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const checkCancionQuery = 'SELECT COUNT(*) AS count FROM USUARIO_CANCION WHERE Usuario = ? AND Cancion = ?;';
+        db.connection.query(checkCancionQuery, [this.id_user, songId], (err, result) => {
+          if (err) {
+            db.connection.rollback(() => {
+              reject(err);
+            });
+          } else {
+            const countCancion = result[0].count;
+            if (countCancion > 0) {
+              // El registro de la canción ya existe, no es necesario insertar
+              db.connection.commit((err) => {
+                if (err) {
+                  db.connection.rollback(() => {
+                    reject(err);
+                  });
+                } else {
+                  resolve(false); // Indicamos que no se insertó
+                }
+              });
+            } else {
+              // El registro de la canción no existe, lo insertamos
+              const usuarioCancionQuery = 'INSERT INTO USUARIO_CANCION (Reproducciones, Usuario, Cancion) VALUES (0, ?, ?);';
+              db.connection.query(usuarioCancionQuery, [this.id_user, songId], (err, result) => {
+                if (err) {
+                  db.connection.rollback(() => {
+                    reject(err);
+                  });
+                } else {
+                  // Ahora verificamos y realizamos el proceso para Usuario-Album
+                  const checkAlbumQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ALBUM WHERE Usuario = ? AND Album = ?;';
+                  db.connection.query(checkAlbumQuery, [this.id_user, albumId], (err, result) => {
+                    if (err) {
+                      db.connection.rollback(() => {
+                        reject(err);
+                      });
+                    } else {
+                      const countAlbum = result[0].count;
+                      if (countAlbum > 0) {
+                        // El registro del álbum ya existe, no es necesario insertar
+                        db.connection.commit((err) => {
+                          if (err) {
+                            db.connection.rollback(() => {
+                              reject(err);
+                            });
+                          } else {
+                            resolve(false); // Indicamos que no se insertó
+                          }
+                        });
+                      } else {
+                        // El registro del álbum no existe, lo insertamos
+                        const usuarioAlbumQuery = 'INSERT INTO USUARIO_ALBUM (Reproducciones, Usuario, Album) VALUES (0, ?, ?);';
+                        db.connection.query(usuarioAlbumQuery, [this.id_user, albumId], (err, result) => {
+                          if (err) {
+                            db.connection.rollback(() => {
+                              reject(err);
+                            });
+                          } else {
+                            // Ahora verificamos y realizamos el proceso para Usuario-Artista
+                            const checkArtistaQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ARTISTA WHERE Usuario = ? AND Artista = ?;';
+                            db.connection.query(checkArtistaQuery, [this.id_user, artistId], (err, result) => {
+                              if (err) {
+                                db.connection.rollback(() => {
+                                  reject(err);
+                                });
+                              } else {
+                                const countArtista = result[0].count;
+                                if (countArtista > 0) {
+                                  // El registro del artista ya existe, no es necesario insertar
+                                  db.connection.commit((err) => {
+                                    if (err) {
+                                      db.connection.rollback(() => {
+                                        reject(err);
+                                      });
+                                    } else {
+                                      resolve(false); // Indicamos que no se insertó
+                                    }
+                                  });
+                                } else {
+                                  // El registro del artista no existe, lo insertamos
+                                  const usuarioArtistaQuery = 'INSERT INTO USUARIO_ARTISTA (Reproducciones, Usuario, Artista) VALUES (0, ?, ?);';
+                                  db.connection.query(usuarioArtistaQuery, [this.id_user, artistId], (err, result) => {
+                                    if (err) {
+                                      db.connection.rollback(() => {
+                                        reject(err);
+                                      });
+                                    } else {
+                                      db.connection.commit((err) => {
+                                        if (err) {
+                                          db.connection.rollback(() => {
+                                            reject(err);
+                                          });
+                                        } else {
+                                          resolve(result.affectedRows > 0);
+                                        }
+                                      });
+                                    }
+                                  });
+                                }
+                              }
+                            });
+                          }
+                        });
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          }
+        });
       });
     });
   }

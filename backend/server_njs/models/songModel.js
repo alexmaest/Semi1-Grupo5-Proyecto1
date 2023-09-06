@@ -198,6 +198,36 @@ class songModel {
             });
         });
     }
+
+    getByRegex(search) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id
+                WHERE C.Nombre REGEXP ?;
+            `;
+            db.connection.query(query, [search], (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const songList = results.map(result => ({
+                        'id_song': result.Id,
+                        'name': result.Nombre,
+                        'coverPhoto': result.Src_image,
+                        'songFile': result.Src_mp3,
+                        'duration': result.Duracion,
+                        'artist': result.Artista,
+                        'album': result.Album,
+                        'id_artist': result.IdArtista,
+                        'id_album': result.IdAlbum
+                    }));
+                    resolve(songList);
+                }
+            });
+        });
+    }
 }
 
 module.exports = songModel;
