@@ -9,7 +9,8 @@ Apellido varchar(50),
 Src varchar(100),
 Correo varchar(100),
 Psw varchar(10),
-Fecha_nac varchar(10)
+Fecha_nac varchar(10),
+UNIQUE (Correo)
 );
 
 create table ARTISTA(
@@ -27,7 +28,6 @@ Src varchar(100) not null,
 Artista int not null,
 foreign key (Artista) references ARTISTA(Id) 
 );
-
 
 create table CANCION(
 Id int primary key auto_increment,
@@ -84,3 +84,8 @@ Artista int,
 foreign key (Usuario) references USUARIO(Id), 
 foreign key (Artista) references ARTISTA(Id) 
 );
+
+select * from USUARIO;
+select * from ARTISTA;
+select * FROM ALBUM;
+select * from CANCION;

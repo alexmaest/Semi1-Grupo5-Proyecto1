@@ -23,38 +23,48 @@ export default function ModificarArtista() {
   const [fecha, changeFecha] = useState(datos.artist.birthday);
   const id = datos.artist.id_artist;
 
-  function convertBase64(file) {
+  async function convertBase64(file) {
     var myInit = {
       method: "GET",
       mode: "no-cors",
     };
 
     var myRequest = new Request(file, myInit);
-    return fetch(myRequest)
+    return await fetch(myRequest)
       .then((response) => response.blob())
       .then((blob) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          return reader.result;
-        };
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(blob);
+
+          fileReader.onload = () => {
+            resolve(fileReader.result);
+          };
+
+          fileReader.onerror = (error) => {
+            reject(error);
+          };
+        });
       });
   }
 
-  function submitHandler(e) {
+  async function submitHandler(e) {
     e.preventDefault();
+    let result;
 
-    convertBase64(src).then((result) => {
-      fetch(api + "/admin/artist", {
+    if (src === datos.artist.profilePhoto) result = "";
+    else result = await convertBase64(src);
+
+    fetch(api + "/admin/artist", {
         method: "PUT", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id: id,
-          name: nombre,
-          birthday: fecha,
-          profilePhoto: result,
+          name: nombre === "" ? null : nombre,
+          birthday: fecha === "" ? null : fecha,
+          profilePhoto: result === "" ? null : result,
         }),
       })
         .then((response) => {
@@ -68,7 +78,6 @@ export default function ModificarArtista() {
         .catch((error) => {
           console.error("Error de red:", error);
         });
-    });
   }
 
   return (

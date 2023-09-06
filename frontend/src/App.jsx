@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Sidebar from "./Components/Sidebar";
 import SidebarAdmin from "./Components/SidebarAdmin";
-import Perfil from "./Routes/Perfil";
+import Perfil, {loader as loaderPerfil} from "./Routes/Perfil";
 import Buscar from "./Routes/Buscar";
 import CrearCancion, {loader as loaderCCancion} from "./Routes/Cancion/CrearCancion";
 import Artistas, { loader as loaderArtista } from "./Routes/Artista/Artistas";
@@ -32,6 +32,7 @@ function App() {
         },
         {
           path: "Perfil",
+          loader: loaderPerfil,
           element: <Perfil />,
         },
         {
@@ -55,6 +56,7 @@ function App() {
       children: [
         {
           path: "Perfil",
+          loader: loaderPerfil,
           element: <Perfil />,
         },
         {

@@ -24,7 +24,6 @@ export default function ModificarAlbum() {
   const { datosArtistas, datosAlbum } = useLoaderData();
 
   const [nombre, changeNombre] = useState(datosAlbum.album.name);
-  const [foto, changeFoto] = useState("");
   const [src, changeSrc] = useState(datosAlbum.album.coverPhoto);
   const [descripcion, changeDescripcion] = useState(
     datosAlbum.album.description
@@ -33,53 +32,64 @@ export default function ModificarAlbum() {
   const id = datosAlbum.album.id_album;
   const artistas = datosArtistas.artists;
 
-  function convertBase64(file) {
+  async function convertBase64(file) {
     var myInit = {
       method: "GET",
       mode: "no-cors",
     };
 
     var myRequest = new Request(file, myInit);
-    return fetch(myRequest)
+    return await fetch(myRequest)
       .then((response) => response.blob())
       .then((blob) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          return reader.result;
-        };
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(blob);
+
+          fileReader.onload = () => {
+            resolve(fileReader.result);
+          };
+
+          fileReader.onerror = (error) => {
+            reject(error);
+          };
+        });
       });
   }
 
-  function submitHandler(e) {
+  async function submitHandler(e) {
     e.preventDefault();
+    let result;
 
-    convertBase64(src).then((result) => {
-      fetch(api + "/admin/album", {
-        method: "PUT", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          albumId: id,
-          name: nombre,
-          description: descripcion,
-          artistId: id_artista,
-          profilePhoto: result,
-        }),
+    if (datosAlbum.album.coverPhoto === src) result = "";
+    else {
+      result = await convertBase64(src);
+    }
+
+    fetch(api + "/admin/album", {
+      method: "PUT", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        albumId: id,
+        name: nombre === "" ? null : nombre,
+        description: descripcion === "" ? null : descripcion,
+        artistId: id_artista === "" ? null : id_artista,
+        profilePhoto: result === "" ? null : result,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Modificado exitosamente.");
+          location.href = "/Administrador/Album";
+        } else {
+          alert("Error al modificar el artista.");
+        }
       })
-        .then((response) => {
-          if (response.ok) {
-            alert("Modificado exitosamente.");
-            location.href = "/Administrador/Album";
-          } else {
-            alert("Error al modificar el artista.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error de red:", error);
-        });
-    });
+      .catch((error) => {
+        console.error("Error de red:", error);
+      });
   }
 
   return (
@@ -154,9 +164,8 @@ export default function ModificarAlbum() {
                   className="form-control"
                   type="file"
                   accept="image/*"
-                  onChange={() => {
+                  onChange={(e) => {
                     changeSrc(URL.createObjectURL(e.target.files[0]));
-                    changeFoto(e.target.files[0]);
                   }}
                 />
               </li>

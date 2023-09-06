@@ -40,10 +40,12 @@ class Login extends Component {
       if (solicitud.ok) {
         alert("Todo OK");
         const respuesta = await solicitud.json();
-        if (0 == 0){
-          window.location.href = "/Usuario";
           sessionStorage.setItem("token", respuesta.token);
           sessionStorage.setItem("id", respuesta.id_User);
+        if (sessionStorage.getItem("id") == 1){
+          window.location.href = "/Administrador";
+        } else{
+          window.location.href = "/Usuario";
         }
       } else {
         try {

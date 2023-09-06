@@ -5,13 +5,13 @@ import ITForm from "../../Components/ITPForm";
 const api = import.meta.env.VITE_API;
 
 export async function loader({ params }) {
-    const datosCancion = await fetch(api + "/admin/song/" + params.id)
+  const datosCancion = await fetch(api + "/admin/song/" + params.id)
     .then((response) => response.json())
     .then((data) => {
       return data;
     });
 
-    const datosAlbum = await fetch(api + "/admin/album/")
+  const datosAlbum = await fetch(api + "/admin/album/")
     .then((response) => response.json())
     .then((data) => {
       return data;
@@ -36,54 +36,62 @@ export default function ModificarCancion() {
   const [id_album, changeIdAlbum] = useState(datosCancion.song.album);
   const id = datosCancion.song.id_song;
 
-  function convertBase64(file) {
+  async function convertBase64(file) {
     var myInit = {
       method: "GET",
       mode: "no-cors",
     };
 
     var myRequest = new Request(file, myInit);
-    return fetch(myRequest)
+    return await fetch(myRequest)
       .then((response) => response.blob())
       .then((blob) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          return reader.result;
-        };
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(blob);
+
+          fileReader.onload = () => {
+            resolve(fileReader.result);
+          };
+
+          fileReader.onerror = (error) => {
+            reject(error);
+          };
+        });
       });
   }
 
-  function submitHandler(e) {
+  async function submitHandler(e) {
     e.preventDefault();
+    let result;
+    if (datosCancion.song.coverPhoto === src) result = "";
+    else result = await convertBase64(src);
 
-    convertBase64(src).then((result) => {
-      fetch(api + "/admin/song", {
-        method: "PUT", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          songId: id,
-          name: nombre,
-          duration: duracion,
-          artistId: id_artista,
-          albumId: id_album,
-          profilePhoto: result,
-        }),
+    fetch(api + "/admin/song", {
+      method: "PUT", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        songId: id,
+        name: nombre === "" ? null : nombre,
+        duration: duracion === "" ? null : duracion,
+        artistId: id_artista === "" ? null : id_artista,
+        albumId: id_album === "" ? null : id_album,
+        profilePhoto: result === "" ? null : result,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Modificado exitosamente.");
+          location.href = "/Administrador/Cancion";
+        } else {
+          alert("Error al modificar el artista.");
+        }
       })
-        .then((response) => {
-          if (response.ok) {
-            alert("Modificado exitosamente.");
-            location.href = "/Administrador/Cancion";
-          } else {
-            alert("Error al modificar el artista.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error de red:", error);
-        });
-    });
+      .catch((error) => {
+        console.error("Error de red:", error);
+      });
   }
 
   return (
