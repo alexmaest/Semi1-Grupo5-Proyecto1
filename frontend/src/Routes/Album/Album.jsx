@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { CgPlayListSearch } from "react-icons/cg";
+import { CgPlayListSearch, CgOptions, CgErase } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 import React, { useState } from "react";
@@ -13,7 +13,6 @@ export async function loader() {
       return data;
     });
 
-  console.log(album);
   return album;
 }
 
@@ -21,6 +20,39 @@ export default function Album() {
   const datos = useLoaderData();
   const [album, setAlbum] = useState(datos.albums);
   const [buscar, setBuscar] = useState(0);
+
+  function handlerEliminar(param) {
+    fetch(api + "/admin/album/" + param, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        window.location.reload();
+      });
+  }
+
+  function handlerBuscar(e) {
+    e.preventDefault();
+
+    if (buscar === "") {
+      fetch(api + "/admin/album/")
+        .then((response) => response.json())
+        .then((data) => {
+          setAlbum(data.albums);
+        });
+      return;
+    }
+    fetch(api + "/admin/album/" + buscar)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.album != null) {
+          setAlbum([data.album]);
+        } else {
+          setAlbum([]);
+        }
+      });
+  }
 
   return (
     <div className="container">
@@ -39,35 +71,13 @@ export default function Album() {
           </div>
           <button
             className="btn btn-secondary col-sm-1 m-1"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log(buscar);
-              if (buscar === "") {
-                fetch(api + "/admin/album/")
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log(data);
-                    setAlbum(data.albums);
-                  });
-                return;
-              }
-              fetch(api + "/admin/album/" + buscar)
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.album != null) {
-                    setAlbum([data.album]);
-                  } else {
-                    setAlbum([]);
-                  }
-                });
-            }}
+            onClick={handlerBuscar}
           >
             <CgPlayListSearch />
           </button>
           <Link
             to="CrearAlbum"
-            style={{ textDecoration: "none" }}
-            className="btn btn-primary col-sm-1 m-1"
+            className="btn btn-primary col-sm-1 m-1 d-flex align-items-center justify-content-center text-decoration-none"
           >
             <BsPlusLg />
           </Link>
@@ -99,16 +109,23 @@ export default function Album() {
                         </small>
                       </p>
                     </div>
-                    <div className="col-sm-2 d-flex align-items-center">
+                    <div className="col-sm-3 d-flex align-items-center justify-content-center">
                       <Link
                         to={`${album.id_album}`}
-                        className="btn btn-secondary m-1"
+                        className="col-sm-6 btn btn-secondary m-1"
                         type="button"
                       >
-                        Modificar
+                        <CgOptions />
                       </Link>
-                      <button className="btn btn-danger m-1" type="button">
-                        Eliminar
+                      <button
+                        className="col-sm-6 btn btn-danger m-1"
+                        type="button"
+                        value={album.id_album}
+                        onClick={(e) => {
+                          handlerEliminar(e.target.value);
+                        }}
+                      >
+                        <CgErase />
                       </button>
                     </div>
                   </div>

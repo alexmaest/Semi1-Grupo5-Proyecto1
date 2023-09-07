@@ -150,3 +150,77 @@ class songModel:
                 return song_list
         except Exception as e:
             raise e
+        
+    def getByRegex(self, search):
+        try:
+            query = """
+                SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id
+                WHERE C.Nombre REGEXP %s;
+            """
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query, (search,))
+                results = db_cursor.fetchall()
+
+                songList = []
+                for result in results:
+                    song = {
+                        'id_song': result['Id'],
+                        'name': result['Nombre'],
+                        'coverPhoto': result['Src_image'],
+                        'songFile': result['Src_mp3'],
+                        'duration': result['Duracion'],
+                        'artist': result['Artista'],
+                        'album': result['Album'],
+                        'id_artist': result['IdArtista'],
+                        'id_album': result['IdAlbum']
+                    }
+                    songList.append(song)
+
+                return songList
+
+        except Exception as e:
+            raise e
+
+    def get_random(self):
+        try:
+            query = """
+                SELECT *, A.Nombre AS nameArtista, A.Id AS IdArtista, B.Nombre AS nameAlbum, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id 
+                ORDER BY RAND() LIMIT 1;
+            """
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query)
+                result = db_cursor.fetchone()
+                if result:
+                    self.id_song = result['Id']
+                    self.name = result['Nombre']
+                    self.coverPhoto = result['Src_image']
+                    self.songFile = result['Src_mp3']
+                    self.duration = result['Duracion']
+                    self.artist = result['nameArtista']
+                    self.album = result['nameAlbum']
+                    id_artist = result['IdArtista']
+                    id_album = result['IdAlbum']
+
+                    song_obtained = {
+                        'id_song': self.id_song,
+                        'name': self.name,
+                        'coverPhoto': self.coverPhoto,
+                        'songFile': self.songFile,
+                        'duration': self.duration,
+                        'artist': self.artist,
+                        'album': self.album,
+                        'id_artist': id_artist,
+                        'id_album': id_album
+                    }
+
+                    return song_obtained
+                else:
+                    return None
+        except Exception as e:
+            raise e

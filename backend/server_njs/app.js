@@ -7,8 +7,9 @@ const morgan = require('morgan');
 const mainRoute = require('./routers/mainRoute');
 const loginRoute = require('./routers/loginRoute');
 const registerRoute = require('./routers/registerRoute');
-const adminRoute = require('./routers/adminRoute');
 const profileRoute = require('./routers/profileRoute');
+const adminRoute = require('./routers/adminRoute');
+const userRoute = require('./routers/userRoute');
 const playlistRoute = require('./routers/playlistRoute');
 
 //middleware
@@ -21,8 +22,9 @@ app.use(cors());
 app.use('/', mainRoute);
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
-app.use('/admin', adminRoute);
 app.use('/profile', profileRoute);
+app.use('/admin', adminRoute);
+app.use('/user', userRoute);
 app.use('/playlist', playlistRoute);
 
 module.exports = app;

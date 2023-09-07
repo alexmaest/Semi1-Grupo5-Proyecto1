@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { CgPlayListSearch } from "react-icons/cg";
+import { CgPlayListSearch, CgOptions, CgErase } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 
@@ -12,8 +12,6 @@ export async function loader() {
     .then((data) => {
       return data;
     });
-
-  console.log(artistas);
   return artistas;
 }
 
@@ -21,6 +19,38 @@ export default function Artistas() {
   const datos = useLoaderData();
   const [artistas, setArtistas] = useState(datos.artists);
   const [buscar, setBuscar] = useState(0);
+
+  function handlerEliminar(param) {
+    fetch(api + "/admin/artist/" + param, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        window.location.reload();
+      });
+  }
+
+  function handlerBuscar(e) {
+    e.preventDefault();
+    if (buscar === "") {
+      fetch(api + "/admin/artist/")
+        .then((response) => response.json())
+        .then((data) => {
+          setArtistas(data.artists);
+        });
+      return;
+    }
+    fetch(api + "/admin/artist/" + buscar)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.artist != null) {
+          setArtistas([data.artist]);
+        } else {
+          setArtistas([]);
+        }
+      });
+  }
 
   return (
     <div className="container">
@@ -39,35 +69,13 @@ export default function Artistas() {
           </div>
           <button
             className="btn btn-secondary col-sm-1 m-1"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log(buscar);
-              if (buscar === "") {
-                fetch(api + "/admin/artist/")
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log(data);
-                    setArtistas(data.artists);
-                  });
-                return;
-              }
-              fetch(api + "/admin/artist/" + buscar)
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.artist != null) {
-                    setArtistas([data.artist]);
-                  } else {
-                    setArtistas([]);
-                  }
-                });
-            }}
+            onClick={handlerBuscar}
           >
             <CgPlayListSearch />
           </button>
           <Link
             to="CrearArtista"
-            style={{ textDecoration: "none" }}
-            className="btn btn-primary col-sm-1 m-1"
+            className="btn btn-primary col-sm-1 m-1 d-flex align-items-center justify-content-center text-decoration-none"
           >
             <BsPlusLg />
           </Link>
@@ -100,16 +108,23 @@ export default function Artistas() {
                         </small>
                       </p>
                     </div>
-                    <div className="col-sm-2 d-flex align-items-center">
+                    <div className="col-sm-3 d-flex align-items-center justify-content-center">
                       <Link
                         to={`${artista.id_artist}`}
-                        className="btn btn-secondary m-1"
+                        className="col-sm-6 btn btn-secondary m-1"
                         type="button"
                       >
-                        Modificar
+                        <CgOptions />
                       </Link>
-                      <button className="btn btn-danger m-1" type="button">
-                        Eliminar
+                      <button
+                        className="col-sm-6 btn btn-danger m-1"
+                        type="button"
+                        value={artista.id_artist}
+                        onClick={(e) => {
+                          handlerEliminar(e.target.value);
+                        }}
+                      >
+                        <CgErase />
                       </button>
                     </div>
                   </div>

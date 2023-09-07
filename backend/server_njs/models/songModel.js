@@ -64,7 +64,7 @@ class songModel {
                     reject(err);
                     return;
                 }
-    
+
                 const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
                 db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
                     if (err) {
@@ -121,13 +121,13 @@ class songModel {
                         this.artist = result[0].Artista;
                         this.album = result[0].Album;
                         const songObtained = {
-                            id_song :this.id_song,
-                            name : this.name,
-                            coverPhoto : this.coverPhoto,
-                            songFile : this.songFile,
-                            duration : this.duration,
-                            artist : this.artist,
-                            album : this.album
+                            id_song: this.id_song,
+                            name: this.name,
+                            coverPhoto: this.coverPhoto,
+                            songFile: this.songFile,
+                            duration: this.duration,
+                            artist: this.artist,
+                            album: this.album
                         };
                         resolve(songObtained);
                     } else {
@@ -163,13 +163,13 @@ class songModel {
                     reject(err);
                 } else {
                     const songList = results.map(result => ({
-                        'id_song' : result.Id,
-                        'name' : result.Nombre,
-                        'coverPhoto' : result.Src_image,
-                        'songFile' : result.Src_mp3,
-                        'duration' : result.Duracion,
-                        'artist' : result.Artista,
-                        'album' : result.Album
+                        'id_song': result.Id,
+                        'name': result.Nombre,
+                        'coverPhoto': result.Src_image,
+                        'songFile': result.Src_mp3,
+                        'duration': result.Duracion,
+                        'artist': result.Artista,
+                        'album': result.Album
                     }));
                     resolve(songList);
                 }
@@ -180,20 +180,91 @@ class songModel {
     getAllAvailable(artist) {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM CANCION WHERE Album IS NULL AND Artista = ?;';
-            db.connection.query(query, [artist.id_artist],(err, results) => {
+            db.connection.query(query, [artist.id_artist], (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
                     const songList = results.map(result => ({
-                        'id_song' : result.Id,
-                        'name' : result.Nombre,
-                        'coverPhoto' : result.Src_image,
-                        'songFile' : result.Src_mp3,
-                        'duration' : result.Duracion,
-                        'artist' : result.Artista,
-                        'album' : result.Album
+                        'id_song': result.Id,
+                        'name': result.Nombre,
+                        'coverPhoto': result.Src_image,
+                        'songFile': result.Src_mp3,
+                        'duration': result.Duracion,
+                        'artist': result.Artista,
+                        'album': result.Album
                     }));
                     resolve(songList);
+                }
+            });
+        });
+    }
+
+    getByRegex(search) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id
+                WHERE C.Nombre REGEXP ?;
+            `;
+            db.connection.query(query, [search], (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const songList = results.map(result => ({
+                        'id_song': result.Id,
+                        'name': result.Nombre,
+                        'coverPhoto': result.Src_image,
+                        'songFile': result.Src_mp3,
+                        'duration': result.Duracion,
+                        'artist': result.Artista,
+                        'album': result.Album,
+                        'id_artist': result.IdArtista,
+                        'id_album': result.IdAlbum
+                    }));
+                    resolve(songList);
+                }
+            });
+        });
+    }
+
+    getRandom() {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT *, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                FROM CANCION C
+                INNER JOIN ALBUM B ON C.Album = B.Id
+                INNER JOIN ARTISTA A ON C.Artista = A.Id 
+                ORDER BY RAND() LIMIT 1;
+            `;
+            db.connection.query(query, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (result.length > 0) {
+                        this.id_song = result[0].Id;
+                        this.name = result[0].Nombre;
+                        this.coverPhoto = result[0].Src_image;
+                        this.songFile = result[0].Src_mp3;
+                        this.duration = result[0].Duracion;
+                        this.artist = result[0].Artista;
+                        this.album = result[0].Album;
+                        const songObtained = {
+                            id_song: this.id_song,
+                            name: this.name,
+                            coverPhoto: this.coverPhoto,
+                            songFile: this.songFile,
+                            duration: this.duration,
+                            artist: this.artist,
+                            album: this.album,
+                            id_artist: result[0].IdArtista,
+                            id_album: result[0].IdAlbum
+                        };
+                        resolve(songObtained);
+                    } else {
+                        resolve(null);
+                    }
                 }
             });
         });
