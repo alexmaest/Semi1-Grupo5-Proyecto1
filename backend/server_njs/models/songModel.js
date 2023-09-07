@@ -64,9 +64,8 @@ class songModel {
                     reject(err);
                     return;
                 }
-
-                const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
-                db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
+                const deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = ?';
+                db.connection.query(deletePlaylistCancionQuery, [this.id_song], (err, result) => {
                     if (err) {
                         db.connection.rollback(() => {
                             reject(err);
@@ -79,8 +78,8 @@ class songModel {
                                     reject(err);
                                 });
                             } else {
-                                const deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = ?';
-                                db.connection.query(deletePlaylistCancionQuery, [this.id_song], (err, result) => {
+                                const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
+                                db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
                                     if (err) {
                                         db.connection.rollback(() => {
                                             reject(err);
@@ -232,7 +231,7 @@ class songModel {
     getRandom() {
         return new Promise((resolve, reject) => {
             const query = `
-                SELECT *, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
                 FROM CANCION C
                 INNER JOIN ALBUM B ON C.Album = B.Id
                 INNER JOIN ARTISTA A ON C.Artista = A.Id 

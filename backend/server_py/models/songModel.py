@@ -47,15 +47,15 @@ class songModel:
         try:
             with connection.cursor() as db_cursor:
                 db_cursor.execute('START TRANSACTION')
-                
-                deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = %s'
-                db_cursor.execute(deleteCancionQuery, (self.id_song,))
+
+                deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = %s'
+                db_cursor.execute(deletePlaylistCancionQuery, (self.id_song,))
                 
                 deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = %s'
                 db_cursor.execute(deleteUsuarioCancionQuery, (self.id_song,))
                 
-                deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = %s'
-                db_cursor.execute(deletePlaylistCancionQuery, (self.id_song,))
+                deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = %s'
+                db_cursor.execute(deleteCancionQuery, (self.id_song,))
                 
                 db_cursor.execute('COMMIT')
                 return True
@@ -187,7 +187,7 @@ class songModel:
     def get_random(self):
         try:
             query = """
-                SELECT *, A.Nombre AS nameArtista, A.Id AS IdArtista, B.Nombre AS nameAlbum, B.Id AS IdAlbum
+                SELECT C.*, A.Nombre AS nameArtista, A.Id AS IdArtista, B.Nombre AS nameAlbum, B.Id AS IdAlbum
                 FROM CANCION C
                 INNER JOIN ALBUM B ON C.Album = B.Id
                 INNER JOIN ARTISTA A ON C.Artista = A.Id 
