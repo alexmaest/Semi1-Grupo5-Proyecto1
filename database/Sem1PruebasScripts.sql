@@ -63,7 +63,7 @@ WHERE Usuario IS NULL;
 
 delete FROM Semi1.PLAYLIST WHERE Id = 3;
 
-SELECT * FROM Semi1.PLAYLIST;
+
 
 SELECT * FROM Semi1.USUARIO;
 
@@ -71,4 +71,31 @@ SELECT * FROM Semi1.USUARIO;
 ALTER TABLE Semi1.PLAYLIST
 ADD CONSTRAINT FK_Playlist_Usuario FOREIGN KEY (Usuario) REFERENCES USUARIO(Id);
 
+SELECT * FROM Semi1.CANCION WHERE Semi1.PLAYLIST_CANCION.Playlist = 1;
+SELECT * FROM Semi1.CANCION;
+select * from Semi1.PLAYLIST_CANCION;
+SELECT * FROM Semi1.PLAYLIST;
+SELECT * FROM Semi1.USUARIO;
 
+INSERT INTO `Semi1`.`PLAYLIST`
+(`Nombre`, `Descripcion`, `Src`, `Usuario`)
+VALUES
+('Mi Playlist 1', 'Esta es mi primera lista de reproducción', 'src1.com', 1),
+('Lista Rock', 'Mis canciones de rock favoritas', 'src2.com', 1),
+('Clásicos', 'Las mejores canciones clásicas', 'src3.com', 1),
+('Pop Hits', 'Éxitos pop del momento', 'src4.com', 1),
+('Jazz Lounge', 'Música relajante de jazz', 'src5.com', 1);
+
+INSERT INTO `Semi1`.`PLAYLIST_CANCION` (`Playlist`,`Cancion`)
+VALUES (1,1),(2,1);
+
+SELECT c.*
+FROM Semi1.CANCION AS c
+JOIN Semi1.PLAYLIST_CANCION AS pc ON c.Id = pc.Cancion
+JOIN Semi1.PLAYLIST AS p ON pc.Playlist = p.Id
+WHERE p.Id = 1;
+
+INSERT INTO `Semi1`.`PLAYLIST`
+(`Nombre`, `Descripcion`, `Src`, `Usuario`)
+VALUES
+('Mi Playlist 1', 'Esta es mi primera lista de reproducción', 'src1.com', 2);

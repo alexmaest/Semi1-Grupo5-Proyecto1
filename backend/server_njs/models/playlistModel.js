@@ -1,6 +1,6 @@
 const db = require('../database');
 
-class playlistModel{
+class PlaylistModel{
     constructor(Id, Nombre, Descripcion, Src, Usuario) {
         this.Id = Id;
         this.Nombre = Nombre;
@@ -11,6 +11,7 @@ class playlistModel{
 
     save() {
         return new Promise((resolve, reject) => {
+            //Guardar en la base de datos
             const query = 'INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src, Usuario) VALUES (?, ?, ?, ?);';
             db.connection.query(query, [
                 this.Nombre,
@@ -27,10 +28,32 @@ class playlistModel{
         });
     }
 
-    update() {
+    updateById() {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE ARTISTA SET ? WHERE Id = ?';
-            db.connection.query(query, [artist.name, artist.id], (err, result) => {
+            let query = 'UPDATE Semi1.PLAYLIST SET ';
+            const values = [];
+
+            // Comprobar y agregar campos no nulos
+            if (this.Nombre !== null) {
+                query += 'Nombre = ?, ';
+                values.push(this.Nombre);
+            }
+
+            if (this.Src !== null) {
+                query += 'Src = ?, ';
+                values.push(this.Src);
+            }
+
+            if (this.Descripcion !== null) {
+                query += 'Descripcion = ?, ';
+                values.push(this.Descripcion);
+            }
+            // Eliminar la última coma y espacio
+            query = query.slice(0, -2);
+            
+            query += ' WHERE Id = ? ;';
+            values.push(this.Id);
+            db.connection.query(query, values, (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -40,58 +63,57 @@ class playlistModel{
         });
     }
 
-    delete(artistId) {
+    deleteById() {
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM ARTISTA WHERE Id = ?';
-            db.connection.query(query, artistId, (err, result) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(result.affectedRows > 0);
-                }
+            const query = 'DELETE FROM Semi1.PLAYLIST WHERE Id = ?';
+            db.connection.query(query, this.Id, (err, result) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result.affectedRows > 0);
+              }
             });
         });
     }
+    
 
     getById() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ARTISTA WHERE Id = ?;';
-            db.connection.query(query, [this.id_artist], (err, result) => {
+            const query = 'SELECT * FROM Semi1.PLAYLIST WHERE Id = ? ;';
+            db.connection.query(query, this.Id, (err, result) => {
                 if (err) {
                     reject(err);
+                } else if (result.length > 0) {
+                    const playlistObtained = {
+                        Id: this.Id,
+                        Nombre: result[0].Nombre,
+                        Descripcion: result[0].Descripcion,
+                        Src: result[0].Src,
+                        Usuario: result[0].Usuario
+                    };
+                    resolve(playlistObtained);
                 } else {
-                    if (result.length > 0) {
-                        this.id_artist = result[0].Id;
-                        this.Nombre = result[0].Nombre;
-                        this.birthday = result[0].Fecha_nac;
-                        this.Src = result[0].Src;
-                        const artistObtained = {
-                            id_artist: this.id_artist,
-                            name: this.Nombre,
-                            birthday: this.birthday,
-                            profilePhoto: this.Src
-                        };
-                        resolve(artistObtained);
-                    } else {
-                        resolve(null);
-                    }
+                    resolve(null);
                 }
             });
         });
     }
 
-    getByName() {
+    getAllPlaylist_By_Usuario() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ARTISTA WHERE Nombre = ?';
-            db.connection.query(query, [this.Nombre], (err, result) => {
+            const query = 'SELECT * FROM Semi1.PLAYLIST WHERE Usuario = ?';
+            db.connection.query(query, this.Usuario, (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (result.length > 0) {
-                        resolve(result[0]);
-                    } else {
-                        resolve(null);
-                    }
+                    const playlist_List = results.map(result => ({
+                        'Id': result.Id,
+                        'Nombre': result.Nombre,
+                        'Descripcion': result.Descripcion,
+                        'Src': result.Src,
+                        'Usuario': result.Usuario
+                    }));
+                    resolve(playlist_List);
                 }
             });
         });
@@ -99,42 +121,67 @@ class playlistModel{
 
     getAll() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ARTISTA;';
+            const query = 'SELECT * FROM Semi1.PLAYLIST;';
             db.connection.query(query, (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
-                    const artistsList = results.map(result => ({
-                        'id_artist': result.Id,
-                        'name': result.Nombre,
-                        'birthday': result.Fecha_nac,
-                        'profilePhoto': result.Src
+                    const playlist_List = results.map(result => ({
+                        'Id': result.Id,
+                        'Nombre': result.Nombre,
+                        'Descripcion': result.Descripcion,
+                        'Src': result.Src,
+                        'Usuario': result.Usuario
                     }));
-                    resolve(artistsList);
+                    resolve(playlist_List);
                 }
             });
         });
     }
     
-    getAllArtistAlbums() {
+    getAllSongs_By_Id_Playlist() {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM ALBUM WHERE Artista = ?;'
-            db.connection.query(query, [this.id_artist], (err, results) => {
+            const query = `
+            SELECT c.*
+            FROM Semi1.CANCION AS c
+            JOIN Semi1.PLAYLIST_CANCION AS pc ON c.Id = pc.Cancion
+            JOIN Semi1.PLAYLIST AS p ON pc.Playlist = p.Id
+            WHERE p.Id = ? ;
+            `
+            db.connection.query(query, this.Id, (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
-                    const albumsList = results.map(result => ({
-                        'id_album': result.Id,
-                        'name': result.Nombre,
-                        'description': result.Descripcion,
-                        'coverPhoto': result.Src,
-                        "artistId": result.Artista
+                    const songList = results.map(result => ({
+                        'Id': result.Id,
+                        'Nombre': result.Nombre,
+                        'Src_image': result.Src_image,
+                        'Src_mp3': result.Src_mp3,
+                        "Duracion": result.Duracion,
+                        "Artista": result.Artista,
+                        "Album": result.Album
                     }));
-                    resolve(albumsList);
+                    resolve(songList);
+                }
+            });
+        });
+    }
+
+    addSong_To_Playlist(idCancion) {
+        return new Promise((resolve, reject) => {
+            const query = 'INSERT INTO Semi1.PLAYLIST_CANCION (Playlist, Cancion) VALUES (?, ?);';
+            db.connection.query(query, [
+                this.Id,
+                idCancion
+            ], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.affectedRows > 0);
                 }
             });
         });
     }
 }
 
-module.exports = playlistModel;
+module.exports = PlaylistModel;
