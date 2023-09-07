@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { BsMusicPlayerFill, BsSearch, BsPersonPlus } from "react-icons/bs";
 import { MdFavoriteBorder, MdOutlinePlaylistAdd } from "react-icons/md";
-import { CgProfile, CgPlayList } from "react-icons/cg";
+import { CgProfile, CgPlayList, CgHeadset } from "react-icons/cg";
 import { PiMusicNotesPlus } from "react-icons/pi";
 
 import MediaPlayer from "./MediaPlayer";
@@ -10,11 +10,16 @@ import MediaPlayer from "./MediaPlayer";
 class Sidebar extends Component {
   state = {};
 
+  logout = () => {
+    sessionStorage.clear();
+    window.location.href = "/";
+  };
+
   render() {
     return (
       <>
         <div id="sidebar">
-          <h1>Grupo 5 - Spotify</h1>
+          <h1 onClick={this.logout}>Logout</h1>
           <div>
             <Link to={""}>
               <BsMusicPlayerFill />
@@ -45,6 +50,12 @@ class Sidebar extends Component {
                 <Link to={"Perfil"}>
                   <CgProfile />
                   Perfil
+                </Link>
+              </li>
+              <li>
+                <Link to={"Radio"}>
+                  <CgHeadset />
+                  Radio
                 </Link>
               </li>
               <li>

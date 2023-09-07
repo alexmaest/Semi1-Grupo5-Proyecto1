@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { CgPlayListSearch } from "react-icons/cg";
+import { CgPlayListSearch, CgOptions, CgErase } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 
@@ -75,8 +75,7 @@ export default function Artistas() {
           </button>
           <Link
             to="CrearArtista"
-            style={{ textDecoration: "none" }}
-            className="btn btn-primary col-sm-1 m-1"
+            className="btn btn-primary col-sm-1 m-1 d-flex align-items-center justify-content-center text-decoration-none"
           >
             <BsPlusLg />
           </Link>
@@ -109,23 +108,23 @@ export default function Artistas() {
                         </small>
                       </p>
                     </div>
-                    <div className="col-sm-2 d-flex align-items-center">
+                    <div className="col-sm-3 d-flex align-items-center justify-content-center">
                       <Link
                         to={`${artista.id_artist}`}
-                        className="btn btn-secondary m-1"
+                        className="col-sm-6 btn btn-secondary m-1"
                         type="button"
                       >
-                        Modificar
+                        <CgOptions />
                       </Link>
                       <button
-                        className="btn btn-danger m-1"
+                        className="col-sm-6 btn btn-danger m-1"
                         type="button"
                         value={artista.id_artist}
                         onClick={(e) => {
                           handlerEliminar(e.target.value);
                         }}
                       >
-                        Eliminar
+                        <CgErase />
                       </button>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { CgPlayListSearch } from "react-icons/cg";
+import { CgPlayListSearch, CgOptions, CgErase } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 
@@ -34,7 +34,7 @@ export default function Canciones() {
 
   function handlerBuscar(e) {
     e.preventDefault();
-    
+
     if (buscar === "") {
       fetch(api + "/admin/song/")
         .then((response) => response.json())
@@ -77,8 +77,7 @@ export default function Canciones() {
           </button>
           <Link
             to="CrearCancion"
-            style={{ textDecoration: "none" }}
-            className="btn btn-primary col-sm-1 m-1"
+            className="btn btn-primary col-sm-1 m-1 d-flex align-items-center justify-content-center text-decoration-none"
           >
             <BsPlusLg />
           </Link>
@@ -113,21 +112,21 @@ export default function Canciones() {
                         </small>
                       </p>
                     </div>
-                    <div className="col-sm-2 d-flex align-items-center">
+                    <div className="col-sm-3 d-flex align-items-center justify-content-center">
                       <Link
                         to={`${cancion.id_song}`}
-                        className="btn btn-secondary m-1"
+                        className="col-sm-6 btn btn-secondary m-1"
                         type="button"
                       >
-                        Modificar
+                        <CgOptions />
                       </Link>
                       <button
-                        className="btn btn-danger m-1"
+                        className="col-sm-6 btn btn-danger m-1"
                         type="button"
                         value={cancion.id_song}
                         onClick={(e) => handlerEliminar(e.target.value)}
                       >
-                        Eliminar
+                        <CgErase />
                       </button>
                     </div>
                   </div>

@@ -40,11 +40,13 @@ class Login extends Component {
       if (solicitud.ok) {
         alert("Todo OK");
         const respuesta = await solicitud.json();
-          sessionStorage.setItem("token", respuesta.token);
-          sessionStorage.setItem("id", respuesta.id_User);
-        if (sessionStorage.getItem("id") == 1){
+        sessionStorage.setItem("token", respuesta.token);
+        sessionStorage.setItem("id", respuesta.id_User);
+        sessionStorage.setItem("tracks",[]); 
+        sessionStorage.setItem("noSong",0); 
+        if (sessionStorage.getItem("id") == 1) {
           window.location.href = "/Administrador";
-        } else{
+        } else {
           window.location.href = "/Usuario";
         }
       } else {

@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { CgPlayListSearch } from "react-icons/cg";
+import { CgPlayListSearch, CgOptions, CgErase } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 import React, { useState } from "react";
@@ -77,8 +77,7 @@ export default function Album() {
           </button>
           <Link
             to="CrearAlbum"
-            style={{ textDecoration: "none" }}
-            className="btn btn-primary col-sm-1 m-1"
+            className="btn btn-primary col-sm-1 m-1 d-flex align-items-center justify-content-center text-decoration-none"
           >
             <BsPlusLg />
           </Link>
@@ -110,23 +109,23 @@ export default function Album() {
                         </small>
                       </p>
                     </div>
-                    <div className="col-sm-2 d-flex align-items-center">
+                    <div className="col-sm-3 d-flex align-items-center justify-content-center">
                       <Link
                         to={`${album.id_album}`}
-                        className="btn btn-secondary m-1"
+                        className="col-sm-6 btn btn-secondary m-1"
                         type="button"
                       >
-                        Modificar
+                        <CgOptions />
                       </Link>
                       <button
-                        className="btn btn-danger m-1"
+                        className="col-sm-6 btn btn-danger m-1"
                         type="button"
                         value={album.id_album}
                         onClick={(e) => {
                           handlerEliminar(e.target.value);
                         }}
                       >
-                        Eliminar
+                        <CgErase />
                       </button>
                     </div>
                   </div>

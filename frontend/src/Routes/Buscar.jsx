@@ -1,126 +1,125 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { CgPlayListSearch } from "react-icons/cg";
+import SearchSong from "../Components/SearchSong";
+import SearchArtist from "../Components/SearchArtist";
+import SearchAlbum from "../Components/SearchAlbum";
 
-class Buscar extends Component {
-  state = {};
-  render() {
-    return (
-      <div className="container">
-        <form>
-          <div className="row justify-content-md-center">
-            <div className="col col-sm-8">
-              <input
-                className="form-control"
-                type="search"
-                placeholder="Buscar canciones, artistas o albumes"
-                style={{ height: "4rem" }}
-              />
-            </div>
-            <button className="btn btn-secondary col-sm-2" type="submit">
-              <CgPlayListSearch />
-            </button>
-          </div>
-          <div className="row justify-content-md-center">
-            <div className="col col-md-2 form-check m-1">
-              <input
-                className="form-check-input"
-                type="radio"
-                value="cancion"
-                name="busqueda"
-                defaultChecked
-              />
-              <label className="form-check-label">Cancion</label>
-            </div>
-            <div className="col col-md-2 form-check m-1">
-              <input
-                className="form-check-input"
-                type="radio"
-                value="atista"
-                name="busqueda"
-              />
-              <label className="form-check-label">Artista</label>
-            </div>
-            <div className="col col-md-2 form-check m-1">
-              <input
-                className="form-check-input"
-                type="radio"
-                value="album"
-                name="busqueda"
-              />
-              <label className="form-check-label">Album</label>
-            </div>
-          </div>
-        </form>
-        <div className="container mt-5">
-          <ul className="list-group">
-            <li className="list-group-item">
-              <div className="row">
-                <div className="col-sm-1 d-flex align-items-center">
-                  <img
-                    src="https://i.pinimg.com/1200x/c5/eb/f2/c5ebf2e0bb30390ba534e8fe30884ec8.jpg"
-                    alt=""
-                    style={{ width: "50px", height: "50px" }}
-                    className="rounded img-fluid m-3"
-                  ></img>
-                </div>
-                <div className="col-sm-8 d-flex align-items-center">
-                  <p className="h3">Cancion <br/> <small className="text-muted">Artista - Album</small></p>
-                </div>
-                <div className="col-sm-2 d-flex align-items-center">
-                  <button className="btn btn-secondary m-1" type="button">
-                    Reproducir
-                  </button>
-                  <button className="btn btn-secondary m-1" type="button">
-                    Playlist
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li className="list-group-item">
-              <div className="row">
-                <div className="col-sm-1 d-flex align-items-center">
-                  <img
-                    src="https://i.pinimg.com/1200x/c5/eb/f2/c5ebf2e0bb30390ba534e8fe30884ec8.jpg"
-                    alt=""
-                    style={{ width: "50px", height: "50px" }}
-                    className="rounded img-fluid m-3"
-                  ></img>
-                </div>
-                <div className="col-sm-8 d-flex align-items-center">
-                  <p className="h3">Artista</p>
-                </div>
-                <div className="col-sm-2 d-flex align-items-center">
-                  <button className="btn btn-secondary m-1" type="button">
-                    Canciones
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li className="list-group-item">
-              <div className="row">
-                <div className="col-sm-1 d-flex align-items-center">
-                  <img
-                    src="https://i.pinimg.com/1200x/c5/eb/f2/c5ebf2e0bb30390ba534e8fe30884ec8.jpg"
-                    alt=""
-                    style={{ width: "50px", height: "50px" }}
-                    className="rounded img-fluid m-3"
-                  ></img>
-                </div>
-                <div className="col-sm-8 d-flex align-items-center">
-                <p className="h3">Album <br/> <small className="text-muted">Artista</small></p>
-                </div>
-                <div className="col-sm-2 d-flex align-items-center">
-                  <button className="btn btn-secondary m-1" type="button">
-                    Canciones
-                  </button>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+const api = import.meta.env.VITE_API;
+
+export default function Buscar() {
+  const [checked, setChecked] = useState("cancion");
+  const [search, setSearch] = useState("");
+  const [datos, setDatos] = useState();
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setDatos(
+      await fetch(api + "/user/search", {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          search: search,
+        }),
+      }).then((response) => response.json())
     );
   }
-}
 
-export default Buscar;
+  const seeList = () => {
+    if (checked === "cancion" && datos) {
+      return (
+        <ul className="list-group">
+          {datos.songs
+            ? datos.songs.map((data) => (
+                <li className="list-group-item" key={data.id_song}>
+                  <SearchSong data={data} />
+                </li>
+              ))
+            : null}
+        </ul>
+      );
+    } else if (checked === "artista" && datos) {
+      return (
+        <ul className="list-group">
+          {datos.artists
+            ? datos.artists.map((data) => (
+                <li className="list-group-item" key={data.id_artist}>
+                  <SearchArtist data={data} />
+                </li>
+              ))
+            : null}
+        </ul>
+      );
+    } else if (checked === "album" && datos) {
+      return (
+        <ul className="list-group">
+          {datos.albums
+            ? datos.albums.map((data) => (
+                <li className="list-group-item" key={data.id_album}>
+                  <SearchAlbum data={data} />
+                </li>
+              ))
+            : null}
+        </ul>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="container">
+      <form>
+        <div className="row justify-content-md-center">
+          <div className="col col-sm-8">
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Buscar canciones, artistas o albumes"
+              onChange={(event) => setSearch(event.target.value)}
+              style={{ height: "4rem" }}
+            />
+          </div>
+          <button
+            className="btn btn-secondary col-sm-2"
+            type="submit"
+            onClick={handleSubmit}
+          >
+            <CgPlayListSearch />
+          </button>
+        </div>
+        <div className="row justify-content-md-center">
+          <div className="col col-md-2 form-check m-1">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="busqueda"
+              onClick={() => setChecked("cancion")}
+              defaultChecked
+            />
+            <label className="form-check-label">Cancion</label>
+          </div>
+          <div className="col col-md-2 form-check m-1">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="busqueda"
+              onClick={() => setChecked("artista")}
+            />
+            <label className="form-check-label">Artista</label>
+          </div>
+          <div className="col col-md-2 form-check m-1">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="busqueda"
+              onClick={() => setChecked("album")}
+            />
+            <label className="form-check-label">Album</label>
+          </div>
+        </div>
+      </form>
+      <div className="container mt-5">{seeList()}</div>
+    </div>
+  );
+}
