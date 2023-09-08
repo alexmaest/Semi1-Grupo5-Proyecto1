@@ -3,13 +3,13 @@ import { CgPlayListSearch } from "react-icons/cg";
 
 export default function SearchAlbum(props) {
   return (
-    <div className="row">
+    <div className="row m-3">
       <div className="col-sm-1 d-flex align-items-center">
         <img
           src={props.data.coverPhoto}
           alt=""
           style={{ width: "50px", height: "50px" }}
-          className="rounded img-fluid m-3"
+          className="rounded img-fluid"
         ></img>
       </div>
       <div className="col-sm-8 d-flex align-items-center">

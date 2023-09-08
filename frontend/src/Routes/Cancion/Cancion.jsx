@@ -91,13 +91,13 @@ export default function Canciones() {
           {canciones.length > 0
             ? canciones.map((cancion) => (
                 <li key={cancion.id_song} className="list-group-item">
-                  <div className="row">
+                  <div className="row m-2">
                     <div className="col-sm-1 d-flex align-items-center">
                       <img
                         src={cancion.coverPhoto}
                         alt=""
                         style={{ width: "50px", height: "50px" }}
-                        className="rounded img-fluid m-3"
+                        className="rounded img-fluid"
                       ></img>
                     </div>
                     <div className="col-sm-8 d-flex align-items-center">
@@ -115,7 +115,7 @@ export default function Canciones() {
                     <div className="col-sm-3 d-flex align-items-center justify-content-center">
                       <Link
                         to={`${cancion.id_song}`}
-                        className="col-sm-6 btn btn-secondary m-1"
+                        className="col-sm-6 btn btn-warning m-1"
                         type="button"
                       >
                         <CgOptions />

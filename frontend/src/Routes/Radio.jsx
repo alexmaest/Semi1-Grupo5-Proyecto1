@@ -46,14 +46,15 @@ class Radio extends Component {
   render() {
     return (
       <div
-        style={{ height: "100%", width: "90%", maxWidth: "100%" }}
+        style={{ height: "100%", width: "100%", maxWidth: "100%" }}
         className="d-flex align-items-center justify-content-center"
       >
         <div className="col-ms-4">
           <img
             src={this.state.src}
             alt=""
-            className="rounded img-fluid m-3"
+            style={{width: "100%" }}
+            className="rounded img-fluid"
           ></img>
         </div>
       </div>
