@@ -13,6 +13,7 @@ class MediaPlayer extends Component {
 
   nextSong = () => {
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
+    console.log(tracks);
     sessionStorage.setItem(
       "noSong",
       parseInt(sessionStorage.getItem("noSong")) >= tracks.length - 1
@@ -31,18 +32,29 @@ class MediaPlayer extends Component {
       });
   };
 
-  nextSongR = () => {
-    fetch(api + "/user/random/")
-      .then((response) => response.json())
-      .then((data) => {
-        sessionStorage.setItem("tracks", JSON.stringify([data.song.id_song]));
-        sessionStorage.setItem("noSong", 0);
-        this.setState({
-          title: data.song.name + " - " + data.song.duration,
-          src: data.song.songFile,
-          id: data.song.id_song,
+  nextSongR = async () => {
+    let title = "";
+    let src = "";
+    let id = this.state.id;
+    const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
+    while (tracks[0] == id) {
+      await fetch(api + "/user/random/")
+        .then((response) => response.json())
+        .then((data) => {
+          title = data.song.name + " - " + data.song.duration;
+          src = data.song.songFile;
+          id = data.song.id_song;
         });
-      });
+    }
+
+    sessionStorage.setItem("tracks", JSON.stringify([id]));
+    sessionStorage.setItem("noSong", 0);
+
+    this.setState({
+      title: title,
+      src: src,
+      id: id,
+    });
   };
 
   previousSong = () => {
@@ -117,11 +129,6 @@ class MediaPlayer extends Component {
             sessionStorage.getItem("radio") === "true" ? null : this.errorSong
           }
           onError={
-            sessionStorage.getItem("radio") === "true"
-              ? this.nextSongR
-              : this.errorSong
-          }
-          onPlayError={
             sessionStorage.getItem("radio") === "true"
               ? this.nextSongR
               : this.errorSong

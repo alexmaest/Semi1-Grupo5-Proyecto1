@@ -62,7 +62,7 @@ export default function Canciones() {
             <input
               className="form-control"
               type="text"
-              placeholder="Buscar ID Artista"
+              placeholder="Buscar ID Cancion"
               onChange={(e) => {
                 setBuscar(e.target.value);
               }}

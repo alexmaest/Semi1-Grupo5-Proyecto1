@@ -11,11 +11,22 @@ class Radio extends Component {
   componentDidMount() {
     sessionStorage.setItem("radio", true);
 
+    if (this.state.tracks[0] != 0) {
+      fetch(api + "/admin/song/" + this.state.tracks[0])
+        .then((response) => response.json())
+        .then((data) => {
+          this.setState({
+            src: data.song.coverPhoto,
+            tracks: this.state.tracks,
+          });
+        });
+    }
+
     this.trackChange = setInterval(() => {
       const updatedTracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
 
       if (JSON.stringify(updatedTracks) !== JSON.stringify(this.state.tracks)) {
-        fetch(api + "/admin/song/" + this.state.tracks[0])
+        fetch(api + "/admin/song/" + updatedTracks[0])
           .then((response) => response.json())
           .then((data) => {
             this.setState({
@@ -34,13 +45,16 @@ class Radio extends Component {
 
   render() {
     return (
-      <div style={{height: "100%", width:"90%", maxWidth: "100%"}} className="d-flex align-items-center justify-content-center">
+      <div
+        style={{ height: "100%", width: "90%", maxWidth: "100%" }}
+        className="d-flex align-items-center justify-content-center"
+      >
         <div className="col-ms-4">
-        <img
-          src={this.state.src}
-          alt=""
-          className="rounded img-fluid m-3"
-        ></img>
+          <img
+            src={this.state.src}
+            alt=""
+            className="rounded img-fluid m-3"
+          ></img>
         </div>
       </div>
     );

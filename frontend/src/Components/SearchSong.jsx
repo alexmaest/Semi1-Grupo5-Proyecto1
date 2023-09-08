@@ -1,7 +1,28 @@
 import React, { useState } from "react";
 import { CgPlayButtonO, CgPlayListAdd, CgHeart } from "react-icons/cg";
 
+const api = import.meta.env.VITE_API;
+
 export default function SearchSong(props) {
+  function hadlerFavorite() {
+    fetch(api + "/user/like/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: sessionStorage.getItem("id"),
+        songId: props.data.id_song,
+        albumId: props.data.id_album,
+        artistId: props.data.id_artist,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert(data.message);
+      });
+  }
+
   return (
     <div className="row">
       <div className="col-sm-1 d-flex align-items-center">
@@ -14,14 +35,18 @@ export default function SearchSong(props) {
       </div>
       <div className="col-sm-8 d-flex align-items-center">
         <p className="h3">
-          {props.data.name} <br />{" "}
+          {props.data.name + " - " + props.data.duration} <br />
           <small className="text-muted">
             {props.data.artist} - {props.data.album}
           </small>
         </p>
       </div>
       <div className="col-sm-3 d-flex align-items-center justify-content-center">
-        <button className="btn btn-danger m-1 col-sm-4" type="button">
+        <button
+          className="btn btn-danger m-1 col-sm-4"
+          type="button"
+          onClick={hadlerFavorite}
+        >
           <CgHeart />
         </button>
         <button

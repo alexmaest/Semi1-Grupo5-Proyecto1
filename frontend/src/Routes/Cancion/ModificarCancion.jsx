@@ -140,7 +140,7 @@ export default function ModificarCancion() {
                   <div className="col-sm-8">
                     <select
                       className="form-select"
-                      defaultValue={datosCancion.song.artist}
+                      defaultValue={datosCancion.song.artist ? datosCancion.song.artist : 0}
                       onChange={(e) => {
                         changeIdArtista(e.target.value);
                       }}
@@ -171,7 +171,7 @@ export default function ModificarCancion() {
                   <div className="col-sm-8">
                     <select
                       className="form-select"
-                      defaultValue={datosCancion.song.album}
+                      defaultValue={datosCancion.song.album? datosCancion.song.album : 0}
                       onChange={(e) => {
                         changeIdAlbum(e.target.value);
                       }}

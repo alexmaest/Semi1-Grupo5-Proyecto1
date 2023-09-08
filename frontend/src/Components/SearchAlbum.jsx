@@ -14,11 +14,19 @@ export default function SearchAlbum(props) {
       </div>
       <div className="col-sm-8 d-flex align-items-center">
         <p className="h3">
-          {props.data.name} <br /> <small className="text-muted">{props.data.description}</small>
+          {props.data.name} <br />{" "}
+          <small className="text-muted">{props.data.description}</small>
         </p>
       </div>
       <div className="col-sm-3 d-flex align-items-center justify-content-center">
-        <button className="btn btn-warning m-1 col-sm-12" type="button">
+        <button
+          className="btn btn-warning m-1 col-sm-12"
+          type="button "
+          onClick={() => {
+            props.setOpen(true);
+            props.setSongs(props.data.songs);
+          }}
+        >
           <CgPlayListSearch />
         </button>
       </div>

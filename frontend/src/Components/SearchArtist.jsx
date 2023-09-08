@@ -16,7 +16,14 @@ export default function SearchArtist(props) {
         <p className="h3">{props.data.name}</p>
       </div>
       <div className="col-sm-3 d-flex align-items-center justify-content-center">
-        <button className="btn btn-info m-1 col-sm-12" type="button">
+        <button
+          className="btn btn-info m-1 col-sm-12"
+          type="button"
+          onClick={() => {
+            props.setOpen(true);
+            props.setSongs(props.data.songs);
+          }}
+        >
           <CgPlayListSearch />
         </button>
       </div>
