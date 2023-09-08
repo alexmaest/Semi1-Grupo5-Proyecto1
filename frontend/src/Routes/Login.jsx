@@ -42,7 +42,7 @@ class Login extends Component {
         const respuesta = await solicitud.json();
         sessionStorage.setItem("token", respuesta.token);
         sessionStorage.setItem("id", respuesta.id_User);
-        sessionStorage.setItem("tracks",[]); 
+        sessionStorage.setItem("tracks",JSON.stringify([0])); 
         sessionStorage.setItem("noSong",0); 
         if (sessionStorage.getItem("id") == 1) {
           window.location.href = "/Administrador";

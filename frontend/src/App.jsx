@@ -69,6 +69,10 @@ function App() {
           element: <Buscar />,
         },
         {
+          path: "Buscar/Artista/:id",
+          element: <Perfil />,
+        },
+        {
           path: "Favoritos",
           element: <h1>Aqui deberian ir los favoritos</h1>,
         },

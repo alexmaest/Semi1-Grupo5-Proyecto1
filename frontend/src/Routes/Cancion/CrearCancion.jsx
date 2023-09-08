@@ -54,7 +54,7 @@ export default function CrearCancion() {
       formData.append("name", nombre);
       formData.append("duration", duracion);
       formData.append("artistId", id_artista);
-      formData.append("albumId", id_album);
+      formData.append("albumId", id_album == 0 ? null : id_album);
       formData.append("profilePhoto", result);
       formData.append("track", track);
 

@@ -20,29 +20,42 @@ class MediaPlayer extends Component {
         : (parseInt(sessionStorage.getItem("noSong")) + 1) % tracks.length
     );
 
-    fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({
-          title: data.song.name + " - " + data.song.duration,
-          src: data.song.songFile,
-          id: data.song.id_song,
+    if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
+      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+        .then((response) => response.json())
+        .then((data) => {
+          this.setState({
+            title: data.song.name + " - " + data.song.duration,
+            src: data.song.songFile,
+            id: data.song.id_song,
+          });
         });
-      });
+    }
   };
 
-  nextSongR = () => {
-    fetch(api + "/user/random/")
-      .then((response) => response.json())
-      .then((data) => {
-        sessionStorage.setItem("tracks", JSON.stringify([data.song.id_song]));
-        sessionStorage.setItem("noSong", 0);
-        this.setState({
-          title: data.song.name + " - " + data.song.duration,
-          src: data.song.songFile,
-          id: data.song.id_song,
+  nextSongR = async () => {
+    let title = "";
+    let src = "";
+    let id = this.state.id;
+    const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
+    while (tracks[0] == id) {
+      await fetch(api + "/user/random/")
+        .then((response) => response.json())
+        .then((data) => {
+          title = data.song.name + " - " + data.song.duration;
+          src = data.song.songFile;
+          id = data.song.id_song;
         });
-      });
+    }
+
+    sessionStorage.setItem("tracks", JSON.stringify([id]));
+    sessionStorage.setItem("noSong", 0);
+
+    this.setState({
+      title: title,
+      src: src,
+      id: id,
+    });
   };
 
   previousSong = () => {
@@ -88,6 +101,51 @@ class MediaPlayer extends Component {
     }
   };
 
+  handlerOnClickNext = () => {
+    if (sessionStorage.getItem("radio") === "true") {
+      this.nextSongR();
+    } else {
+      this.nextSong();
+    }
+  };
+
+  handlerOnListen = () => {
+    if (sessionStorage.getItem("radio") === "false") {
+      this.nextSong();
+    }
+  };
+
+  onListen = () => {
+    const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
+    if (
+      tracks[sessionStorage.getItem("noSong")] != this.state.id &&
+      tracks.length == 1
+    ) {
+      sessionStorage.setItem(
+        "noSong",
+        parseInt(sessionStorage.getItem("noSong")) >= tracks.length - 1
+          ? 0
+          : (parseInt(sessionStorage.getItem("noSong")) + 1) % tracks.length
+      );
+
+      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+        .then((response) => response.json())
+        .then((data) => {
+          this.setState({
+            title: data.song.name + " - " + data.song.duration,
+            src: data.song.songFile,
+            id: data.song.id_song,
+          });
+        });
+    }
+  };
+
+  handlerOnClickPrevious = () => {
+    if (sessionStorage.getItem("radio") !== "true") {
+      this.previousSong();
+    }
+  };
+
   render() {
     return (
       <div>
@@ -103,34 +161,11 @@ class MediaPlayer extends Component {
           showSkipControls={true}
           showJumpControls={false}
           header={this.state.title}
-          onClickNext={
-            sessionStorage.getItem("radio") === "true"
-              ? this.nextSongR
-              : this.nextSong
-          }
-          onClickPrevious={
-            sessionStorage.getItem("radio") === "true"
-              ? null
-              : this.previousSong
-          }
-          onListen={
-            sessionStorage.getItem("radio") === "true" ? null : this.errorSong
-          }
-          onError={
-            sessionStorage.getItem("radio") === "true"
-              ? this.nextSongR
-              : this.errorSong
-          }
-          onPlayError={
-            sessionStorage.getItem("radio") === "true"
-              ? this.nextSongR
-              : this.errorSong
-          }
-          onEnded={
-            sessionStorage.getItem("radio") === "true"
-              ? this.nextSongR
-              : this.nextSong
-          }
+          onClickNext={this.handlerOnClickNext}
+          onClickPrevious={this.handlerOnClickPrevious}
+          onError={this.handlerOnClickNext}
+          onEnded={this.handlerOnClickNext}
+          onListen={this.onListen}
           autoPlayAfterSrcChange={true}
           autoPlay={true}
         />
