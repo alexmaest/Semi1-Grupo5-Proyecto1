@@ -11,6 +11,7 @@ def create_app():
     from controllers.profileController import profile_route
     from controllers.adminController import admin_route
     from controllers.userController import user_route
+    from controllers.playlistController import playlist_route
 
     app.register_blueprint(main_route, url_prefix='/')
     app.register_blueprint(login_route, url_prefix='/login')
@@ -18,5 +19,6 @@ def create_app():
     app.register_blueprint(profile_route, url_prefix='/profile')
     app.register_blueprint(admin_route, url_prefix='/admin')
     app.register_blueprint(user_route, url_prefix='/user')
+    app.register_blueprint(playlist_route, url_prefix='/playlist')
 
     return app

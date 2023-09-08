@@ -26,12 +26,20 @@ class PlaylistController {
             if (nombreDuplicado) {
                 return res.status(500).json({ message: 'playlist already exists' });
             }
-
+            
             //Validación de Usuario existente
             const userValidacion = new userModel(null, null, null, null, null, null, null);
             const responseUserValidacion = await userValidacion.getById(Usuario);
             if (responseUserValidacion.length === 0) {
                 return res.status(500).json({ message: 'user does not exist' });
+            }
+
+            //Cambios para recibir base64 en la imagen de la playlist.
+            if (Src != null) {
+                const imageUrl = await loadController.uploadImage(Src);
+                if (imageUrl) {
+                    playlist.Src = imageUrl;
+                }
             }
 
             const result = await playlist.save();
