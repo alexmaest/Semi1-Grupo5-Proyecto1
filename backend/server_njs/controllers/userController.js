@@ -2,6 +2,7 @@ const userModel = require('../models/userModel');
 const artistModel = require('../models/artistModel');
 const albumModel = require('../models/albumModel');
 const songModel = require('../models/songModel');
+const loadController = require('./loadController')
 
 class userController {
     constructor() { }
@@ -22,6 +23,14 @@ class userController {
         try {
             const { id_user, firstName, lastName, email, password, profilePhoto } = req.body;
             const user = new userModel(id_user, firstName, lastName, email, password, null, profilePhoto);
+            //Cambios para recibir base64 en la imagen de perfil
+            if (profilePhoto != null) {
+                const imageUrl = await loadController.uploadImage(profilePhoto);
+                if (imageUrl) {
+                    user.profilePhoto = imageUrl;
+                }
+            }
+            
             const userUpdated = await user.update(user);
             if (userUpdated) {
                 res.status(200).json({ message: 'User updated' });

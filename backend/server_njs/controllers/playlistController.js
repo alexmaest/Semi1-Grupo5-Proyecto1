@@ -1,6 +1,6 @@
 const PlaylistModel = require('../models/playlistModel');
 const userModel = require('../models/userModel');
-
+const loadController = require('./loadController')
 class PlaylistController {
     
     async createPlaylist(req, res) {
@@ -45,6 +45,13 @@ class PlaylistController {
         try {
             const { id, Nombre, Descripcion, Src } = req.body;
             const playlist = new PlaylistModel(id, Nombre, Descripcion, Src, null);
+            //Cambios para recibir base64 en la imagen de la playlist.
+            if (Src != null) {
+                const imageUrl = await loadController.uploadImage(Src);
+                if (imageUrl) {
+                    playlist.Src = imageUrl;
+                }
+            }
             const result = await playlist.updateById();
             res.status(200).json({ success: result });
         } catch (error) {
@@ -111,6 +118,17 @@ class PlaylistController {
             const { Id_Playlist, Id_Song } = req.body;
             const playlist = new PlaylistModel(Id_Playlist);
             const result = await playlist.addSong_To_Playlist(Id_Song);
+            res.status(200).json({ success: result });
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async deleteSong_From_Playlist(req, res) {
+        try {
+            const { Id_Playlist, Id_Song } = req.body;
+            const playlist = new PlaylistModel(Id_Playlist);
+            const result = await playlist.deleteSong_From_Playlist(Id_Song);
             res.status(200).json({ success: result });
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });

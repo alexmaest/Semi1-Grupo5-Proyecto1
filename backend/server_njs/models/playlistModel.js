@@ -50,7 +50,7 @@ class PlaylistModel{
             }
             // Eliminar la última coma y espacio
             query = query.slice(0, -2);
-            
+
             query += ' WHERE Id = ? ;';
             values.push(this.Id);
             db.connection.query(query, values, (err, result) => {
@@ -179,6 +179,19 @@ class PlaylistModel{
                 } else {
                     resolve(result.affectedRows > 0);
                 }
+            });
+        });
+    }
+
+    deleteSong_From_Playlist(idCancion) {
+        return new Promise((resolve, reject) => {
+            const query = 'DELETE FROM Semi1.PLAYLIST_CANCION WHERE Playlist = ? AND Cancion = ?';
+            db.connection.query(query, [this.Id, idCancion], (err, result) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result.affectedRows > 0);
+              }
             });
         });
     }

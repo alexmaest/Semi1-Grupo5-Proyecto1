@@ -12,5 +12,6 @@ router.get('/usuario/:usuario', PlaylistController.getAllPlaylist_By_Usuario);
 router.get('/', PlaylistController.getAll);
 router.get('/songs/:id', PlaylistController.getAllSongs_By_Id_Playlist);
 router.post('/addSong', PlaylistController.addSong_To_Playlist);
+router.delete('/remove/song', PlaylistController.deleteSong_From_Playlist);
 
 module.exports = router;
