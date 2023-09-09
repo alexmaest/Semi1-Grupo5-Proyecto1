@@ -51,7 +51,10 @@ class songModel:
                 deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = %s'
                 db_cursor.execute(deletePlaylistCancionQuery, (self.id_song,))
                 
-                deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = %s'
+                deleteUsuarioCancionQuery = 'DELETE FROM REPRODUCCION_BITACORA WHERE Cancion = %s'
+                db_cursor.execute(deleteUsuarioCancionQuery, (self.id_song,))
+
+                deleteUsuarioCancionQuery = 'DELETE FROM FAVORITO WHERE Cancion = %s'
                 db_cursor.execute(deleteUsuarioCancionQuery, (self.id_song,))
                 
                 deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = %s'
@@ -184,7 +187,7 @@ class songModel:
         except Exception as e:
             raise e
 
-    def get_random(self):
+    def get_random(self, user_id):
         try:
             query = """
                 SELECT C.*, A.Nombre AS nameArtista, A.Id AS IdArtista, B.Nombre AS nameAlbum, B.Id AS IdAlbum
@@ -218,6 +221,45 @@ class songModel:
                         'id_artist': id_artist,
                         'id_album': id_album
                     }
+
+                    insert_query = 'INSERT INTO REPRODUCCION_BITACORA (Usuario, Cancion) VALUES (%s, %s);'
+                    db_cursor.execute(insert_query, (user_id, self.id_song))
+                    connection.commit()
+
+                    return song_obtained
+                else:
+                    return None
+        except Exception as e:
+            raise e
+
+    def get_to_play(self, user_id):
+        try:
+            query = 'SELECT * FROM CANCION WHERE Id = %s;'
+            with connection.cursor() as db_cursor:
+                db_cursor.execute(query, (self.id_song,))
+                result = db_cursor.fetchone()
+                if result:
+                    self.id_song = result['Id']
+                    self.name = result['Nombre']
+                    self.coverPhoto = result['Src_image']
+                    self.songFile = result['Src_mp3']
+                    self.duration = result['Duracion']
+                    self.artist = result['Artista']
+                    self.album = result['Album']
+
+                    song_obtained = {
+                        'id_song': self.id_song,
+                        'name': self.name,
+                        'coverPhoto': self.coverPhoto,
+                        'songFile': self.songFile,
+                        'duration': self.duration,
+                        'artist': self.artist,
+                        'album': self.album
+                    }
+
+                    insert_query = 'INSERT INTO REPRODUCCION_BITACORA (Usuario, Cancion) VALUES (%s, %s);'
+                    db_cursor.execute(insert_query, (user_id, self.id_song))
+                    connection.commit()
 
                     return song_obtained
                 else:

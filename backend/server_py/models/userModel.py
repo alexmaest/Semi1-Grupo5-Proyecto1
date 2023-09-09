@@ -101,12 +101,12 @@ class userModel:
         except Exception as e:
             raise e
 
-    def likeASong(self, songId, albumId, artistId):
+    def likeASong(self, songId):
         try:
             with connection.cursor() as db_cursor:
                 db_cursor.execute("START TRANSACTION")
 
-                checkCancionQuery = 'SELECT COUNT(*) AS count FROM USUARIO_CANCION WHERE Usuario = %s AND Cancion = %s;'
+                checkCancionQuery = 'SELECT COUNT(*) AS count FROM FAVORITO WHERE Usuario = %s AND Cancion = %s;'
                 db_cursor.execute(checkCancionQuery, (self.id_user, songId))
                 countCancion = db_cursor.fetchone()['count']
 
@@ -114,51 +114,23 @@ class userModel:
                     db_cursor.execute("COMMIT")
                     return False
                 else:
-                    usuarioCancionQuery = 'INSERT INTO USUARIO_CANCION (Reproducciones, Usuario, Cancion) VALUES (0, %s, %s);'
+                    usuarioCancionQuery = 'INSERT INTO FAVORITO (Reproducciones, Usuario, Cancion) VALUES (0, %s, %s);'
                     db_cursor.execute(usuarioCancionQuery, (self.id_user, songId))
 
-                    checkAlbumQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ALBUM WHERE Usuario = %s AND Album = %s;'
-                    db_cursor.execute(checkAlbumQuery, (self.id_user, albumId))
-                    countAlbum = db_cursor.fetchone()['count']
-
-                    if countAlbum > 0:
-                        db_cursor.execute("COMMIT")
-                        return False
-                    else:
-                        usuarioAlbumQuery = 'INSERT INTO USUARIO_ALBUM (Reproducciones, Usuario, Album) VALUES (0, %s, %s);'
-                        db_cursor.execute(usuarioAlbumQuery, (self.id_user, albumId))
-
-                        checkArtistaQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ARTISTA WHERE Usuario = %s AND Artista = %s;'
-                        db_cursor.execute(checkArtistaQuery, (self.id_user, artistId))
-                        countArtista = db_cursor.fetchone()['count']
-
-                        if countArtista > 0:
-                            db_cursor.execute("COMMIT")
-                            return False
-                        else:
-                            usuarioArtistaQuery = 'INSERT INTO USUARIO_ARTISTA (Reproducciones, Usuario, Artista) VALUES (0, %s, %s);'
-                            db_cursor.execute(usuarioArtistaQuery, (self.id_user, artistId))
-
-                            db_cursor.execute("COMMIT")
-                            return True
+                    db_cursor.execute("COMMIT")
+                    return True
 
         except Exception as e:
             db_cursor.execute("ROLLBACK")
             raise e
 
-    def unlikeASong(self, songId, albumId, artistId):
+    def unlikeASong(self, songId):
         try:
             with connection.cursor() as db_cursor:
                 db_cursor.execute("START TRANSACTION")
 
-                usuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Usuario = %s AND Cancion = %s;'
+                usuarioCancionQuery = 'DELETE FROM FAVORITO WHERE Usuario = %s AND Cancion = %s;'
                 db_cursor.execute(usuarioCancionQuery, (self.id_user, songId))
-
-                usuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Usuario = %s AND Album = %s;'
-                db_cursor.execute(usuarioAlbumQuery, (self.id_user, albumId))
-
-                usuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Usuario = %s AND Artista = %s;'
-                db_cursor.execute(usuarioArtistaQuery, (self.id_user, artistId))
 
                 db_cursor.execute("COMMIT")
                 return True

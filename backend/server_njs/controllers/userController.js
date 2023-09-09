@@ -61,9 +61,9 @@ class userController {
 
     async like(req, res) {
         try {
-            const { userId, songId, albumId, artistId } = req.body;
+            const { userId, songId } = req.body;
             const user = new userModel(userId, null, null, null, null, null, null);
-            const likedSong = await user.likeASong(songId, albumId, artistId);
+            const likedSong = await user.likeASong(songId);
             res.status(200).json({ message: 'Song liked by user' });
         } catch (err) {
             console.error(err);
@@ -73,9 +73,9 @@ class userController {
 
     async unlike(req, res) {
         try {
-            const { userId, songId, albumId, artistId } = req.body;
+            const { userId, songId } = req.body;
             const user = new userModel(userId, null, null, null, null, null, null);
-            const unlikedSong = await user.unlikeASong(songId, albumId, artistId);
+            const unlikedSong = await user.unlikeASong(songId);
             res.status(200).json({ message: 'Song unliked by user' });
         } catch (err) {
             console.error(err);
@@ -85,9 +85,22 @@ class userController {
 
     async randomSong(req, res) {
         try {
+            const { userId } = req.body;
             const song = new songModel(null, null, null, null, null, null, null);
-            const randomSong = await song.getRandom();
+            const randomSong = await song.getRandom(userId);
             res.status(200).json({ song: randomSong });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async playSong(req, res) {
+        try {
+            const { userId, songId } = req.body;
+            const song = new songModel(songId, null, null, null, null, null, null);
+            const songObtained = await song.getToPlay(userId);
+            res.status(200).json({ song: songObtained });
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Internal Server Error' });
