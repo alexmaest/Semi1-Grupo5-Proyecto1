@@ -111,32 +111,18 @@ class MediaPlayer extends Component {
 
   handlerOnListen = () => {
     if (sessionStorage.getItem("radio") === "false") {
-      this.nextSong();
-    }
-  };
-
-  onListen = () => {
-    const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
-    if (
-      tracks[sessionStorage.getItem("noSong")] != this.state.id &&
-      tracks.length == 1
-    ) {
-      sessionStorage.setItem(
-        "noSong",
-        parseInt(sessionStorage.getItem("noSong")) >= tracks.length - 1
-          ? 0
-          : (parseInt(sessionStorage.getItem("noSong")) + 1) % tracks.length
-      );
-
-      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
-        .then((response) => response.json())
-        .then((data) => {
-          this.setState({
-            title: data.song.name + " - " + data.song.duration,
-            src: data.song.songFile,
-            id: data.song.id_song,
+      const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
+      if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
+        fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+          .then((response) => response.json())
+          .then((data) => {
+            this.setState({
+              title: data.song.name + " - " + data.song.duration,
+              src: data.song.songFile,
+              id: data.song.id_song,
+            });
           });
-        });
+      }
     }
   };
 
@@ -165,7 +151,7 @@ class MediaPlayer extends Component {
           onClickPrevious={this.handlerOnClickPrevious}
           onError={this.handlerOnClickNext}
           onEnded={this.handlerOnClickNext}
-          onListen={this.onListen}
+          onListen={this.handlerOnListen}
           autoPlayAfterSrcChange={true}
           autoPlay={true}
         />

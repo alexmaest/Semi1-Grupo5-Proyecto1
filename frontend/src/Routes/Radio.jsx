@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { MdWidthFull } from "react-icons/md";
 const api = import.meta.env.VITE_API;
 
 class Radio extends Component {
@@ -49,13 +48,11 @@ class Radio extends Component {
         style={{ height: "100%", width: "100%", maxWidth: "100%" }}
         className="d-flex align-items-center justify-content-center"
       >
-        <div className="col-ms-4">
-          <img
-            src={this.state.src}
-            alt=""
-            style={{width: "100%" }}
-            className="rounded img-fluid"
-          ></img>
+        <div
+          style={{ width: "60%", height: "60%" }}
+          className="d-flex align-items-center justify-content-center"
+        >
+          <img src={this.state.src} alt="" className="img-fluid rounded"></img>
         </div>
       </div>
     );
