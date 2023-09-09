@@ -65,7 +65,6 @@ ADD CONSTRAINT unique_playlist_cancion UNIQUE (Playlist, Cancion);
 
 create table REPRODUCCION_BITACORA(
 Id int primary key auto_increment,
-Cantidad int,
 Usuario int,
 Cancion int,
 foreign key (Usuario) references USUARIO(Id), 
