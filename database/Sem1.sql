@@ -46,9 +46,11 @@ Id int primary key auto_increment,
 Nombre varchar(50) not null,
 Descripcion varchar(100),
 Src varchar(100) not null,
-Usuario int,
-foreign key (Usuario) references USUARIO(Id) 
+Usuario int
 );
+
+ALTER TABLE Semi1.PLAYLIST
+ADD CONSTRAINT FK_Playlist_Usuario FOREIGN KEY (Usuario) REFERENCES USUARIO(Id);
 
 create table PLAYLIST_CANCION(
 Id int primary key auto_increment,
@@ -57,6 +59,9 @@ Cancion int,
 foreign key (Playlist) references PLAYLIST(Id), 
 foreign key (Cancion) references CANCION(Id) 
 );
+
+ALTER TABLE Semi1.PLAYLIST_CANCION
+ADD CONSTRAINT unique_playlist_cancion UNIQUE (Playlist, Cancion);
 
 create table REPRODUCCION_BITACORA(
 Id int primary key auto_increment,
