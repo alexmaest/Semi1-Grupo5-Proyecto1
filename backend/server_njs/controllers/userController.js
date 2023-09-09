@@ -85,9 +85,22 @@ class userController {
 
     async randomSong(req, res) {
         try {
+            const { userId } = req.body;
             const song = new songModel(null, null, null, null, null, null, null);
-            const randomSong = await song.getRandom();
+            const randomSong = await song.getRandom(userId);
             res.status(200).json({ song: randomSong });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async playSong(req, res) {
+        try {
+            const { userId, songId } = req.body;
+            const song = new songModel(songId, null, null, null, null, null, null);
+            const songObtained = await song.getToPlay(userId);
+            res.status(200).json({ song: songObtained });
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Internal Server Error' });
