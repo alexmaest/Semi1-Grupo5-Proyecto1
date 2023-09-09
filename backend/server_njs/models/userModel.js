@@ -92,6 +92,19 @@ class userModel {
     });
   }
 
+  getAdmin() {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM USUARIO WHERE Id = 1';
+      db.connection.query(query, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result[0]);
+        }
+      });
+    });
+  }
+
   getById(userId) {
     return new Promise((resolve, reject) => {
       const query = 'SELECT * FROM USUARIO WHERE Id = ?';

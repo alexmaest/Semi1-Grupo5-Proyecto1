@@ -3,6 +3,8 @@ const router = express.Router();
 
 const adminController = require('../controllers/adminController');
 
+router.post('/password', adminController.passValidation);   // Admin password validation
+
 //Artist CRUD
 router.get('/artistAlbums/:id', adminController.getArtistAlbums); // Obtain all artist albums
 router.get('/artist/:id', adminController.getSingleArtist); // Obtain a single artist
