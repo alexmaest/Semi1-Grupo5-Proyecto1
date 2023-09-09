@@ -18,7 +18,7 @@ export async function loader() {
 
 export default function Canciones() {
   const datos = useLoaderData();
-  const [canciones, setArtistas] = useState(datos.songs);
+  const [canciones, setCanciones] = useState(datos.songs);
   const [buscar, setBuscar] = useState(0);
 
   function handlerEliminar(param) {
@@ -39,7 +39,7 @@ export default function Canciones() {
       fetch(api + "/admin/song/")
         .then((response) => response.json())
         .then((data) => {
-          setArtistas(data.songs);
+          setCanciones(data.songs);
         });
       return;
     }
@@ -47,9 +47,9 @@ export default function Canciones() {
       .then((response) => response.json())
       .then((data) => {
         if (data.song != null) {
-          setArtistas([data.song]);
+          setCanciones([data.song]);
         } else {
-          setArtistas([]);
+          setCanciones([]);
         }
       });
   }

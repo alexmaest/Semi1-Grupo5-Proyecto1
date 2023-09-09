@@ -71,6 +71,16 @@ class userModel:
         except Exception as e:
             raise e
 
+    def get_admin(self):
+        try:
+            with connection.cursor() as db_cursor:
+                query = 'SELECT * FROM USUARIO WHERE Id = 1;'
+                db_cursor.execute(query)
+                result = db_cursor.fetchone()
+                return result
+        except Exception as e:
+            raise e
+
     def get_by_id(self, user_id):
         try:
             with connection.cursor() as db_cursor:

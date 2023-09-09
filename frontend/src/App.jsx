@@ -19,6 +19,7 @@ import ModificarAlbum, {loader as loaderMAlbum} from "./Routes/Album/ModificarAl
 import Canciones , {loader as loaderCancion} from "./Routes/Cancion/Cancion";
 import ModificarCancion, {loader as loaderMCancion} from "./Routes/Cancion/ModificarCancion";
 import Radio from "./Routes/Radio";
+import Playlist, {loader as loaderPlaylist} from "./Routes/Playlist/Playlist";
 
 function App() {
   const router = createBrowserRouter([
@@ -78,7 +79,8 @@ function App() {
         },
         {
           path: "Playlist",
-          element: <h1>Aqui deberian ir la playlist</h1>,
+          loader: loaderPlaylist,
+          element: <Playlist />,
         },
         {
           path: "Artista",

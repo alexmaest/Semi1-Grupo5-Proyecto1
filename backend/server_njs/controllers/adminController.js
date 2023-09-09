@@ -1,11 +1,32 @@
 const artistModel = require('../models/artistModel');
 const albumModel = require('../models/albumModel');
 const songModel = require('../models/songModel');
+const userModel = require('../models/userModel');
 const loadController = require('./loadController')
 const multer = require('multer');
 
 class adminController {
     constructor() { }
+
+    async passValidation(req, res) {
+        try {
+            const adminPassword = req.body.password;
+            const admin = new userModel(null, null, null, null, adminPassword, null, null);
+            const adminObtained = await admin.getAdmin();
+            if (!adminObtained) {
+                res.status(501).json({ message: 'Account admin does not exist' });
+            } else {
+                if (adminObtained.Psw !== admin.password) {
+                    res.status(200).json({ message: false });
+                } else {
+                    res.status(200).json({ message: true });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 
     async createArtist(req, res) {
         try {
