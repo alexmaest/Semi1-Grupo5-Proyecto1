@@ -51,8 +51,8 @@ class PlaylistController {
 
     async updatePlaylist(req, res) {
         try {
-            const { id, Nombre, Descripcion, Src } = req.body;
-            const playlist = new PlaylistModel(id, Nombre, Descripcion, Src, null);
+            const { Id, Nombre, Descripcion, Src } = req.body;
+            const playlist = new PlaylistModel(Id, Nombre, Descripcion, Src, null);
             //Cambios para recibir base64 en la imagen de la playlist.
             if (Src != null) {
                 const imageUrl = await loadController.uploadImage(Src);
