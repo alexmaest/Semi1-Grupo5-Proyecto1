@@ -58,34 +58,21 @@ foreign key (Playlist) references PLAYLIST(Id),
 foreign key (Cancion) references CANCION(Id) 
 );
 
-create table USUARIO_CANCION(
+create table REPRODUCCION_BITACORA(
 Id int primary key auto_increment,
-Reproducciones int,
+Cantidad int,
 Usuario int,
 Cancion int,
 foreign key (Usuario) references USUARIO(Id), 
 foreign key (Cancion) references CANCION(Id) 
 );
 
-create table USUARIO_ALBUM(
+
+create table FAVORITO(
 Id int primary key auto_increment,
-Reproducciones int,
 Usuario int,
-Album int,
+Cancion int,
 foreign key (Usuario) references USUARIO(Id), 
-foreign key (Album) references ALBUM(Id) 
+foreign key (Cancion) references CANCION(Id) 
 );
 
-create table USUARIO_ARTISTA(
-Id int primary key auto_increment,
-Reproducciones int,
-Usuario int,
-Artista int,
-foreign key (Usuario) references USUARIO(Id), 
-foreign key (Artista) references ARTISTA(Id) 
-);
-
-select * from USUARIO;
-select * from ARTISTA;
-select * FROM ALBUM;
-select * from CANCION;
