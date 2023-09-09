@@ -1,10 +1,29 @@
 from models.artistModel import artistModel
 from models.albumModel import albumModel
 from models.songModel import songModel
+from models.userModel import userModel
 from controllers.loadController import load_controller
 from flask import Blueprint, jsonify, request
 
 admin_route = Blueprint('admin_route', __name__)
+
+@admin_route.route('/password', methods=['POST'])
+def pass_validation():
+    try:
+        data = request.get_json()
+        adminPassword = data['password']
+        admin = userModel(None, None, None, None, adminPassword, None, None)
+        adminObtained = admin.get_admin()
+        if adminObtained:
+            if adminObtained['Psw'] != adminPassword:
+                return jsonify({ 'message': False }), 200
+            else:
+                return jsonify({ 'message': True }), 200
+        else:
+            return jsonify({ 'message': 'Account admin does not exist' }), 501
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500
 
 #Artist CRUD
 @admin_route.route('/artistAlbums/<int:id>', methods=['GET'])
