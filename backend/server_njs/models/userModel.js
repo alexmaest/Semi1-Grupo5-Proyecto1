@@ -296,6 +296,36 @@ class userModel {
       });
     });
   }
+
+  getFavoriteSongs_By_User() {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT f.Id , f.Usuario , f.Cancion AS Id_Cancion ,
+        c.Nombre AS Cancion , a.Nombre AS Artista , a2.Nombre AS Album
+        FROM FAVORITO f  
+        INNER JOIN CANCION c ON c.Id = f.Cancion 
+        INNER JOIN ARTISTA a ON a.Id  = c.Artista 
+        INNER JOIN ALBUM a2 ON a2.Id = c.Album 
+        WHERE f.Usuario = ? ;
+      `
+      db.connection.query(query, this.id_user, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const songList = results.map(result => ({
+            'Id': result.Id,
+            'Reproducciones': result.Reproducciones,
+            'Usuario': result.Usuario,
+            'Id_Cancion': result.Id_Cancion,
+            'Cancion': result.Cancion,
+            'Artista': result.Artista,
+            'Album': result.Album
+          }));
+          resolve(songList);
+        }
+      });
+    });
+  }
 }
 
 module.exports = userModel;

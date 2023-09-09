@@ -76,6 +76,7 @@ SELECT * FROM Semi1.CANCION;
 select * from Semi1.PLAYLIST_CANCION;
 SELECT * FROM Semi1.PLAYLIST;
 SELECT * FROM Semi1.USUARIO;
+SELECT * FROM Semi1.USUARIO_CANCION;
 
 INSERT INTO `Semi1`.`PLAYLIST`
 (`Nombre`, `Descripcion`, `Src`, `Usuario`)

@@ -93,6 +93,18 @@ class userController {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }
+
+    async getFavoriteSongs_By_User(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = new userModel(userId, null, null, null, null, null, null);
+            const likedSongs = await user.getFavoriteSongs_By_User();
+            res.status(200).json({ success: likedSongs });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 }
 
 module.exports = new userController();
