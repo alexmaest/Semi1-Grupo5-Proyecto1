@@ -71,27 +71,36 @@ class songModel {
                             reject(err);
                         });
                     } else {
-                        const deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = ?';
+                        const deleteUsuarioCancionQuery = 'DELETE FROM REPRODUCCION_BITACORA WHERE Cancion = ?';
                         db.connection.query(deleteUsuarioCancionQuery, [this.id_song], (err, result) => {
                             if (err) {
                                 db.connection.rollback(() => {
                                     reject(err);
                                 });
                             } else {
-                                const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
-                                db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
+                                const deleteUsuarioCancionQuery = 'DELETE FROM FAVORITO WHERE Cancion = ?';
+                                db.connection.query(deleteUsuarioCancionQuery, [this.id_song], (err, result) => {
                                     if (err) {
                                         db.connection.rollback(() => {
                                             reject(err);
                                         });
                                     } else {
-                                        db.connection.commit((err) => {
+                                        const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
+                                        db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
                                             if (err) {
                                                 db.connection.rollback(() => {
                                                     reject(err);
                                                 });
                                             } else {
-                                                resolve(result.affectedRows > 0);
+                                                db.connection.commit((err) => {
+                                                    if (err) {
+                                                        db.connection.rollback(() => {
+                                                            reject(err);
+                                                        });
+                                                    } else {
+                                                        resolve(result.affectedRows > 0);
+                                                    }
+                                                });
                                             }
                                         });
                                     }

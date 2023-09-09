@@ -45,10 +45,10 @@ class artistModel:
             with connection.cursor() as db_cursor:
                 db_cursor.execute('START TRANSACTION')
                 
-                deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album IN (SELECT Id FROM ALBUM WHERE Artista = %s)'
+                deleteUsuarioAlbumQuery = 'DELETE FROM FAVORITO WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = %s)'
                 db_cursor.execute(deleteUsuarioAlbumQuery, (self.id_artist,))
                 
-                deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = %s)'
+                deleteUsuarioCancionQuery = 'DELETE FROM REPRODUCCION_BITACORA WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = %s)'
                 db_cursor.execute(deleteUsuarioCancionQuery, (self.id_artist,))
                 
                 deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = %s)'
@@ -59,9 +59,6 @@ class artistModel:
                 
                 deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Artista = %s'
                 db_cursor.execute(deleteAlbumQuery, (self.id_artist,))
-                
-                deleteUsuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Artista = %s'
-                db_cursor.execute(deleteUsuarioArtistaQuery, (self.id_artist,))
                 
                 deleteArtistaQuery = 'DELETE FROM ARTISTA WHERE Id = %s'
                 db_cursor.execute(deleteArtistaQuery, (self.id_artist,))

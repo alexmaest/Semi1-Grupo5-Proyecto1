@@ -37,10 +37,8 @@ def like():
         data = request.get_json()
         userId = data['userId']
         songId = data['songId']
-        albumId = data['albumId']
-        artistId = data['artistId']
         user = userModel(userId, None, None, None, None, None, None)
-        likedSong = user.likeASong(songId, albumId, artistId)
+        likedSong = user.likeASong(songId)
         return jsonify({ 'message': 'Song liked by user' }), 200
     except Exception as e:
         print(e)
@@ -52,10 +50,8 @@ def unlike():
         data = request.get_json()
         userId = data['userId']
         songId = data['songId']
-        albumId = data['albumId']
-        artistId = data['artistId']
         user = userModel(userId, None, None, None, None, None, None)
-        unlikedSong = user.unlikeASong(songId, albumId, artistId)
+        unlikedSong = user.unlikeASong(songId)
         return jsonify({ 'message': 'Song unliked by user' }), 200
     except Exception as e:
         print(e)

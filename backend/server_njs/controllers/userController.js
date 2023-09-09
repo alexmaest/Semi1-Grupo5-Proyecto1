@@ -61,9 +61,9 @@ class userController {
 
     async like(req, res) {
         try {
-            const { userId, songId, albumId, artistId } = req.body;
+            const { userId, songId } = req.body;
             const user = new userModel(userId, null, null, null, null, null, null);
-            const likedSong = await user.likeASong(songId, albumId, artistId);
+            const likedSong = await user.likeASong(songId);
             res.status(200).json({ message: 'Song liked by user' });
         } catch (err) {
             console.error(err);
@@ -73,9 +73,9 @@ class userController {
 
     async unlike(req, res) {
         try {
-            const { userId, songId, albumId, artistId } = req.body;
+            const { userId, songId } = req.body;
             const user = new userModel(userId, null, null, null, null, null, null);
-            const unlikedSong = await user.unlikeASong(songId, albumId, artistId);
+            const unlikedSong = await user.unlikeASong(songId);
             res.status(200).json({ message: 'Song unliked by user' });
         } catch (err) {
             console.error(err);

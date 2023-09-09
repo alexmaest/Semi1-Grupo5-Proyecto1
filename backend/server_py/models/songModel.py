@@ -51,7 +51,10 @@ class songModel:
                 deletePlaylistCancionQuery = 'DELETE FROM PLAYLIST_CANCION WHERE Cancion = %s'
                 db_cursor.execute(deletePlaylistCancionQuery, (self.id_song,))
                 
-                deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = %s'
+                deleteUsuarioCancionQuery = 'DELETE FROM REPRODUCCION_BITACORA WHERE Cancion = %s'
+                db_cursor.execute(deleteUsuarioCancionQuery, (self.id_song,))
+
+                deleteUsuarioCancionQuery = 'DELETE FROM FAVORITO WHERE Cancion = %s'
                 db_cursor.execute(deleteUsuarioCancionQuery, (self.id_song,))
                 
                 deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = %s'
