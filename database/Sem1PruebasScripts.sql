@@ -9,7 +9,7 @@ VALUES
 INSERT INTO `Semi1`.`USUARIO`
 (`Id`, `Nombre`, `Apellido`, `Src`, `Correo`, `Psw`, `Fecha_nac`)
 VALUES
-(1, 'John', 'Doe', 'user1.jpg', 'john@example.com', 'password123', '1990-05-15'),
+(1, 'John', 'Doe', 'user1.jpg', 'gigachad@ingenieria.mx', 'admin', '1990-05-15'),
 (2, 'Jane', 'Smith', 'user2.jpg', 'jane@example.com', 'password456', '1988-09-20'),
 (3, 'Michael', 'Johnson', 'user3.jpg', 'michael@example.com', 'password789', '1995-02-10'),
 (4, 'Emily', 'Brown', 'user4.jpg', 'emily@example.com', 'securepass', '1992-11-28'),
@@ -35,7 +35,7 @@ INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src, Usuario)
 VALUES ('Lista de éxitos', 'Las mejores canciones del año', 'playlist2.jpg', 2);
 
 -- Insertar una playlist para el usuario Michael Johnson
-INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src)
+INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src, Usuario)
 VALUES ('Música relajante', 'Canciones suaves para relajarse', 'playlist3.jpg', 3);
 
 -- Insertar una playlist para el usuario Emily Brown
@@ -51,7 +51,7 @@ INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src, Usuario)
 VALUES ('Música favorita', 'Canciones preferidas', 'playlist6.jpg', 6);
 
 -- Insertar una playlist para el usuario Angel Marroquín (ERROR)
-INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src)
+INSERT INTO Semi1.PLAYLIST (Nombre, Descripcion, Src, Usuario)
 VALUES ('Lista de reproducción variada', 'Diferentes géneros musicales', 'playlist7.jpg');
 
 -- Insertar una playlist para el usuario Estuardo Gabriel Son Mux (ERROR)
@@ -63,13 +63,7 @@ WHERE Usuario IS NULL;
 
 delete FROM Semi1.PLAYLIST WHERE Id = 3;
 
-
-
 SELECT * FROM Semi1.USUARIO;
-
--- Agregar la restricción de clave externa a la tabla PLAYLIST
-ALTER TABLE Semi1.PLAYLIST
-ADD CONSTRAINT FK_Playlist_Usuario FOREIGN KEY (Usuario) REFERENCES USUARIO(Id);
 
 SELECT * FROM Semi1.CANCION WHERE Semi1.PLAYLIST_CANCION.Playlist = 1;
 SELECT * FROM Semi1.CANCION;
@@ -99,10 +93,6 @@ INSERT INTO `Semi1`.`PLAYLIST`
 (`Nombre`, `Descripcion`, `Src`, `Usuario`)
 VALUES
 ('Mi Playlist 1', 'Esta es mi primera lista de reproducción', 'src1.com', 2);
-
-
-ALTER TABLE Semi1.PLAYLIST_CANCION
-ADD CONSTRAINT unique_playlist_cancion UNIQUE (Playlist, Cancion);
 
 delete FROM Semi1.PLAYLIST_CANCION WHERE Id <= 13;
 SELECT * FROM Semi1.PLAYLIST_CANCION;
