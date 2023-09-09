@@ -6,11 +6,25 @@ from flask import Blueprint, jsonify, request
 
 user_route = Blueprint('user_route', __name__)
 
+@user_route.route('/play', methods=['GET'])
+def play_song():
+    try:
+        data = request.get_json()
+        userId = data['userId']
+        songId = data['songId']
+        song = songModel(songId, None, None, None, None, None, None)
+        song_obtained = song.get_to_play(userId)
+        return jsonify({'song': song_obtained}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Internal Server Error'}), 500
+
 @user_route.route('/random', methods=['GET'])
 def random_song():
     try:
+        userId = request.json.get('userId')
         song = songModel(None, None, None, None, None, None, None)
-        random_song = song.get_random()
+        random_song = song.get_random(userId)
         return jsonify({'song': random_song}), 200
     except Exception as e:
         print(e)
@@ -37,10 +51,8 @@ def like():
         data = request.get_json()
         userId = data['userId']
         songId = data['songId']
-        albumId = data['albumId']
-        artistId = data['artistId']
         user = userModel(userId, None, None, None, None, None, None)
-        likedSong = user.likeASong(songId, albumId, artistId)
+        likedSong = user.likeASong(songId)
         return jsonify({ 'message': 'Song liked by user' }), 200
     except Exception as e:
         print(e)
@@ -52,10 +64,8 @@ def unlike():
         data = request.get_json()
         userId = data['userId']
         songId = data['songId']
-        albumId = data['albumId']
-        artistId = data['artistId']
         user = userModel(userId, None, None, None, None, None, None)
-        unlikedSong = user.unlikeASong(songId, albumId, artistId)
+        unlikedSong = user.unlikeASong(songId)
         return jsonify({ 'message': 'Song unliked by user' }), 200
     except Exception as e:
         print(e)

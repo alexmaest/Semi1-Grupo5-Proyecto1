@@ -60,7 +60,6 @@ class albumModel {
                     reject(err);
                     return;
                 }
-    
                 const removeAlbumFromSongQuery = 'UPDATE CANCION SET Album = NULL WHERE Album = ?';
                 db.connection.query(removeAlbumFromSongQuery, [this.id_album], (err, result) => {
                     if (err) {
@@ -68,29 +67,20 @@ class albumModel {
                             reject(err);
                         });
                     } else {
-                        const deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album = ?';
-                        db.connection.query(deleteUsuarioAlbumQuery, [this.id_album], (err, result) => {
+                        const deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Id = ?';
+                        db.connection.query(deleteAlbumQuery, [this.id_album], (err, result) => {
                             if (err) {
                                 db.connection.rollback(() => {
                                     reject(err);
                                 });
                             } else {
-                                const deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Id = ?';
-                                db.connection.query(deleteAlbumQuery, [this.id_album], (err, result) => {
+                                db.connection.commit((err) => {
                                     if (err) {
                                         db.connection.rollback(() => {
                                             reject(err);
                                         });
                                     } else {
-                                        db.connection.commit((err) => {
-                                            if (err) {
-                                                db.connection.rollback(() => {
-                                                    reject(err);
-                                                });
-                                            } else {
-                                                resolve(result.affectedRows > 0);
-                                            }
-                                        });
+                                        resolve(result.affectedRows > 0);
                                     }
                                 });
                             }
@@ -119,7 +109,7 @@ class albumModel {
                             name: this.name,
                             description: this.description,
                             coverPhoto: this.coverPhoto,
-                            artistId : this.artistId
+                            artistId: this.artistId
                         };
                         resolve(albumObtained);
                     } else {
@@ -175,13 +165,13 @@ class albumModel {
                     reject(err);
                 } else {
                     const songList = results.map(result => ({
-                        'id_song' : result.Id,
-                        'name' : result.Nombre,
-                        'coverPhoto' : result.Src_image,
-                        'songFile' : result.Src_mp3,
-                        'duration' : result.Duracion,
-                        'artist' : result.Artista,
-                        'album' : result.Album
+                        'id_song': result.Id,
+                        'name': result.Nombre,
+                        'coverPhoto': result.Src_image,
+                        'songFile': result.Src_mp3,
+                        'duration': result.Duracion,
+                        'artist': result.Artista,
+                        'album': result.Album
                     }));
                     resolve(songList);
                 }
@@ -222,7 +212,7 @@ class albumModel {
                 FROM ALBUM A
                 WHERE A.Nombre REGEXP ?;
             `;
-    
+
             db.connection.query(albumQuery, [search], (err, albumResults) => {
                 if (err) {
                     reject(err);
@@ -235,7 +225,7 @@ class albumModel {
                         'artistId': albumResult.artistId,
                         'songs': []
                     }));
-    
+
                     const songQuery = `
                         SELECT C.Id AS songId, C.Nombre AS songName, C.Src_image AS songCover, C.Src_mp3 AS songFile, C.Duracion AS songDuration, A.Nombre AS artistName, B.Nombre AS albumName, B.Id AS IdAlbum, A.Id AS IdArtista
                         FROM CANCION C
@@ -243,7 +233,7 @@ class albumModel {
                         INNER JOIN ALBUM B ON C.Album = B.Id
                         WHERE B.Nombre REGEXP ?;
                     `;
-    
+
                     db.connection.query(songQuery, [search], (err, songResults) => {
                         if (err) {
                             reject(err);

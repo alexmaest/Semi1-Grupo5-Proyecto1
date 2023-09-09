@@ -59,14 +59,14 @@ class artistModel {
                     return;
                 }
 
-                const deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album IN (SELECT Id FROM ALBUM WHERE Artista = ?)';
+                const deleteUsuarioAlbumQuery = 'DELETE FROM FAVORITO WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = ?)';
                 db.connection.query(deleteUsuarioAlbumQuery, [this.id_artist], (err) => {
                     if (err) {
                         db.connection.rollback(() => {
                             reject(err);
                         });
                     } else {
-                        const deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = ?)';
+                        const deleteUsuarioCancionQuery = 'DELETE FROM REPRODUCCION_BITACORA WHERE Cancion IN (SELECT Id FROM CANCION WHERE Artista = ?)';
                         db.connection.query(deleteUsuarioCancionQuery, [this.id_artist], (err) => {
                             if (err) {
                                 db.connection.rollback(() => {
@@ -94,29 +94,20 @@ class artistModel {
                                                             reject(err);
                                                         });
                                                     } else {
-                                                        const deleteUsuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Artista = ?';
-                                                        db.connection.query(deleteUsuarioArtistaQuery, [this.id_artist], (err) => {
+                                                        const deleteArtistaQuery = 'DELETE FROM ARTISTA WHERE Id = ?';
+                                                        db.connection.query(deleteArtistaQuery, [this.id_artist], (err) => {
                                                             if (err) {
                                                                 db.connection.rollback(() => {
                                                                     reject(err);
                                                                 });
                                                             } else {
-                                                                const deleteArtistaQuery = 'DELETE FROM ARTISTA WHERE Id = ?';
-                                                                db.connection.query(deleteArtistaQuery, [this.id_artist], (err) => {
+                                                                db.connection.commit((err) => {
                                                                     if (err) {
                                                                         db.connection.rollback(() => {
                                                                             reject(err);
                                                                         });
                                                                     } else {
-                                                                        db.connection.commit((err) => {
-                                                                            if (err) {
-                                                                                db.connection.rollback(() => {
-                                                                                    reject(err);
-                                                                                });
-                                                                            } else {
-                                                                                resolve(true);
-                                                                            }
-                                                                        });
+                                                                        resolve(true);
                                                                     }
                                                                 });
                                                             }
@@ -225,7 +216,7 @@ class artistModel {
                 FROM ARTISTA A
                 WHERE A.Nombre REGEXP ?;
             `;
-    
+
             db.connection.query(artistQuery, [search], (err, artistResults) => {
                 if (err) {
                     reject(err);
@@ -237,7 +228,7 @@ class artistModel {
                         'profilePhoto': artistResult.artistProfilePhoto,
                         'songs': []
                     }));
-    
+
                     const songQuery = `
                         SELECT C.Id AS songId, C.Nombre AS songName, C.Src_image AS songCover, C.Src_mp3 AS songFile, C.Duracion AS songDuration, A.Nombre AS artistName, B.Nombre AS albumName, B.Id AS IdAlbum, A.Id AS IdArtista
                         FROM CANCION C
@@ -245,7 +236,7 @@ class artistModel {
                         INNER JOIN ALBUM B ON C.Album = B.Id
                         WHERE A.Nombre REGEXP ?;
                     `;
-    
+
                     db.connection.query(songQuery, [search], (err, songResults) => {
                         if (err) {
                             reject(err);
@@ -273,7 +264,7 @@ class artistModel {
             });
         });
     }
-    
+
 }
 
 module.exports = artistModel;

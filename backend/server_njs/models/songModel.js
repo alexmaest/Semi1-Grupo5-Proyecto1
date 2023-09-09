@@ -71,27 +71,36 @@ class songModel {
                             reject(err);
                         });
                     } else {
-                        const deleteUsuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Cancion = ?';
+                        const deleteUsuarioCancionQuery = 'DELETE FROM REPRODUCCION_BITACORA WHERE Cancion = ?';
                         db.connection.query(deleteUsuarioCancionQuery, [this.id_song], (err, result) => {
                             if (err) {
                                 db.connection.rollback(() => {
                                     reject(err);
                                 });
                             } else {
-                                const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
-                                db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
+                                const deleteUsuarioCancionQuery = 'DELETE FROM FAVORITO WHERE Cancion = ?';
+                                db.connection.query(deleteUsuarioCancionQuery, [this.id_song], (err, result) => {
                                     if (err) {
                                         db.connection.rollback(() => {
                                             reject(err);
                                         });
                                     } else {
-                                        db.connection.commit((err) => {
+                                        const deleteCancionQuery = 'DELETE FROM CANCION WHERE Id = ?';
+                                        db.connection.query(deleteCancionQuery, [this.id_song], (err, result) => {
                                             if (err) {
                                                 db.connection.rollback(() => {
                                                     reject(err);
                                                 });
                                             } else {
-                                                resolve(result.affectedRows > 0);
+                                                db.connection.commit((err) => {
+                                                    if (err) {
+                                                        db.connection.rollback(() => {
+                                                            reject(err);
+                                                        });
+                                                    } else {
+                                                        resolve(result.affectedRows > 0);
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -228,7 +237,7 @@ class songModel {
         });
     }
 
-    getRandom() {
+    getRandom(userId) {
         return new Promise((resolve, reject) => {
             const query = `
                 SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
@@ -260,7 +269,56 @@ class songModel {
                             id_artist: result[0].IdArtista,
                             id_album: result[0].IdAlbum
                         };
-                        resolve(songObtained);
+                        
+                        const insertQuery = 'INSERT INTO REPRODUCCION_BITACORA (Usuario, Cancion) VALUES (?, ?);';
+                        db.connection.query(insertQuery, [userId, this.id_song], (insertErr, insertResult) => {
+                            if (insertErr) {
+                                reject(insertErr);
+                            } else {
+                                resolve(songObtained);
+                            }
+                        });
+                    } else {
+                        resolve(null);
+                    }
+                }
+            });
+        });
+    }
+
+    getToPlay(userId) {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM CANCION WHERE Id = ?;';
+            db.connection.query(query, [this.id_song], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (result.length > 0) {
+                        this.id_song = result[0].Id;
+                        this.name = result[0].Nombre;
+                        this.coverPhoto = result[0].Src_image;
+                        this.songFile = result[0].Src_mp3;
+                        this.duration = result[0].Duracion;
+                        this.artist = result[0].Artista;
+                        this.album = result[0].Album;
+                        const songObtained = {
+                            id_song: this.id_song,
+                            name: this.name,
+                            coverPhoto: this.coverPhoto,
+                            songFile: this.songFile,
+                            duration: this.duration,
+                            artist: this.artist,
+                            album: this.album
+                        };
+                        
+                        const insertQuery = 'INSERT INTO REPRODUCCION_BITACORA (Usuario, Cancion) VALUES (?, ?);';
+                        db.connection.query(insertQuery, [userId, this.id_song], (insertErr, insertResult) => {
+                            if (insertErr) {
+                                reject(insertErr);
+                            } else {
+                                resolve(songObtained);
+                            }
+                        });
                     } else {
                         resolve(null);
                     }

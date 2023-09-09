@@ -46,9 +46,11 @@ Id int primary key auto_increment,
 Nombre varchar(50) not null,
 Descripcion varchar(100),
 Src varchar(100) not null,
-Usuario int,
-foreign key (Usuario) references USUARIO(Id) 
+Usuario int
 );
+
+ALTER TABLE Semi1.PLAYLIST
+ADD CONSTRAINT FK_Playlist_Usuario FOREIGN KEY (Usuario) REFERENCES USUARIO(Id);
 
 create table PLAYLIST_CANCION(
 Id int primary key auto_increment,
@@ -58,34 +60,23 @@ foreign key (Playlist) references PLAYLIST(Id),
 foreign key (Cancion) references CANCION(Id) 
 );
 
-create table USUARIO_CANCION(
+ALTER TABLE Semi1.PLAYLIST_CANCION
+ADD CONSTRAINT unique_playlist_cancion UNIQUE (Playlist, Cancion);
+
+create table REPRODUCCION_BITACORA(
 Id int primary key auto_increment,
-Reproducciones int,
 Usuario int,
 Cancion int,
 foreign key (Usuario) references USUARIO(Id), 
 foreign key (Cancion) references CANCION(Id) 
 );
 
-create table USUARIO_ALBUM(
+
+create table FAVORITO(
 Id int primary key auto_increment,
-Reproducciones int,
 Usuario int,
-Album int,
+Cancion int,
 foreign key (Usuario) references USUARIO(Id), 
-foreign key (Album) references ALBUM(Id) 
+foreign key (Cancion) references CANCION(Id) 
 );
 
-create table USUARIO_ARTISTA(
-Id int primary key auto_increment,
-Reproducciones int,
-Usuario int,
-Artista int,
-foreign key (Usuario) references USUARIO(Id), 
-foreign key (Artista) references ARTISTA(Id) 
-);
-
-select * from USUARIO;
-select * from ARTISTA;
-select * FROM ALBUM;
-select * from CANCION;

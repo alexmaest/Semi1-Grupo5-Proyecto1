@@ -135,7 +135,7 @@ class userModel {
     });
   }
 
-  likeASong(songId, albumId, artistId) {
+  likeASong(songId) {
     return new Promise((resolve, reject) => {
       db.connection.beginTransaction((err) => {
         if (err) {
@@ -143,7 +143,7 @@ class userModel {
           return;
         }
 
-        const checkCancionQuery = 'SELECT COUNT(*) AS count FROM USUARIO_CANCION WHERE Usuario = ? AND Cancion = ?;';
+        const checkCancionQuery = 'SELECT COUNT(*) AS count FROM FAVORITO WHERE Usuario = ? AND Cancion = ?;';
         db.connection.query(checkCancionQuery, [this.id_user, songId], (err, result) => {
           if (err) {
             db.connection.rollback(() => {
@@ -162,84 +162,14 @@ class userModel {
                 }
               });
             } else {
-              const usuarioCancionQuery = 'INSERT INTO USUARIO_CANCION (Reproducciones, Usuario, Cancion) VALUES (0, ?, ?);';
+              const usuarioCancionQuery = 'INSERT INTO FAVORITO (Usuario, Cancion) VALUES (?, ?);';
               db.connection.query(usuarioCancionQuery, [this.id_user, songId], (err, result) => {
                 if (err) {
                   db.connection.rollback(() => {
                     reject(err);
                   });
                 } else {
-                  const checkAlbumQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ALBUM WHERE Usuario = ? AND Album = ?;';
-                  db.connection.query(checkAlbumQuery, [this.id_user, albumId], (err, result) => {
-                    if (err) {
-                      db.connection.rollback(() => {
-                        reject(err);
-                      });
-                    } else {
-                      const countAlbum = result[0].count;
-                      if (countAlbum > 0) {
-                        db.connection.commit((err) => {
-                          if (err) {
-                            db.connection.rollback(() => {
-                              reject(err);
-                            });
-                          } else {
-                            resolve(false);
-                          }
-                        });
-                      } else {
-                        const usuarioAlbumQuery = 'INSERT INTO USUARIO_ALBUM (Reproducciones, Usuario, Album) VALUES (0, ?, ?);';
-                        db.connection.query(usuarioAlbumQuery, [this.id_user, albumId], (err, result) => {
-                          if (err) {
-                            db.connection.rollback(() => {
-                              reject(err);
-                            });
-                          } else {
-                            const checkArtistaQuery = 'SELECT COUNT(*) AS count FROM USUARIO_ARTISTA WHERE Usuario = ? AND Artista = ?;';
-                            db.connection.query(checkArtistaQuery, [this.id_user, artistId], (err, result) => {
-                              if (err) {
-                                db.connection.rollback(() => {
-                                  reject(err);
-                                });
-                              } else {
-                                const countArtista = result[0].count;
-                                if (countArtista > 0) {
-                                  db.connection.commit((err) => {
-                                    if (err) {
-                                      db.connection.rollback(() => {
-                                        reject(err);
-                                      });
-                                    } else {
-                                      resolve(false);
-                                    }
-                                  });
-                                } else {
-                                  const usuarioArtistaQuery = 'INSERT INTO USUARIO_ARTISTA (Reproducciones, Usuario, Artista) VALUES (0, ?, ?);';
-                                  db.connection.query(usuarioArtistaQuery, [this.id_user, artistId], (err, result) => {
-                                    if (err) {
-                                      db.connection.rollback(() => {
-                                        reject(err);
-                                      });
-                                    } else {
-                                      db.connection.commit((err) => {
-                                        if (err) {
-                                          db.connection.rollback(() => {
-                                            reject(err);
-                                          });
-                                        } else {
-                                          resolve(result.affectedRows > 0);
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              }
-                            });
-                          }
-                        });
-                      }
-                    }
-                  });
+                  resolve(result.affectedRows > 0);
                 }
               });
             }
@@ -249,7 +179,7 @@ class userModel {
     });
   }
 
-  unlikeASong(songId, albumId, artistId) {
+  unlikeASong(songId) {
     return new Promise((resolve, reject) => {
       db.connection.beginTransaction((err) => {
         if (err) {
@@ -257,40 +187,14 @@ class userModel {
           return;
         }
 
-        const usuarioCancionQuery = 'DELETE FROM USUARIO_CANCION WHERE Usuario = ? AND Cancion = ?;';
+        const usuarioCancionQuery = 'DELETE FROM FAVORITO WHERE Usuario = ? AND Cancion = ?;';
         db.connection.query(usuarioCancionQuery, [this.id_user, songId], (err, result) => {
           if (err) {
             db.connection.rollback(() => {
               reject(err);
             });
           } else {
-            const usuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Usuario = ? AND Album = ?;';
-            db.connection.query(usuarioAlbumQuery, [this.id_user, albumId], (err, result) => {
-              if (err) {
-                db.connection.rollback(() => {
-                  reject(err);
-                });
-              } else {
-                const usuarioArtistaQuery = 'DELETE FROM USUARIO_ARTISTA WHERE Usuario = ? AND Artista = ?;';
-                db.connection.query(usuarioArtistaQuery, [this.id_user, artistId], (err, result) => {
-                  if (err) {
-                    db.connection.rollback(() => {
-                      reject(err);
-                    });
-                  } else {
-                    db.connection.commit((err) => {
-                      if (err) {
-                        db.connection.rollback(() => {
-                          reject(err);
-                        });
-                      } else {
-                        resolve(result.affectedRows > 0);
-                      }
-                    });
-                  }
-                });
-              }
-            });
+            resolve(result.affectedRows > 0);
           }
         });
       });

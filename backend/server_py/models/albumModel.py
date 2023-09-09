@@ -49,9 +49,6 @@ class albumModel:
                 removeAlbumFromSongQuery = 'UPDATE CANCION SET Album = NULL WHERE Album = %s'
                 db_cursor.execute(removeAlbumFromSongQuery, (self.id_album,))
                 
-                deleteUsuarioAlbumQuery = 'DELETE FROM USUARIO_ALBUM WHERE Album = %s'
-                db_cursor.execute(deleteUsuarioAlbumQuery, (self.id_album,))
-                
                 deleteAlbumQuery = 'DELETE FROM ALBUM WHERE Id = %s'
                 db_cursor.execute(deleteAlbumQuery, (self.id_album,))
                 
