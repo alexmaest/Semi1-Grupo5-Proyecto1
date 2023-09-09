@@ -99,3 +99,10 @@ INSERT INTO `Semi1`.`PLAYLIST`
 (`Nombre`, `Descripcion`, `Src`, `Usuario`)
 VALUES
 ('Mi Playlist 1', 'Esta es mi primera lista de reproducción', 'src1.com', 2);
+
+
+ALTER TABLE Semi1.PLAYLIST_CANCION
+ADD CONSTRAINT unique_playlist_cancion UNIQUE (Playlist, Cancion);
+
+delete FROM Semi1.PLAYLIST_CANCION WHERE Id <= 13;
+SELECT * FROM Semi1.PLAYLIST_CANCION;
