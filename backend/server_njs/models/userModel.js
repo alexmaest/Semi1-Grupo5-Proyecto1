@@ -230,6 +230,122 @@ class userModel {
       });
     });
   }
+
+  //                        *********************PARTE DE TOPS*********************
+
+  getTopSongs_By_User() {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT Cancion AS Id_Cancion, c.Nombre AS Nombre_Cancion, COUNT(*) AS Cantidad_Reproducciones
+        FROM REPRODUCCION_BITACORA rb
+        INNER JOIN CANCION c ON c.Id = rb.Cancion 
+        WHERE rb.Usuario = ?
+        GROUP BY Cancion
+        ORDER BY Cantidad_Reproducciones DESC
+        LIMIT 5;
+      `
+      db.connection.query(query, this.id_user, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const songList = results.map(result => ({
+            'Id_Cancion': result.Id_Cancion,
+            'Nombre_Cancion': result.Nombre_Cancion,
+            'Cantidad_Reproducciones': result.Cantidad_Reproducciones
+          }));
+          resolve(songList);
+        }
+      });
+    });
+  }  
+
+  getTopArtists_By_User() {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT a.Id AS Id_Artista, a.Nombre AS Nombre_Artista,
+        SUM(rb.Cantidad_Reproducciones) AS Total_Reproducciones
+        FROM ARTISTA a
+        LEFT JOIN CANCION c ON a.Id = c.Artista
+        LEFT JOIN (
+            SELECT Usuario, Cancion, COUNT(*) AS Cantidad_Reproducciones
+            FROM REPRODUCCION_BITACORA
+            GROUP BY Cancion
+        ) rb ON c.Id = rb.Cancion
+        WHERE rb.Usuario = ?
+        GROUP BY a.Id
+        ORDER BY Total_Reproducciones DESC
+        LIMIT 3;
+      `
+      db.connection.query(query, this.id_user, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const artistList = results.map(result => ({
+            'Id_Artista': result.Id_Artista,
+            'Nombre_Artista': result.Nombre_Artista,
+            'Total_Reproducciones': result.Total_Reproducciones
+          }));
+          resolve(artistList);
+        }
+      });
+    });
+  }
+
+  getTopAlbums_By_User() {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT a.Id AS Id_Album, a.Nombre AS Nombre_Album,
+        SUM(rb.Cantidad_Reproducciones) AS Total_Reproducciones
+        FROM ALBUM a 
+        LEFT JOIN CANCION c ON a.Id = c.Artista
+        LEFT JOIN (
+            SELECT Usuario, Cancion, COUNT(*) AS Cantidad_Reproducciones
+            FROM REPRODUCCION_BITACORA
+            GROUP BY Cancion
+        ) rb ON c.Id = rb.Cancion
+        WHERE rb.Usuario = ?
+        GROUP BY a.Id
+        ORDER BY Total_Reproducciones DESC
+        LIMIT 5;
+      `
+      db.connection.query(query, this.id_user, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const albumList = results.map(result => ({
+            'Id_Album': result.Id_Album,
+            'Nombre_Album': result.Nombre_Album,
+            'Total_Reproducciones': result.Total_Reproducciones
+          }));
+          resolve(albumList);
+        }
+      });
+    });
+  }
+  
+  getHistorySongs_By_User() {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT rb.Usuario, c.Id AS Id_Cancion, c.Nombre AS Nombre_Cancion
+        FROM REPRODUCCION_BITACORA rb 
+        INNER JOIN CANCION c ON c.Id = rb.Cancion
+        WHERE rb.Usuario = ?
+        ORDER BY rb.Id DESC;
+      `
+      db.connection.query(query, this.id_user, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const songList = results.map(result => ({
+            'Usuario': result.Usuario,
+            'Id_Cancion': result.Id_Cancion,
+            'Nombre_Cancion': result.Nombre_Cancion
+          }));
+          resolve(songList);
+        }
+      });
+    });
+  }
 }
 
 module.exports = userModel;

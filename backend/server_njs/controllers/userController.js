@@ -118,6 +118,54 @@ class userController {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }
+
+    async getTopSongs_By_User(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = new userModel(userId, null, null, null, null, null, null);
+            const topSongs = await user.getTopSongs_By_User();
+            res.status(200).json({ success: topSongs });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async getTopArtists_By_User(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = new userModel(userId, null, null, null, null, null, null);
+            const topArtists = await user.getTopArtists_By_User();
+            res.status(200).json({ success: topArtists });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async getTopAlbums_By_User(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = new userModel(userId, null, null, null, null, null, null);
+            const topAlbums = await user.getTopAlbums_By_User();
+            res.status(200).json({ success: topAlbums });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    async getHistorySongs_By_User(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = new userModel(userId, null, null, null, null, null, null);
+            const historySongs = await user.getHistorySongs_By_User();
+            res.status(200).json({ success: historySongs });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 }
 
 module.exports = new userController();
