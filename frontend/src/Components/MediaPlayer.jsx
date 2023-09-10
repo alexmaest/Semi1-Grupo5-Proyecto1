@@ -80,6 +80,7 @@ class MediaPlayer extends Component {
         : parseInt(sessionStorage.getItem("noSong")) - 1
     );
 
+    if(id != tracks[sessionStorage.getItem("noSong")]){
     fetch(api + "/user/play", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -96,6 +97,7 @@ class MediaPlayer extends Component {
           id: data.song.id_song,
         });
       });
+    }
   };
 
   errorSong = () => {
