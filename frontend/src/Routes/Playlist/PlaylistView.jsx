@@ -29,19 +29,26 @@ export default function PlaylistView(props) {
 
   function handlerRemoveSong(e) {
     e.preventDefault();
-
+    const idSong =e.target.value;
     fetch(api + "/playlist/remove/song", {
       headers: { "Content-Type": "application/json" },
       method: "DELETE",
       body: JSON.stringify({
         Id_Playlist: props.playlist.Id,
-        Id_Song: e.target.value,
+        Id_Song: idSong,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          canciones.filter((cancion) => cancion.Id != e.target.value);
+          fetch(api + "/playlist/songs/" + props.playlist.Id)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Cancion eliminada");
+                setCanciones(data.success);
+              }
+            });
         } else alert("Error al eliminar cancion");
       });
   }

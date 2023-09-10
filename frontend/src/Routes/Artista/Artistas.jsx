@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-import {
-  CgPlayListSearch,
-  CgOptions,
-  CgErase,
-  CgEye
-} from "react-icons/cg";
+import { CgPlayListSearch, CgOptions, CgErase, CgEye } from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { BsPlusLg } from "react-icons/bs";
 
@@ -29,14 +24,35 @@ export default function Artistas() {
   const [datosArtista, setDatosArtista] = useState([]);
 
   function handlerEliminar(param) {
-    fetch(api + "/admin/artist/" + param, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        window.location.reload();
-      });
+    let password = prompt("Ingrese su password:", "");
+    if (password == null || password == "") {
+      alert("Password incorrecto");
+    } else {
+      fetch(api + "/admin/password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: password,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message == true) {
+            fetch(api + "/admin/artist/" + param, {
+              method: "DELETE",
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                alert(data.message);
+                window.location.reload();
+              });
+          } else {
+            alert("Password incorrecto");
+          }
+        });
+    }
   }
 
   function handlerBuscar(e) {
@@ -165,7 +181,11 @@ export default function Artistas() {
         </ModalHeader>
         <ModalBody>
           <p className="h4">{`Birthday: ` + datosArtista.birthday}</p>
-          <img style={{maxWidth:"50%"}} className="img-fluid" src={datosArtista.profilePhoto}></img>
+          <img
+            style={{ maxWidth: "50%" }}
+            className="img-fluid"
+            src={datosArtista.profilePhoto}
+          ></img>
         </ModalBody>
       </Modal>
     </>

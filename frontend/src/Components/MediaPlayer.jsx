@@ -21,7 +21,14 @@ class MediaPlayer extends Component {
     );
 
     if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
-      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+      fetch(api + "/user/play", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+          songId: tracks[sessionStorage.getItem("noSong")],
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           this.setState({
@@ -39,7 +46,13 @@ class MediaPlayer extends Component {
     let id = this.state.id;
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
     while (tracks[0] == id) {
-      await fetch(api + "/user/random/")
+      await fetch(api + "/user/random", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           title = data.song.name + " - " + data.song.duration;
@@ -67,7 +80,14 @@ class MediaPlayer extends Component {
         : parseInt(sessionStorage.getItem("noSong")) - 1
     );
 
-    fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+    fetch(api + "/user/play", {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      body: JSON.stringify({
+        userId: sessionStorage.getItem("id"),
+        songId: tracks[sessionStorage.getItem("noSong")],
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         this.setState({
@@ -89,7 +109,14 @@ class MediaPlayer extends Component {
           : (parseInt(sessionStorage.getItem("noSong")) + 1) % tracks.length
       );
 
-      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+      fetch(api + "/user/play", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+          songId: tracks[sessionStorage.getItem("noSong")],
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           this.setState({
@@ -113,7 +140,14 @@ class MediaPlayer extends Component {
     if (sessionStorage.getItem("radio") === "false") {
       const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
       if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
-        fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+        fetch(api + "/user/play", {
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+          body: JSON.stringify({
+            userId: sessionStorage.getItem("id"),
+            songId: tracks[sessionStorage.getItem("noSong")],
+          }),
+        })
           .then((response) => response.json())
           .then((data) => {
             this.setState({

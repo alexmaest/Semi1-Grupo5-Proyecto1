@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import {
-  CgPlayListSearch,
-  CgOptions,
-  CgErase,
-  CgPlayList,
-  CgPlayListAdd,
-} from "react-icons/cg";
+import { CgOptions, CgErase, CgPlayList, CgPlayListAdd } from "react-icons/cg";
 import { BsPlusLg } from "react-icons/bs";
 import { Button, Modal } from "reactstrap";
 import PlaylistAdd from "./PlaylistAdd";
 import PlaylistView from "./PlaylistView";
 import PlaylistCreate from "./PlaylistCreate";
+import PlaylistUpdate from "./PlaylistUpdate";
 
 const api = import.meta.env.VITE_API;
 
@@ -45,23 +40,24 @@ export default function Playlist() {
       return <PlaylistAdd playlist={currentPlaylist} />;
     } else if (type === "View") {
       return <PlaylistView playlist={currentPlaylist} />;
-    }else if (type === "Create") {
+    } else if (type === "Create") {
       return <PlaylistCreate />;
+    } else if (type === "Update") {
+      return <PlaylistUpdate playlist={currentPlaylist} />;
     }
     return null;
   };
 
   const handlerErrasePlaylist = (e) => {
     e.preventDefault();
-    fetch(api + "/playlist/" + e.target.value, {
+    const id = e.target.value;
+    fetch(api + "/playlist/" + id, {
       method: "DELETE",
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setPlaylist(
-            playlists.filter((playlist) => playlist.Id != e.target.value)
-          );
+          setPlaylist(playlists.filter((playlist) => playlist.Id != id));
         } else alert("Error al eliminar playlist");
       });
   };
@@ -110,13 +106,16 @@ export default function Playlist() {
                         >
                           <CgPlayListAdd />
                         </button>
-                        <button className="btn btn-warning">
+                        <button
+                          className="btn btn-warning"
+                          onClick={(e) => handlerViewModal(playlist, "Update")}
+                        >
                           <CgOptions />
                         </button>
                         <button
                           className="btn btn-danger"
                           value={playlist.Id}
-                          onClick={handlerErrasePlaylist}
+                          onClick={(e) => handlerErrasePlaylist(e)}
                         >
                           <CgErase />
                         </button>
