@@ -95,3 +95,53 @@
     display: flex;
     align-items: center;
 }
+
+/* Tabla de Favoritos */
+
+.favsbackground{
+    background: linear-gradient(rgba(114, 70, 165, 0.637) 0%, rgb(2, 42, 82) 100%);
+}
+
+.margen-lista{
+    padding-left: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.vertical-center {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.transparent-button {
+    background: transparent;
+    border: 1px solid transparent;
+    color: white;
+    padding: 5px 10px; 
+    cursor: pointer;
+    border-radius: 10px;
+    width: 25%;
+  }
+  
+  .transparent-button:hover {
+    background: white; 
+    color: rgba(44, 13, 78, 0.795);
+  }
+
+  .tipografia3-titulo{
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 400;
+    font-size: x-large;
+  }
+
+  .tipografia3-detalles{
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 200;
+    font-style: italic;
+    font-size: medium;
+  }
+
+  .blanco{
+    color: white;
+  }
