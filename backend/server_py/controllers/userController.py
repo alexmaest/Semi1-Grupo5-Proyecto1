@@ -71,3 +71,53 @@ def unlike():
         print(e)
         return jsonify({ 'message': 'Internal Server Error' }), 500
 
+@user_route.route('/favoriteSongs/<userId>', methods=['GET'])
+def favoriteSongs(userId):
+    try:
+        user = userModel(userId, None, None, None, None, None, None)
+        favoriteSongs = user.getFavoriteSongs_By_User()
+        return jsonify({ 'success': favoriteSongs }), 200
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500
+
+@user_route.route('/topSongs/<userId>', methods=['GET'])
+def topSongs(userId):
+    try:
+        user = userModel(userId, None, None, None, None, None, None)
+        topSongs = user.getTopSongs_By_User()
+        return jsonify({ 'success': topSongs }), 200
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500
+    
+@user_route.route('/topArtists/<userId>', methods=['GET'])
+def topArtists(userId):
+    try:
+        user = userModel(userId, None, None, None, None, None, None)
+        topArtists = user.getTopArtists_By_User()
+        return jsonify({ 'success': topArtists }), 200
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500
+    
+@user_route.route('/topAlbums/<userId>', methods=['GET'])
+def topAlbums(userId):
+    try:
+        user = userModel(userId, None, None, None, None, None, None)
+        topAlbums = user.getTopAlbums_By_User()
+        return jsonify({ 'success': topAlbums }), 200
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500
+    
+@user_route.route('/history/<userId>', methods=['GET'])
+def history(userId):
+    try:
+        user = userModel(userId, None, None, None, None, None, None)
+        history = user.getHistorySongs_By_User()
+        return jsonify({ 'success': history }), 200
+    except Exception as e:
+        print(e)
+        return jsonify({ 'message': 'Internal Server Error' }), 500
+

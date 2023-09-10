@@ -138,3 +138,148 @@ class userModel:
         except Exception as e:
             db_cursor.execute("ROLLBACK")
             raise e
+
+    def getFavoriteSongs_By_User(self):
+        try:
+            with connection.cursor() as db_cursor:
+                query = '''
+                    SELECT f.Id , f.Usuario , f.Cancion AS Id_Cancion ,
+                    c.Nombre AS Cancion , a.Nombre AS Artista , a2.Nombre AS Album
+                    FROM FAVORITO f  
+                    INNER JOIN CANCION c ON c.Id = f.Cancion 
+                    INNER JOIN ARTISTA a ON a.Id  = c.Artista 
+                    INNER JOIN ALBUM a2 ON a2.Id = c.Album 
+                    WHERE f.Usuario = %s ;
+                    '''
+                db_cursor.execute(query, self.id_user)
+                results = db_cursor.fetchall()
+                playlist_List = []
+                for result in results:
+                    playlist = {
+                        'Id': result['Id'],
+                        'Usuario': result['Usuario'],
+                        'Id_Cancion': result['Id_Cancion'],
+                        'Cancion': result['Cancion'],
+                        'Artista': result['Artista'],
+                        'Album': result['Album']
+                    }
+                    playlist_List.append(playlist)
+                return playlist_List
+        except Exception as e:
+            raise e
+        
+    #                        *********************PARTE DE TOPS*********************
+        
+    def getTopSongs_By_User(self):
+        try:
+            with connection.cursor() as db_cursor:
+                query = '''
+                    SELECT Cancion AS Id_Cancion, c.Nombre AS Nombre_Cancion, COUNT(*) AS Cantidad_Reproducciones
+                    FROM REPRODUCCION_BITACORA rb
+                    INNER JOIN CANCION c ON c.Id = rb.Cancion 
+                    WHERE rb.Usuario = %s
+                    GROUP BY Cancion
+                    ORDER BY Cantidad_Reproducciones DESC
+                    LIMIT 5;
+                    '''
+                db_cursor.execute(query, self.id_user)
+                results = db_cursor.fetchall()
+                playlist_List = []
+                for result in results:
+                    playlist = {
+                        'Id_Cancion': result['Id_Cancion'],
+                        'Nombre_Cancion': result['Nombre_Cancion'],
+                        'Cantidad_Reproducciones': result['Cantidad_Reproducciones']
+                    }
+                    playlist_List.append(playlist)
+                return playlist_List
+        except Exception as e:
+            raise e
+    
+    def getTopArtists_By_User(self):
+        try:
+            with connection.cursor() as db_cursor:
+                query = '''
+                    SELECT a.Id AS Id_Artista, a.Nombre AS Nombre_Artista,
+                    SUM(rb.Cantidad_Reproducciones) AS Total_Reproducciones
+                    FROM ARTISTA a
+                    LEFT JOIN CANCION c ON a.Id = c.Artista
+                    LEFT JOIN (
+                        SELECT Usuario, Cancion, COUNT(*) AS Cantidad_Reproducciones
+                        FROM REPRODUCCION_BITACORA
+                        GROUP BY Cancion
+                    ) rb ON c.Id = rb.Cancion
+                    WHERE rb.Usuario = %s
+                    GROUP BY a.Id
+                    ORDER BY Total_Reproducciones DESC
+                    LIMIT 3;
+                    '''
+                db_cursor.execute(query, self.id_user)
+                results = db_cursor.fetchall()
+                playlist_List = []
+                for result in results:
+                    playlist = {
+                        'Id_Artista': result['Id_Artista'],
+                        'Nombre_Artista': result['Nombre_Artista'],
+                        'Total_Reproducciones': result['Total_Reproducciones']
+                    }
+                    playlist_List.append(playlist)
+                return playlist_List
+        except Exception as e:
+            raise e 
+        
+    def getTopAlbums_By_User(self):
+        try:
+            with connection.cursor() as db_cursor:
+                query = '''
+                    SELECT a.Id AS Id_Album, a.Nombre AS Nombre_Album,
+                    SUM(rb.Cantidad_Reproducciones) AS Total_Reproducciones
+                    FROM ALBUM a 
+                    LEFT JOIN CANCION c ON a.Id = c.Artista
+                    LEFT JOIN (
+                        SELECT Usuario, Cancion, COUNT(*) AS Cantidad_Reproducciones
+                        FROM REPRODUCCION_BITACORA
+                        GROUP BY Cancion
+                    ) rb ON c.Id = rb.Cancion
+                    WHERE rb.Usuario = %s
+                    GROUP BY a.Id
+                    ORDER BY Total_Reproducciones DESC
+                    LIMIT 5;
+                    '''
+                db_cursor.execute(query, self.id_user)
+                results = db_cursor.fetchall()
+                playlist_List = []
+                for result in results:
+                    playlist = {
+                        'Id_Album': result['Id_Album'],
+                        'Nombre_Album': result['Nombre_Album'],
+                        'Total_Reproducciones': result['Total_Reproducciones']
+                    }
+                    playlist_List.append(playlist)
+                return playlist_List
+        except Exception as e:
+            raise e
+    
+    def getHistorySongs_By_User(self):
+        try:
+            with connection.cursor() as db_cursor:
+                query = '''
+                    SELECT rb.Usuario, c.Id AS Id_Cancion, c.Nombre AS Nombre_Cancion
+                    FROM REPRODUCCION_BITACORA rb 
+                    INNER JOIN CANCION c ON c.Id = rb.Cancion
+                    WHERE rb.Usuario = %s 
+                    ORDER BY rb.Id DESC;
+                    '''
+                db_cursor.execute(query, self.id_user)
+                results = db_cursor.fetchall()
+                playlist_List = []
+                for result in results:
+                    playlist = {
+                        'Usuario': result['Usuario'],
+                        'Id_Cancion': result['Id_Cancion'],
+                        'Nombre_Cancion': result['Nombre_Cancion']
+                    }
+                    playlist_List.append(playlist)
+                return playlist_List
+        except Exception as e:
+            raise e
