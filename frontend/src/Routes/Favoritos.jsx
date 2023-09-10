@@ -15,7 +15,7 @@ export default function Favoritos() {
         const response = await fetch(api + "/user/favoriteSongs/" + sessionStorage.getItem("id"));
         const data = await response.json();
         setFavs(data.success);
-        console.log(data.success);
+        //console.log(data.success);
       } catch (error) {
         console.error('Error al cargar favoritos:', error);
       }
@@ -23,6 +23,17 @@ export default function Favoritos() {
 
     fetchData();
   }, []);
+
+  async function updateData() {
+    try {
+      const response = await fetch(api + "/user/favoriteSongs/" + sessionStorage.getItem("id"));
+      const data = await response.json();
+      setFavs(data.success);
+      //console.log(data.success);
+    } catch (error) {
+      console.error('Error al cargar favoritos:', error);
+    }
+  }
 
   function handleButtonPLay(songId) {
     //console.log('El ID es:', songId);
@@ -47,6 +58,7 @@ export default function Favoritos() {
       .then((response) => response.json())
       .then((data) => {
         alert(data.message);
+        updateData();
       });
   }
 
