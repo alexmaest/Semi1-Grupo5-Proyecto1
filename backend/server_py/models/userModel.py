@@ -1,4 +1,5 @@
 from database import connection
+import bcrypt
 
 class userModel:
     def __init__(self, id_user, first_name, last_name, email, password, birthday, profile_photo):
@@ -283,3 +284,12 @@ class userModel:
                 return playlist_List
         except Exception as e:
             raise e
+
+    def generate_hash(self):
+            salt_rounds = 10
+            hashed_password = bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt(salt_rounds))
+            return hashed_password.decode('utf-8')
+
+    def compare_hash(self, hashed_password):
+        print(self.password, hashed_password)
+        return bcrypt.checkpw(self.password.encode('utf-8'), hashed_password.encode('utf-8'))
