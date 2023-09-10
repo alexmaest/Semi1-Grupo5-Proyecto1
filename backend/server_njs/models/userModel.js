@@ -1,4 +1,5 @@
 const db = require('../database');
+const bcrypt = require('bcrypt');
 
 class userModel {
   constructor(id_user, firstName, lastName, email, password, birthday, profilePhoto) {
@@ -345,6 +346,17 @@ class userModel {
         }
       });
     });
+  }
+
+  generateHash() {
+      const saltRounds = 10;
+      const hash = bcrypt.hashSync(this.password, saltRounds);
+      return hash;
+  }
+
+  compareHash(hashedPassword) {
+    console.log(this.password, hashedPassword);
+    return bcrypt.compareSync(this.password, hashedPassword);
   }
 }
 

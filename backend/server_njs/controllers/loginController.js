@@ -14,7 +14,7 @@ class LoginController {
             if (!userByEmail) {
                 res.status(501).json({ message: 'Account with that email not exist' });
             } else {
-                if (userByEmail.Psw !== userPassword) {
+                if (!user.compareHash(userByEmail.Psw)) {
                     res.status(501).json({ message: 'Incorrect password' });
                 } else {
                     const token = jwt.sign({ userEmail, userPassword }, process.env.AUTH_KEY, { expiresIn: '1h' });
