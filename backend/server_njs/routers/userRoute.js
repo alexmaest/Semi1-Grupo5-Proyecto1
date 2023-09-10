@@ -3,8 +3,8 @@ const router = express.Router();
 
 const userController = require('../controllers/userController');
 
-router.get('/play', userController.playSong);  // Play a song
-router.get('/random', userController.randomSong);  // Play a random song
+router.post('/play', userController.playSong);  // Play a song
+router.post('/random', userController.randomSong);  // Play a random song
 
 router.post('/search', userController.search);  // Search controller
 router.post('/like', userController.like);  // Like a song
