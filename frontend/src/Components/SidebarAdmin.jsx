@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { BsMusicPlayerFill, BsSearch, BsPersonPlus } from "react-icons/bs";
 import { MdFavoriteBorder, MdOutlinePlaylistAdd } from "react-icons/md";
-import { CgProfile, CgPlayList, CgHeadset } from "react-icons/cg";
+import { CgProfile, CgPlayList, CgHeadset, CgTimer } from "react-icons/cg";
 import { PiMusicNotesPlus } from "react-icons/pi";
 
 import MediaPlayer from "./MediaPlayer";
@@ -59,6 +59,12 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li>
+                <Link to={"Historico"}>
+                  <CgTimer />
+                  Historico
+                </Link>
+              </li>
+              <li>
                 <Link to={"Cancion"}>
                   <PiMusicNotesPlus />
                   CRUD Cancion
@@ -88,7 +94,7 @@ class Sidebar extends Component {
               "linear-gradient(rgba(144, 88, 209, 0.637) 0%, rgb(0, 51, 102) 100%)",
           }}
         >
-          <div style={{ overflow: "auto", flex: 1 }}>
+          <div style={{ overflow: "auto", flex: 1 }} id="contenedor">
             <Outlet />
           </div>
           <div style={{ order: 1 }}>

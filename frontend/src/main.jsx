@@ -4,7 +4,7 @@ import App from './App'
 
 import "./index.css";
 import "./bootstrap.min.css";
-import "./Styles/homepage.css"
+import "./Styles/homepage.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

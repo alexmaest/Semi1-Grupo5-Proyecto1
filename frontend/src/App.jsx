@@ -27,6 +27,8 @@ import ModificarCancion, {
 import Radio from "./Routes/Radio";
 import Playlist, { loader as loaderPlaylist } from "./Routes/Playlist/Playlist";
 import Favoritos from "./Routes/Favoritos";
+import HomeUser from "./Routes/HomeUser/HomeUser";
+import Historico from "./Routes/Historico/Historico";
 
 function App() {
   const router = createBrowserRouter([
@@ -37,7 +39,7 @@ function App() {
       children: [
         {
           path: "",
-          element: <h1>Aqui debe ir una radio</h1>,
+          element: <HomeUser />,
         },
         {
           path: "Perfil",
@@ -61,6 +63,10 @@ function App() {
           path: "Radio",
           element: <Radio />,
         },
+        {
+          path: "Historico",
+          element: <Historico />,
+        }
       ],
     },
     {
@@ -68,6 +74,10 @@ function App() {
       element: <SidebarAdmin />,
       errorElement: <h1>404 Not Found</h1>,
       children: [
+        {
+          path: "",
+          element: <HomeUser />,
+        },
         {
           path: "Perfil",
           loader: loaderPerfil,
@@ -134,6 +144,10 @@ function App() {
           path: "Radio",
           element: <Radio />,
         },
+        {
+          path: "Historico",
+          element: <Historico />,
+        }
       ],
     },
     {

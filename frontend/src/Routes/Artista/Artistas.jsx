@@ -114,6 +114,7 @@ export default function Artistas() {
         <div
           className="container mt-5"
           style={{ maxHeight: "900px", overflowY: "auto" }}
+          id="contenedor"
         >
           <ul className="list-group">
             {artistas.length > 0
