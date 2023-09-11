@@ -50,7 +50,7 @@ export default function PlaylistUpdate(props) {
         Nombre: nombre === "" ? props.playlist.Nombre : nombre,
         Descripcion:
           descripcion === "" ? props.playlist.Descripcion : descripcion,
-        Src: result === "" ? null : src,
+        Src: result === "" ? null : result,
       }),
     })
       .then((response) => response.json())

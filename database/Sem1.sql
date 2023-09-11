@@ -8,7 +8,7 @@ Nombre varchar(50),
 Apellido varchar(50),
 Src varchar(100),
 Correo varchar(100),
-Psw varchar(10),
+Psw varchar(100),
 Fecha_nac varchar(10),
 UNIQUE (Correo)
 );

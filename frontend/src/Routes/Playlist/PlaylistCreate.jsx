@@ -33,8 +33,13 @@ export default function PlaylistCreate(props) {
       });
   }
 
-  function handlerSubmit(e) {
+  async function handlerSubmit(e) {
     e.preventDefault();
+
+    let result;
+    if (src === props.playlist.Src) result = "";
+    else result = await convertBase64(src);
+
     fetch(api + "/playlist/", {
       method: "POST",
       headers: {
@@ -44,7 +49,7 @@ export default function PlaylistCreate(props) {
         Usuario: sessionStorage.getItem("id"),
         Nombre: nombre,
         Descripcion: descripcion,
-        Src: src,
+        Src: result === "" ? null : result,
       }),
     })
       .then((response) => response.json())
@@ -120,7 +125,12 @@ export default function PlaylistCreate(props) {
           />
         </div>
         <div className="row mt-4">
-          <input type="submit" className="btn btn-primary" value={"Crear Playlist"} onClick={handlerSubmit}></input>
+          <input
+            type="submit"
+            className="btn btn-primary"
+            value={"Crear Playlist"}
+            onClick={handlerSubmit}
+          ></input>
         </div>
       </ModalBody>
     </>
