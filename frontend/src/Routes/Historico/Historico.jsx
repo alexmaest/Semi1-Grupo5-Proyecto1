@@ -138,7 +138,7 @@ function HomeUser() {
       <div className="row flex-nowrap overflow-auto" id="contenedor">
         {Historial
           ? Historial.map((dato) => (
-              <div className="col-3" key={contador3}>
+              <div className="col-3" key={contador4}>
                 <div className="card border-secondary">
                   <div
                     className="card-header tipografia3-detalles"
