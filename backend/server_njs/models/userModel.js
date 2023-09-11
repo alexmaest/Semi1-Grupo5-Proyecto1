@@ -355,7 +355,6 @@ class userModel {
   }
 
   compareHash(hashedPassword) {
-    console.log(this.password, hashedPassword);
     return bcrypt.compareSync(this.password, hashedPassword);
   }
 }

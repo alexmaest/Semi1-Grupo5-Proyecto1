@@ -16,7 +16,7 @@ class adminController {
             if (!adminObtained) {
                 res.status(501).json({ message: 'Account admin does not exist' });
             } else {
-                if (adminObtained.Psw !== admin.password) {
+                if (!admin.compareHash(adminObtained.Psw)) {
                     res.status(200).json({ message: false });
                 } else {
                     res.status(200).json({ message: true });

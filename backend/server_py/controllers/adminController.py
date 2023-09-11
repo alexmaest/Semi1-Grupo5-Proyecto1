@@ -15,7 +15,7 @@ def pass_validation():
         admin = userModel(None, None, None, None, adminPassword, None, None)
         adminObtained = admin.get_admin()
         if adminObtained:
-            if adminObtained['Psw'] != adminPassword:
+            if not admin.compare_hash(adminObtained['Psw']):
                 return jsonify({ 'message': False }), 200
             else:
                 return jsonify({ 'message': True }), 200
