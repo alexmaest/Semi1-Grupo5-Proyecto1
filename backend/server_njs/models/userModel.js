@@ -262,28 +262,21 @@ class userModel {
   getTopArtists_By_User() {
     return new Promise((resolve, reject) => {
       const query = `
-        SELECT a.Id AS Id_Artista, a.Nombre AS Nombre_Artista,
-        SUM(rb.Cantidad_Reproducciones) AS Total_Reproducciones
-        FROM ARTISTA a
-        LEFT JOIN CANCION c ON a.Id = c.Artista
-        LEFT JOIN (
-            SELECT Usuario, Cancion, COUNT(*) AS Cantidad_Reproducciones
-            FROM REPRODUCCION_BITACORA
-            GROUP BY Cancion
-        ) rb ON c.Id = rb.Cancion
-        WHERE rb.Usuario = ?
-        GROUP BY a.Id
-        ORDER BY Total_Reproducciones DESC
-        LIMIT 3;
+        select rb.usuario, a.Id, a.Nombre, count(rb.usuario) as Contador from REPRODUCCION_BITACORA rb
+        inner join CANCION c on rb.Cancion = c.Id
+        inner join ARTISTA a on c.Artista = a.Id
+        where rb.usuario = ?
+        group by rb.usuario, a.Nombre
+        order by count(rb.usuario) desc limit 3;
       `
       db.connection.query(query, this.id_user, (err, results) => {
         if (err) {
           reject(err);
         } else {
           const artistList = results.map(result => ({
-            'Id_Artista': result.Id_Artista,
-            'Nombre_Artista': result.Nombre_Artista,
-            'Total_Reproducciones': result.Total_Reproducciones
+            'Id_Artista': result.Id,
+            'Nombre_Artista': result.Nombre,
+            'Total_Reproducciones': result.Contador
           }));
           resolve(artistList);
         }
@@ -294,18 +287,13 @@ class userModel {
   getTopAlbums_By_User() {
     return new Promise((resolve, reject) => {
       const query = `
-        SELECT a.Id AS Id_Album, a.Nombre AS Nombre_Album,
-        SUM(rb.Cantidad_Reproducciones) AS Total_Reproducciones
-        FROM ALBUM a 
-        LEFT JOIN CANCION c ON a.Id = c.Artista
-        LEFT JOIN (
-            SELECT Usuario, Cancion, COUNT(*) AS Cantidad_Reproducciones
-            FROM REPRODUCCION_BITACORA
-            GROUP BY Cancion
-        ) rb ON c.Id = rb.Cancion
-        WHERE rb.Usuario = ?
-        GROUP BY a.Id
-        ORDER BY Total_Reproducciones DESC
+        SELECT rb.usuario, a.Id, a.Nombre, COUNT(rb.usuario) AS Contador 
+        FROM REPRODUCCION_BITACORA rb
+        INNER JOIN CANCION c ON rb.Cancion = c.Id
+        INNER JOIN ALBUM a ON c.Album = a.Id
+        WHERE rb.usuario = ?
+        GROUP BY rb.usuario, a.Nombre
+        ORDER BY Contador DESC 
         LIMIT 5;
       `
       db.connection.query(query, this.id_user, (err, results) => {
@@ -313,9 +301,9 @@ class userModel {
           reject(err);
         } else {
           const albumList = results.map(result => ({
-            'Id_Album': result.Id_Album,
-            'Nombre_Album': result.Nombre_Album,
-            'Total_Reproducciones': result.Total_Reproducciones
+            'Id_Album': result.Id,
+            'Nombre_Album': result.Nombre,
+            'Total_Reproducciones': result.Contador
           }));
           resolve(albumList);
         }
