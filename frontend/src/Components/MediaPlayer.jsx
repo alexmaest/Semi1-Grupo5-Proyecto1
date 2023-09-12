@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
@@ -21,22 +22,22 @@ class MediaPlayer extends Component {
     );
 
     if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
-      fetch(api + "/user/play", {
+      axios({
+        method: "post",
+        url: api + "/user/play",
         headers: { "Content-Type": "application/json" },
-        method: "POST",
-        body: JSON.stringify({
+        data: {
           userId: sessionStorage.getItem("id"),
           songId: tracks[sessionStorage.getItem("noSong")],
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          this.setState({
-            title: data.song.name + " - " + data.song.duration,
-            src: data.song.songFile,
-            id: data.song.id_song,
-          });
+        },
+      }).then((response) => {
+        const data = response.data;
+        this.setState({
+          title: data.song.name + " - " + data.song.duration,
+          src: data.song.songFile,
+          id: data.song.id_song,
         });
+      });
     }
   };
 
@@ -46,19 +47,19 @@ class MediaPlayer extends Component {
     let id = this.state.id;
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
     while (tracks[0] == id) {
-      await fetch(api + "/user/random", {
+      await axios({
+        method: "post",
+        url: api + "/user/random",
         headers: { "Content-Type": "application/json" },
-        method: "POST",
-        body: JSON.stringify({
+        data: {
           userId: sessionStorage.getItem("id"),
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          title = data.song.name + " - " + data.song.duration;
-          src = data.song.songFile;
-          id = data.song.id_song;
-        });
+        },
+      }).then((response) => {
+        const data = response.data;
+        title = data.song.name + " - " + data.song.duration;
+        src = data.song.songFile;
+        id = data.song.id_song;
+      });
     }
 
     sessionStorage.setItem("tracks", JSON.stringify([id]));
@@ -74,25 +75,26 @@ class MediaPlayer extends Component {
   previousSong = () => {
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
     const noSong = parseInt(sessionStorage.getItem("noSong"));
-    sessionStorage.setItem("noSong", noSong === 0 ? 0 : noSong - 1);
+    sessionStorage.setItem("noSong", noSong == 0 ? 0 : noSong - 1);
 
-    if (id != tracks[noSong]) {
-      fetch(api + "/user/play", {
+    if (this.state.id != tracks[parseInt(sessionStorage.getItem("noSong"))]) {
+      console.log(this.state.id,tracks[parseInt(sessionStorage.getItem("noSong"))]);
+      axios({
+        method: "post",
+        url: api + "/user/play",
         headers: { "Content-Type": "application/json" },
-        method: "POST",
-        body: JSON.stringify({
+        data: {
           userId: sessionStorage.getItem("id"),
-          songId: tracks[noSong],
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          this.setState({
-            title: data.song.name + " - " + data.song.duration,
-            src: data.song.songFile,
-            id: data.song.id_song,
-          });
+          songId: tracks[parseInt(sessionStorage.getItem("noSong"))],
+        },
+      }).then((response) => {
+        const data = response.data;
+        this.setState({
+          title: data.song.name + " - " + data.song.duration,
+          src: data.song.songFile,
+          id: data.song.id_song,
         });
+      });
     }
   };
 
@@ -110,22 +112,22 @@ class MediaPlayer extends Component {
       const noSong = parseInt(sessionStorage.getItem("noSong"));
       console.log("Onlisten");
       if (tracks[noSong] != this.state.id) {
-        await fetch(api + "/user/play", {
+        await axios({
+          method: "post",
+          url: api + "/user/play",
           headers: { "Content-Type": "application/json" },
-          method: "POST",
-          body: JSON.stringify({
+          data: {
             userId: sessionStorage.getItem("id"),
             songId: tracks[noSong],
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            this.setState({
-              title: data.song.name + " - " + data.song.duration,
-              src: data.song.songFile,
-              id: data.song.id_song,
-            });
+          },
+        }).then((response) => {
+          const data = response.data;
+          this.setState({
+            title: data.song.name + " - " + data.song.duration,
+            src: data.song.songFile,
+            id: data.song.id_song,
           });
+        });
       }
     }
   };

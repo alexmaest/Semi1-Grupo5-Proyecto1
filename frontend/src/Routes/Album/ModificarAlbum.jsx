@@ -11,7 +11,7 @@ export async function loader({ params }) {
       return data;
     });
 
-  const datosArtistas = await fetch(api + "/admin/artist/")
+  const datosArtistas = await fetch(api + "/admin/artist")
     .then((response) => response.json())
     .then((data) => {
       return data;

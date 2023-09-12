@@ -11,13 +11,13 @@ export async function loader({ params }) {
       return data;
     });
 
-  const datosAlbum = await fetch(api + "/admin/album/")
+  const datosAlbum = await fetch(api + "/admin/album")
     .then((response) => response.json())
     .then((data) => {
       return data;
     });
 
-  const datosArtistas = await fetch(api + "/admin/artist/")
+  const datosArtistas = await fetch(api + "/admin/artist")
     .then((response) => response.json())
     .then((data) => {
       return data;

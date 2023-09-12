@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Brandvar from "../Components/Brandvar";
 import { Link } from "react-router-dom";
 import Footer from "../Components/Footer";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
@@ -32,14 +33,15 @@ class Login extends Component {
     //Fetch para enviar la información
 
     try {
-      const solicitud = await fetch(url, {
+      const solicitud = await axios({
+        url: url,
         method: "GET",
         headers: { "Content-Type": "application/json" },
         //body: JSON.stringify(userdata),
       });
-      if (solicitud.ok) {
+      if (solicitud.statusText === "OK") {
         alert("Todo OK");
-        const respuesta = await solicitud.json();
+        const respuesta = await solicitud.data;
         sessionStorage.setItem("token", respuesta.token);
         sessionStorage.setItem("id", respuesta.id_User);
         sessionStorage.setItem("tracks",JSON.stringify([0])); 

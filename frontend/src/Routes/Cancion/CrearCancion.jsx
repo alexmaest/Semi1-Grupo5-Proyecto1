@@ -2,20 +2,24 @@ import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import ITForm from "../../Components/ITPForm";
 
+import axios from "axios";
+
 const api = import.meta.env.VITE_API;
 
 export async function loader() {
-  const datosAlbum = await fetch(api + "/admin/album/")
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    });
+  const datosAlbum = await axios({
+    url: api + "/admin/album",
+    method: "GET",
+  }).then((result) => {
+    return result.data;
+  });
 
-  const datosArtistas = await fetch(api + "/admin/artist/")
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    });
+  const datosArtistas = await axios({
+    url: api + "/admin/artist",
+    method: "GET",
+  }).then((result) => {
+    return result.data;
+  });
 
   return { datosArtistas, datosAlbum };
 }
@@ -58,12 +62,13 @@ export default function CrearCancion() {
       formData.append("profilePhoto", result);
       formData.append("track", track);
 
-      fetch(api + "/admin/song", {
+      axios({
+        url: api + "/admin/song",
         method: "POST", // or 'PUT'
-        body: formData,
+        data: formData,
       })
         .then((response) => {
-          if (response.ok) {
+          if (response.statusText == "OK") {
             alert("Cancion creada exitosamente.");
           } else {
             alert("Error al crear la cancion.");

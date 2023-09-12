@@ -4,6 +4,7 @@ import SearchSong from "../Components/SearchSong";
 import SearchArtist from "../Components/SearchArtist";
 import SearchAlbum from "../Components/SearchAlbum";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
@@ -17,15 +18,16 @@ export default function Buscar() {
   async function handleSubmit(event) {
     event.preventDefault();
     setDatos(
-      await fetch(api + "/user/search", {
+      await axios({
+        url: api + "/user/search",
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        data: {
           search: search,
-        }),
-      }).then((response) => response.json())
+        },
+      }).then((response) => response.data)
     );
   }
 

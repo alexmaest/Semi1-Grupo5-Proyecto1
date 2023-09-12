@@ -14,7 +14,7 @@ import React, { useState } from "react";
 const api = import.meta.env.VITE_API;
 
 export async function loader() {
-  const album = await fetch(api + "/admin/album/")
+  const album = await fetch(api + "/admin/album")
     .then((response) => response.json())
     .then((data) => {
       return data;

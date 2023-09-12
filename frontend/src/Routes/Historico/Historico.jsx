@@ -1,44 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import "./Historico.css";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
+export async function loader() {
+  const id = sessionStorage.getItem("id");
+  const fetchCanciones = await axios({
+    url: api + "/user/topSongs/" + id,
+    method: "GET",
+  });
+  const fetchArtistas = await axios({
+    url: api + "/user/topArtists/" + id,
+    method: "GET",
+  });
+  const fetchAlbumes = await axios({
+    url: api + "/user/topAlbums/" + id,
+    method: "GET",
+  });
+  const fetchHistorial = await axios({
+    url: api + "/user/history/" + id,
+    method: "GET",
+  });
+
+  const data = await fetchCanciones.data;
+  const data2 = await fetchArtistas.data;
+  const data3 = await fetchAlbumes.data;
+  const data4 = await fetchHistorial.data;
+  return { data, data2, data3, data4 };
+}
+
 function HomeUser() {
-  const [Canciones, setCanciones] = useState();
-  const [Artistas, setArtistas] = useState();
-  const [Albumes, setAlbumes] = useState();
-  const [Historial, setHistorial] = useState();
+  const datos = useLoaderData();
+  const [Canciones, setCanciones] = useState(datos.data.success);
+  const [Artistas, setArtistas] = useState(datos.data2.success);
+  const [Albumes, setAlbumes] = useState(datos.data3.success);
+  const [Historial, setHistorial] = useState(datos.data4.success);
   let contador = 1;
   let contador2 = 1;
   let contador3 = 1;
   let contador4 = 1;
-
-  async function cargarDatos() {
-    await fetch(api + "/user/topSongs/" + sessionStorage.getItem("id"))
-      .then((response) => response.json())
-      .then((data) => {
-        setCanciones(data.success);
-      });
-    await fetch(api + "/user/topAlbums/" + sessionStorage.getItem("id"))
-      .then((response) => response.json())
-      .then((data) => {
-        setAlbumes(data.success);
-      });
-    await fetch(api + "/user/topArtists/" + sessionStorage.getItem("id"))
-      .then((response) => response.json())
-      .then((data) => {
-        setArtistas(data.success);
-      });
-    await fetch(api + "/user/history/" + sessionStorage.getItem("id"))
-      .then((response) => response.json())
-      .then((data) => {
-        setHistorial(data.success);
-      });
-  }
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
 
   return (
     <div className="container">

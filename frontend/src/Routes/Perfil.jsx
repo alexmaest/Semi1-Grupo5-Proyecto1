@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import ITForm from "../Components/ITPForm";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
 export async function loader() {
-  const datos = await fetch(api + "/profile/" + sessionStorage.getItem("id"))
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    });
+  const datos = await axios({
+    url: api + "/profile/" + sessionStorage.getItem("id"),
+    method: "GET",
+  }).then((response) => {
+    return response.data;
+  });
 
   return datos;
 }
@@ -61,7 +63,8 @@ export default function Perfil() {
       if (fotoPerfil === datos.results[0].Src) result = "";
       else result = await convertBase64(fotoPerfil);
 
-      fetch(api + "/profile", {
+      axios({
+        url: api + "/profile",
         method: "PUT", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +79,7 @@ export default function Perfil() {
         }),
       })
         .then((response) => {
-          if (response.ok) {
+          if (response.statusText === "OK") {
             alert("Modificado exitosamente.");
             window.location.reload();
           } else {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./HomeUser.css";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
@@ -9,21 +10,21 @@ function HomeUser() {
   const [Albumes, setAlbumes] = useState();
 
   async function cargarDatos() {
-    await fetch(api + "/admin/song")
-      .then((response) => response.json())
-      .then((data) => {
-        setCanciones(data.songs);
-      });
-    await fetch(api + "/admin/album")
-      .then((response) => response.json())
-      .then((data) => {
-        setAlbumes(data.albums);
-      });
-    await fetch(api + "/admin/artist")
-      .then((response) => response.json())
-      .then((data) => {
-        setArtistas(data.artists);
-      });
+    await axios({ url: api + "/admin/song", method: "GET" }).then(
+      (response) => {
+        setCanciones(response.data.songs);
+      }
+    );
+    await axios({ url: api + "/admin/album", method: "GET" }).then(
+      (response) => {
+        setAlbumes(response.data.albums);
+      }
+    );
+    await axios({ url: api + "/admin/artist", method: "GET" }).then(
+      (response) => {
+        setArtistas(response.data.artists);
+      }
+    );
   }
 
   useEffect(() => {

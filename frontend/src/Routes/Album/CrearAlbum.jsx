@@ -5,7 +5,7 @@ import ITForm from "../../Components/ITPForm";
 const api = import.meta.env.VITE_API;
 
 export async function loader() {
-  const artistas = await fetch(api + "/admin/artist/")
+  const artistas = await fetch(api + "/admin/artist")
     .then((response) => response.json())
     .then((data) => {
       return data;

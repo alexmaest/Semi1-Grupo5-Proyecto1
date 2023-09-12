@@ -28,7 +28,7 @@ import Radio from "./Routes/Radio";
 import Playlist, { loader as loaderPlaylist } from "./Routes/Playlist/Playlist";
 import Favoritos from "./Routes/Favoritos";
 import HomeUser from "./Routes/HomeUser/HomeUser";
-import Historico from "./Routes/Historico/Historico";
+import Historico, {loader as loaderHistorico} from "./Routes/Historico/Historico";
 
 function App() {
   const router = createBrowserRouter([
@@ -65,6 +65,7 @@ function App() {
         },
         {
           path: "Historico",
+          loader: loaderHistorico,
           element: <Historico />,
         }
       ],
@@ -146,6 +147,7 @@ function App() {
         },
         {
           path: "Historico",
+          loader: loaderHistorico,
           element: <Historico />,
         }
       ],

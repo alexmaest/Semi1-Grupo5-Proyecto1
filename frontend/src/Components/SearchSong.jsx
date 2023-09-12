@@ -1,37 +1,35 @@
 import React, { useState } from "react";
 import { CgPlayButtonO, CgPlayListAdd, CgHeart } from "react-icons/cg";
+import axios from "axios";
 
 const api = import.meta.env.VITE_API;
 
 export default function SearchSong(props) {
   function hadlerFavorite() {
-    fetch(api + "/user/like/", {
+    axios({
+      url: api + "/user/like",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
+      data: {
         userId: sessionStorage.getItem("id"),
         songId: props.data.id_song,
         albumId: props.data.id_album,
         artistId: props.data.id_artist,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        alert(data.message);
-      });
+      },
+    }).then((respose) => {
+      const data = respose.data;
+      alert(data.message);
+    });
   }
 
   function handlerPlay() {
-    sessionStorage.setItem(
-      "tracks",
-      JSON.stringify([props.data.id_song])
-    );
+    sessionStorage.setItem("tracks", JSON.stringify([props.data.id_song]));
     sessionStorage.setItem("noSong", 0);
   }
 
-  function handlerPlayList(){
+  function handlerPlayList() {
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
     tracks.push(props.data.id_song);
     sessionStorage.setItem("tracks", JSON.stringify(tracks));
@@ -70,7 +68,11 @@ export default function SearchSong(props) {
         >
           <CgPlayButtonO />
         </button>
-        <button className="btn btn-primary m-1 col-sm-4" type="button" onClick={handlerPlayList}>
+        <button
+          className="btn btn-primary m-1 col-sm-4"
+          type="button"
+          onClick={handlerPlayList}
+        >
           <CgPlayListAdd />
         </button>
       </div>

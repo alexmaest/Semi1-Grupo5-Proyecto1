@@ -7,7 +7,7 @@ import { BsPlusLg } from "react-icons/bs";
 const api = import.meta.env.VITE_API;
 
 export async function loader() {
-  const canciones = await fetch(api + "/admin/song/")
+  const canciones = await fetch(api + "/admin/song")
     .then((response) => response.json())
     .then((data) => {
       return data;
