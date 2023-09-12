@@ -21,7 +21,14 @@ class MediaPlayer extends Component {
     );
 
     if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
-      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+      fetch(api + "/user/play", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+          songId: tracks[sessionStorage.getItem("noSong")],
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           this.setState({
@@ -39,7 +46,13 @@ class MediaPlayer extends Component {
     let id = this.state.id;
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
     while (tracks[0] == id) {
-      await fetch(api + "/user/random/")
+      await fetch(api + "/user/random", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           title = data.song.name + " - " + data.song.duration;
@@ -60,36 +73,18 @@ class MediaPlayer extends Component {
 
   previousSong = () => {
     const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
-    sessionStorage.setItem(
-      "noSong",
-      parseInt(sessionStorage.getItem("noSong")) === 0
-        ? 0
-        : parseInt(sessionStorage.getItem("noSong")) - 1
-    );
+    const noSong = parseInt(sessionStorage.getItem("noSong"));
+    sessionStorage.setItem("noSong", noSong === 0 ? 0 : noSong - 1);
 
-    fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({
-          title: data.song.name + " - " + data.song.duration,
-          src: data.song.songFile,
-          id: data.song.id_song,
-        });
-      });
-  };
-
-  errorSong = () => {
-    const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
-    if (this.state.id != parseInt(tracks[sessionStorage.getItem("noSong")])) {
-      const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
-      sessionStorage.setItem(
-        "noSong",
-        parseInt(sessionStorage.getItem("noSong")) >= tracks.length - 1
-          ? 0
-          : (parseInt(sessionStorage.getItem("noSong")) + 1) % tracks.length
-      );
-
-      fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+    if (id != tracks[noSong]) {
+      fetch(api + "/user/play", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+          songId: tracks[noSong],
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           this.setState({
@@ -109,11 +104,20 @@ class MediaPlayer extends Component {
     }
   };
 
-  handlerOnListen = () => {
+  handlerOnListen = async () => {
     if (sessionStorage.getItem("radio") === "false") {
       const tracks = JSON.parse(sessionStorage.getItem("tracks")) || [];
-      if (tracks[sessionStorage.getItem("noSong")] != this.state.id) {
-        fetch(api + "/admin/song/" + tracks[sessionStorage.getItem("noSong")])
+      const noSong = parseInt(sessionStorage.getItem("noSong"));
+      console.log("Onlisten");
+      if (tracks[noSong] != this.state.id) {
+        await fetch(api + "/user/play", {
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+          body: JSON.stringify({
+            userId: sessionStorage.getItem("id"),
+            songId: tracks[noSong],
+          }),
+        })
           .then((response) => response.json())
           .then((data) => {
             this.setState({
@@ -149,9 +153,7 @@ class MediaPlayer extends Component {
           header={this.state.title}
           onClickNext={this.handlerOnClickNext}
           onClickPrevious={this.handlerOnClickPrevious}
-          onError={this.handlerOnClickNext}
           onEnded={this.handlerOnClickNext}
-          onListen={this.handlerOnListen}
           autoPlayAfterSrcChange={true}
           autoPlay={true}
         />

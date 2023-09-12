@@ -14,11 +14,11 @@ def usersLogin(email, password):
         if not user_by_email:
             return jsonify({ 'message': 'Account with that email not exist' }), 501
         else:
-            if user_by_email['Psw'] != password:
+            if not user.compare_hash(user_by_email['Psw']):
                 return jsonify({ 'message': 'Incorrect password' }), 501
             else:
                 token = generate_token(email)
-                return jsonify({ 'token': token, 'message': 'Successful request' }), 200
+                return jsonify({ 'id_User': user_by_email['Id'], 'token': token, 'message': 'Successful request' }), 200
             
     except Exception as e:
         print(e)

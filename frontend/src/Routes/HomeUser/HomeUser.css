@@ -1,0 +1,9 @@
+div.col-4 {
+    color: #fff;
+    height: 400px;
+}
+
+.card.border-secondary {
+    padding: 0px;
+    height: 100%;
+}

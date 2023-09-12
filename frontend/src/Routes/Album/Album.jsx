@@ -34,14 +34,35 @@ export default function Album() {
   const [currentAlbum, setCurrentAlbum] = useState();
 
   function handlerEliminar(param) {
-    fetch(api + "/admin/album/" + param, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        window.location.reload();
-      });
+    let password = prompt("Ingrese su password:", "");
+    if (password == null || password == "") {
+      alert("Password incorrecto");
+    } else {
+      fetch(api + "/admin/password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: password,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message == true) {
+            fetch(api + "/admin/album/" + param, {
+              method: "DELETE",
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                alert(data.message);
+                window.location.reload();
+              });
+          } else {
+            alert("Password incorrecto");
+          }
+        });
+    }
   }
 
   function handlerBuscar(e) {
@@ -261,7 +282,9 @@ export default function Album() {
                           } m-1`}
                           type="button"
                           value={song.id_song}
-                          onClick={isView == true ? handlerErraseSong : handlerAddSong}
+                          onClick={
+                            isView == true ? handlerErraseSong : handlerAddSong
+                          }
                         >
                           {isView == true ? <CgErase /> : <CgAdd />}
                         </button>

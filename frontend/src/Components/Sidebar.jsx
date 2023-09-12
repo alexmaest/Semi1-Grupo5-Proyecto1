@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { BsMusicPlayerFill, BsSearch } from "react-icons/bs";
 import { MdFavoriteBorder } from "react-icons/md";
-import { CgProfile, CgPlayList, CgHeadset } from "react-icons/cg";
+import { CgProfile, CgPlayList, CgHeadset, CgTimer } from "react-icons/cg";
 import MediaPlayer from "../Components/MediaPlayer";
 
 class Sidebar extends Component {
@@ -56,6 +56,12 @@ class Sidebar extends Component {
                   Radio
                 </Link>
               </li>
+              <li>
+                <Link to={"Historico"}>
+                  <CgTimer />
+                  Historico
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
@@ -68,7 +74,7 @@ class Sidebar extends Component {
               "linear-gradient(rgba(144, 88, 209, 0.637) 0%, rgb(0, 51, 102) 100%)",
           }}
         >
-          <div style={{ overflow: "auto", flex: 1 }}>
+          <div style={{ overflow: "auto", flex: 1 }} id="contenedor">
             <Outlet />
           </div>
           <div style={{ order: 1 }}>

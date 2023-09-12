@@ -22,6 +22,8 @@ def register():
                 return jsonify({ 'message': 'Account with that email already exist' }), 501
             else:
                 imageUrl = load_controller.upload_image(profile_photo)
+                generatedHash = user.generate_hash()
+                user.password = generatedHash
                 if imageUrl:
                     user.profile_photo = imageUrl
                     user_added = user.save()

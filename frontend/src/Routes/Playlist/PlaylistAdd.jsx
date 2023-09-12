@@ -36,13 +36,13 @@ export default function PlaylistAdd(props) {
 
   function handlerAddSong(e) {
     e.preventDefault();
-
+    const idSong = e.target.value;
     fetch(api + "/playlist/addSong", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify({
         Id_Playlist: props.playlist.Id,
-        Id_Song: e.target.value,
+        Id_Song: idSong,
       }),
     })
       .then((response) => response.json())

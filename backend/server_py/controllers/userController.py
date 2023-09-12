@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request
 
 user_route = Blueprint('user_route', __name__)
 
-@user_route.route('/play', methods=['GET'])
+@user_route.route('/play', methods=['POST'])
 def play_song():
     try:
         data = request.get_json()
@@ -19,7 +19,7 @@ def play_song():
         print(e)
         return jsonify({'message': 'Internal Server Error'}), 500
 
-@user_route.route('/random', methods=['GET'])
+@user_route.route('/random', methods=['POST'])
 def random_song():
     try:
         userId = request.json.get('userId')

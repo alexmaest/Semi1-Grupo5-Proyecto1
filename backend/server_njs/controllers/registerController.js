@@ -15,6 +15,8 @@ class registerController {
                 const imageUrl = await loadController.uploadImage(profilePhoto);
                 if (imageUrl) {
                     user.profilePhoto = imageUrl;
+                    const generatedHash = await user.generateHash();
+                    user.password = generatedHash;
                     const userAdded = await user.save();
                     if (userAdded) {
                         res.status(200).json({ message: 'Account created' });

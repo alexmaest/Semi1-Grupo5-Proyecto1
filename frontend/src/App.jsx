@@ -2,9 +2,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Sidebar from "./Components/Sidebar";
 import SidebarAdmin from "./Components/SidebarAdmin";
-import Perfil, {loader as loaderPerfil} from "./Routes/Perfil";
+import Perfil, { loader as loaderPerfil } from "./Routes/Perfil";
 import Buscar from "./Routes/Buscar";
-import CrearCancion, {loader as loaderCCancion} from "./Routes/Cancion/CrearCancion";
+import CrearCancion, {
+  loader as loaderCCancion,
+} from "./Routes/Cancion/CrearCancion";
 import Artistas, { loader as loaderArtista } from "./Routes/Artista/Artistas";
 import CrearArtista from "./Routes/Artista/CrearArtista";
 import ModificarArtista, {
@@ -12,14 +14,21 @@ import ModificarArtista, {
 } from "./Routes/Artista/ModificarArtista";
 import Album, { loader as loaderAlbum } from "./Routes/Album/Album";
 import CrearAlbum, { loader as loaderCAlbum } from "./Routes/Album/CrearAlbum";
-import Login from "./Routes/Login"
+import Login from "./Routes/Login";
 import Home from "./Routes/Home";
 import Register from "./Routes/Register";
-import ModificarAlbum, {loader as loaderMAlbum} from "./Routes/Album/ModificarAlbum";
-import Canciones , {loader as loaderCancion} from "./Routes/Cancion/Cancion";
-import ModificarCancion, {loader as loaderMCancion} from "./Routes/Cancion/ModificarCancion";
+import ModificarAlbum, {
+  loader as loaderMAlbum,
+} from "./Routes/Album/ModificarAlbum";
+import Canciones, { loader as loaderCancion } from "./Routes/Cancion/Cancion";
+import ModificarCancion, {
+  loader as loaderMCancion,
+} from "./Routes/Cancion/ModificarCancion";
 import Radio from "./Routes/Radio";
-import Playlist, {loader as loaderPlaylist} from "./Routes/Playlist/Playlist";
+import Playlist, { loader as loaderPlaylist } from "./Routes/Playlist/Playlist";
+import Favoritos from "./Routes/Favoritos";
+import HomeUser from "./Routes/HomeUser/HomeUser";
+import Historico from "./Routes/Historico/Historico";
 
 function App() {
   const router = createBrowserRouter([
@@ -30,7 +39,7 @@ function App() {
       children: [
         {
           path: "",
-          element: <h1>Aqui debe ir una radio</h1>,
+          element: <HomeUser />,
         },
         {
           path: "Perfil",
@@ -43,16 +52,21 @@ function App() {
         },
         {
           path: "Favoritos",
-          element: <h1>Aqui deberian ir los favoritos</h1>,
+          element: <Favoritos />,
         },
         {
           path: "Playlist",
-          element: <h1>Aqui deberian ir la playlist</h1>,
+          loader: loaderPlaylist,
+          element: <Playlist />,
         },
         {
           path: "Radio",
           element: <Radio />,
         },
+        {
+          path: "Historico",
+          element: <Historico />,
+        }
       ],
     },
     {
@@ -61,6 +75,10 @@ function App() {
       errorElement: <h1>404 Not Found</h1>,
       children: [
         {
+          path: "",
+          element: <HomeUser />,
+        },
+        {
           path: "Perfil",
           loader: loaderPerfil,
           element: <Perfil />,
@@ -70,12 +88,8 @@ function App() {
           element: <Buscar />,
         },
         {
-          path: "Buscar/Artista/:id",
-          element: <Perfil />,
-        },
-        {
           path: "Favoritos",
-          element: <h1>Aqui deberian ir los favoritos</h1>,
+          element: <Favoritos />,
         },
         {
           path: "Playlist",
@@ -130,22 +144,26 @@ function App() {
           path: "Radio",
           element: <Radio />,
         },
+        {
+          path: "Historico",
+          element: <Historico />,
+        }
       ],
     },
     {
-      path: '/login',
+      path: "/login",
       element: <Login />,
-      errorElement: <h1>404 Not Found</h1>
+      errorElement: <h1>404 Not Found</h1>,
     },
     {
-      path: '/registrarse',
+      path: "/registrarse",
       element: <Register />,
-      errorElement: <h1>404 Not Found</h1>
+      errorElement: <h1>404 Not Found</h1>,
     },
     {
-      path: '/',
+      path: "/",
       element: <Home />,
-      errorElement: <h1>404 Not Found</h1>
+      errorElement: <h1>404 Not Found</h1>,
     },
   ]);
 

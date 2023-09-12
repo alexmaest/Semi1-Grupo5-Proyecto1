@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { ModalBody, ModalHeader } from "reactstrap";
 
 const api = import.meta.env.VITE_API;
 
-export default function PlaylistCreate(props) {
+export default function PlaylistUpdate(props) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [src, setSrc] = useState("");
+  const [src, setSrc] = useState(props.playlist.Src);
 
   async function convertBase64(file) {
     var myInit = {
@@ -41,14 +41,15 @@ export default function PlaylistCreate(props) {
     else result = await convertBase64(src);
 
     fetch(api + "/playlist/", {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Usuario: sessionStorage.getItem("id"),
-        Nombre: nombre,
-        Descripcion: descripcion,
+        Id: props.playlist.Id,
+        Nombre: nombre === "" ? props.playlist.Nombre : nombre,
+        Descripcion:
+          descripcion === "" ? props.playlist.Descripcion : descripcion,
         Src: result === "" ? null : result,
       }),
     })
@@ -71,7 +72,7 @@ export default function PlaylistCreate(props) {
               type="text"
               readOnly
               className="form-control-plaintext"
-              value={"Nombre: "}
+              value={"Nombre: " + props.playlist.Nombre}
             ></input>
           </div>
           <div className="col-sm-6">
@@ -90,7 +91,7 @@ export default function PlaylistCreate(props) {
               type="text"
               readOnly
               className="form-control-plaintext"
-              value={"Descripcion: "}
+              value={"Descripcion: " + props.playlist.Descripcion}
             ></input>
           </div>
           <div className="col-sm-6">
@@ -128,7 +129,7 @@ export default function PlaylistCreate(props) {
           <input
             type="submit"
             className="btn btn-primary"
-            value={"Crear Playlist"}
+            value={"Actualizar"}
             onClick={handlerSubmit}
           ></input>
         </div>
