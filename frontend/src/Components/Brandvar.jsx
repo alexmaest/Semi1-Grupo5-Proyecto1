@@ -8,7 +8,7 @@ class Brandvar extends Component {
             <div className="container-fluid d-flex justify-content-between align-items-center">
                 <Link to={"/"} className="textbrand" style={{ display: 'flex', alignItems: 'center' }}>
                     <img src="https://i.imgur.com/2172Pyb.png" alt="Logo" width="50" height="50" style={{ marginRight: '10px' }}/>   
-                    Spotify Pirata
+                    SemiSpotify
                 </Link>
                 <div>
                     <Link to={"/login"} className="options">

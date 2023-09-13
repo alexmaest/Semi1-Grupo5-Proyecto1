@@ -8,7 +8,7 @@ class Footer extends Component {
               <div className="container">
                 <div className="row">
                   <div className="col border-blanco">
-                  2023 Spotify Pirata
+                  2023 SemiSpotify
                   </div>
                   <div className="col">
                   Todos los derechos resevados
