@@ -18,7 +18,7 @@ export async function loader() {
 
 export default function Artistas() {
   const datos = useLoaderData();
-  const [artistas, setArtistas] = useState(datos.artists);
+  const [artistas, setArtistas] = useState(datos.artists?datos.artists:null);
   const [buscar, setBuscar] = useState(0);
   const [open, setOpen] = useState(false);
   const [datosArtista, setDatosArtista] = useState([]);
@@ -117,7 +117,7 @@ export default function Artistas() {
           id="contenedor"
         >
           <ul className="list-group">
-            {artistas.length > 0
+            {artistas
               ? artistas.map((artista) => (
                   <li key={artista.id_artist} className="list-group-item">
                     <div className="row m-2">

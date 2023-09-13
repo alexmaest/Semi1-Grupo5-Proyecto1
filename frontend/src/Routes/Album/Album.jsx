@@ -25,7 +25,7 @@ export async function loader() {
 
 export default function Album() {
   const datos = useLoaderData();
-  const [album, setAlbum] = useState(datos.albums);
+  const [album, setAlbum] = useState(datos.albums?datos.albums:null);
   const [buscar, setBuscar] = useState(0);
   const [open, setOpen] = useState(false);
   const [songs, setSongs] = useState([]);
@@ -179,7 +179,7 @@ export default function Album() {
           style={{ maxHeight: "900px", overflowY: "auto" }}
         >
           <ul className="list-group">
-            {album.length > 0
+            {album
               ? album.map((album) => (
                   <li key={album.id_album} className="list-group-item">
                     <div className="row m-2">

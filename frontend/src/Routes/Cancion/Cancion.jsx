@@ -18,7 +18,7 @@ export async function loader() {
 
 export default function Canciones() {
   const datos = useLoaderData();
-  const [canciones, setCanciones] = useState(datos.songs);
+  const [canciones, setCanciones] = useState(datos.songs?datos.songs:null);
   const [buscar, setBuscar] = useState(0);
 
   function handlerEliminar(param) {
@@ -89,7 +89,7 @@ export default function Canciones() {
         id="contenedor"
       >
         <ul className="list-group">
-          {canciones.length > 0
+          {canciones
             ? canciones.map((cancion) => (
                 <li key={cancion.id_song} className="list-group-item">
                   <div className="row m-2">
