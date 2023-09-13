@@ -140,7 +140,7 @@ class userModel:
             db_cursor.execute("ROLLBACK")
             raise e
 
-    def getFavoriteSongs_By_User(self):
+    async def getFavoriteSongs_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -171,7 +171,7 @@ class userModel:
         
     #                        *********************PARTE DE TOPS*********************
         
-    def getTopSongs_By_User(self):
+    async def getTopSongs_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -197,7 +197,7 @@ class userModel:
         except Exception as e:
             raise e
     
-    def getTopArtists_By_User(self):
+    async def getTopArtists_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -222,7 +222,7 @@ class userModel:
         except Exception as e:
             raise e 
         
-    def getTopAlbums_By_User(self):
+    async def getTopAlbums_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -249,7 +249,7 @@ class userModel:
         except Exception as e:
             raise e
     
-    def getHistorySongs_By_User(self):
+    async def getHistorySongs_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
