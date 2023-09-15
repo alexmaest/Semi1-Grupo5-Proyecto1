@@ -278,7 +278,7 @@ def delete_album(id):
 def get_all_available_songs(id):
     try:
         artist = artistModel(id, None, None, None)
-        song = songModel(None, None, None, None, None, None)
+        song = songModel(None, None, None, None, None, None, None)
         all_songs = song.get_all_available(artist)
         if all_songs:
             return jsonify({'songs': all_songs}), 200

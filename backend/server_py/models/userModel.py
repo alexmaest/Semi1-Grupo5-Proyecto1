@@ -105,24 +105,20 @@ class userModel:
     def likeASong(self, songId):
         try:
             with connection.cursor() as db_cursor:
-                db_cursor.execute("START TRANSACTION")
 
                 checkCancionQuery = 'SELECT COUNT(*) AS count FROM FAVORITO WHERE Usuario = %s AND Cancion = %s;'
                 db_cursor.execute(checkCancionQuery, (self.id_user, songId))
                 countCancion = db_cursor.fetchone()['count']
 
                 if countCancion > 0:
-                    db_cursor.execute("COMMIT")
                     return False
                 else:
-                    usuarioCancionQuery = 'INSERT INTO FAVORITO (Reproducciones, Usuario, Cancion) VALUES (0, %s, %s);'
+                    usuarioCancionQuery = 'INSERT INTO FAVORITO (Usuario, Cancion) VALUES (%s, %s);'
                     db_cursor.execute(usuarioCancionQuery, (self.id_user, songId))
-
-                    db_cursor.execute("COMMIT")
+                    connection.commit()
                     return True
 
         except Exception as e:
-            db_cursor.execute("ROLLBACK")
             raise e
 
     def unlikeASong(self, songId):
@@ -140,7 +136,7 @@ class userModel:
             db_cursor.execute("ROLLBACK")
             raise e
 
-    async def getFavoriteSongs_By_User(self):
+    def getFavoriteSongs_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -171,7 +167,7 @@ class userModel:
         
     #                        *********************PARTE DE TOPS*********************
         
-    async def getTopSongs_By_User(self):
+    def getTopSongs_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -197,7 +193,7 @@ class userModel:
         except Exception as e:
             raise e
     
-    async def getTopArtists_By_User(self):
+    def getTopArtists_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -222,7 +218,7 @@ class userModel:
         except Exception as e:
             raise e 
         
-    async def getTopAlbums_By_User(self):
+    def getTopAlbums_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''
@@ -249,7 +245,7 @@ class userModel:
         except Exception as e:
             raise e
     
-    async def getHistorySongs_By_User(self):
+    def getHistorySongs_By_User(self):
         try:
             with connection.cursor() as db_cursor:
                 query = '''

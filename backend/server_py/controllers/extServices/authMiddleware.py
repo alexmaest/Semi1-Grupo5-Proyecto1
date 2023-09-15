@@ -3,7 +3,7 @@ import jwt
 import os
 from datetime import datetime, timedelta
 
-secret_key = os.getenv("AUTH_KEY")
+secret_key = str(os.getenv("AUTH_KEY"))
 
 # Decorador para verificar el token en las rutas protegidas
 def authenticate_token(func):

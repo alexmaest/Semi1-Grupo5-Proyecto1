@@ -45,13 +45,17 @@ class PlaylistModel:
     def deleteById(self):
         try:
             with connection.cursor() as db_cursor:
-                query = 'DELETE FROM Semi1.PLAYLIST WHERE Id = %s ;'
-                db_cursor.execute(query, self.Id)
+                delete_playlist_cancion_query = 'DELETE FROM Semi1.PLAYLIST_CANCION WHERE Playlist = %s ;'
+                db_cursor.execute(delete_playlist_cancion_query, self.Id)
+
+                delete_playlist_query = 'DELETE FROM Semi1.PLAYLIST WHERE Id = %s ;'
+                db_cursor.execute(delete_playlist_query, self.Id)
+                
                 connection.commit()
                 return db_cursor.rowcount > 0
         except Exception as e:
             raise e
-        
+
     def getById(self):
         try:
             with connection.cursor() as db_cursor:

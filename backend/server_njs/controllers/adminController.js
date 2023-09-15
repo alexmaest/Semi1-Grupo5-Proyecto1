@@ -218,7 +218,7 @@ class adminController {
 
     async getAllSongs(req, res) {
         try {
-            const song = new songModel(null, null, null, null, null, null);
+            const song = new songModel(null, null, null, null, null, null, null);
             const allSongs = await song.getAll();
             if (allSongs) {
                 res.status(200).json({ songs: allSongs });

@@ -67,15 +67,24 @@ class PlaylistController {
         }
     }
 
-    async deletePlaylist(req, res) {
-        try {
-            const { id } = req.params;
-            const playlist = new PlaylistModel(id);
-            const result = await playlist.deleteById();
-            res.status(200).json({ success: result });
-        } catch (error) {
-            res.status(500).json({ message: 'Internal Server Error' });
-        }
+    deleteById() {
+        return new Promise((resolve, reject) => {
+            const deletePlaylistCancionQuery = 'DELETE FROM Semi1.PLAYLIST_CANCION WHERE Playlist = ?';
+            db.connection.query(deletePlaylistCancionQuery, this.Id, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const deletePlaylistQuery = 'DELETE FROM Semi1.PLAYLIST WHERE Id = ?';
+                    db.connection.query(deletePlaylistQuery, this.Id, (err, result) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(result.affectedRows > 0);
+                        }
+                    });
+                }
+            });
+        });
     }
 
     async getPlaylistById(req, res) {

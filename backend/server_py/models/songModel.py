@@ -157,7 +157,7 @@ class songModel:
     def getByRegex(self, search):
         try:
             query = """
-                SELECT C.*, A.Nombre AS Artista, A.Id AS IdArtista, B.Nombre AS Album, B.Id AS IdAlbum
+                SELECT C.*, A.Nombre AS NombreArtista, A.Id AS IdArtista, B.Nombre AS NombreAlbum, B.Id AS IdAlbum
                 FROM CANCION C
                 INNER JOIN ALBUM B ON C.Album = B.Id
                 INNER JOIN ARTISTA A ON C.Artista = A.Id
@@ -175,8 +175,8 @@ class songModel:
                         'coverPhoto': result['Src_image'],
                         'songFile': result['Src_mp3'],
                         'duration': result['Duracion'],
-                        'artist': result['Artista'],
-                        'album': result['Album'],
+                        'artist': result['NombreArtista'],
+                        'album': result['NombreAlbum'],
                         'id_artist': result['IdArtista'],
                         'id_album': result['IdAlbum']
                     }
