@@ -27,7 +27,10 @@ export default function Buscar() {
         data: {
           search: search,
         },
-      }).then((response) => response.data)
+      }).then((response) => {
+        console.log(response.data);
+        return response.data;
+      })
     );
   }
 

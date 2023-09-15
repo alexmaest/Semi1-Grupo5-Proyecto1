@@ -254,7 +254,7 @@ export default function Album() {
         </ModalHeader>
         <ModalBody>
           <ul className="list-group">
-            {songs.length
+            {songs
               ? songs.map((song) => (
                   <li key={song.id_song} className="list-group-item">
                     <div className="row m-2">

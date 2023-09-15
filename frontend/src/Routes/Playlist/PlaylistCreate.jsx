@@ -36,9 +36,7 @@ export default function PlaylistCreate(props) {
   async function handlerSubmit(e) {
     e.preventDefault();
 
-    let result;
-    if (src === props.playlist.Src) result = "";
-    else result = await convertBase64(src);
+    let result = await convertBase64(src);
 
     fetch(api + "/playlist/", {
       method: "POST",
