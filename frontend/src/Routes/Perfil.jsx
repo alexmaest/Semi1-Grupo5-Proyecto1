@@ -44,7 +44,7 @@ async function convertBase64(file) {
 export default function Perfil() {
   const datos = useLoaderData();
   const id = datos.results[0].Id;
-  const [nombre, changeNombre] = useState(datos.results[0].Id);
+  const [nombre, changeNombre] = useState(datos.results[0].Nombre);
   const [apellido, changeApellido] = useState(datos.results[0].Apellido);
   const [correo, changeCorreo] = useState(datos.results[0].Correo);
   const [fechaNacimiento, changeFechaNac] = useState(
